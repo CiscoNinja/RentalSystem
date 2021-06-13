@@ -14,7 +14,7 @@ namespace RentalSystem.Bookings.Dtos
         {
             CreateMap<Booking, BookingDto>()
                 .ForMember(dto => dto.Facility, map => map.MapFrom(ent => ent.Facility.Name))
-                .ForMember(dto => dto.Client, map => map.MapFrom(ent => ent.Client.Name)).ReverseMap();
+                .ForMember(dto => dto.Client, map => map.MapFrom(ent => ent.Client.FirstName)).ReverseMap();
 
             CreateMap<CreateUpdateBookingDto, Booking>().ReverseMap();
 

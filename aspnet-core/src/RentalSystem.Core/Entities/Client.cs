@@ -1,4 +1,5 @@
-﻿using Abp.Domain.Entities.Auditing;
+﻿using Abp.Authorization.Users;
+using Abp.Domain.Entities.Auditing;
 using RentalSystem.Entities;
 using System;
 using System.Collections.Generic;
@@ -12,11 +13,14 @@ namespace RentalSystem.Entities
     public class Client : FullAuditedEntity<long>
     {
         [Required]
-        public string Name { get; set; }
+        public string FirstName { get; set; }
         [Required]
-        public string Address { get; set; }
+        public string LastName { get; set; }
+        public string OtherName { get; set; }
+        public Address Address { get; set; }
         [Required]
         [EmailAddress]
+        [StringLength(AbpUserBase.MaxEmailAddressLength)]
         public string Email { get; set; }
         [Required]
         [Phone]
@@ -26,15 +30,17 @@ namespace RentalSystem.Entities
         protected Client()
         {
         }
-    public Client(string name, string address, string email,
+    public Client(string first, string last, string other, Address address, string email,
             string phone, string nationality)
             : base()
     {
-        Name = name;
-        Address = address;
-        Email = email;
-        Phone = phone;
-        Nationality = nationality;
+            FirstName = first;
+            LastName = last;
+            OtherName = other;
+            Address = address;
+            Email = email;
+            Phone = phone;
+            Nationality = nationality;
 
     }
 }

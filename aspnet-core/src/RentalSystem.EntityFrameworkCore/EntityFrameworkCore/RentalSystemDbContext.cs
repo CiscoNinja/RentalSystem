@@ -18,5 +18,17 @@ namespace RentalSystem.EntityFrameworkCore
             : base(options)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<Client>()
+                .HasIndex(u => u.Email).IsUnique();
+
+            builder.Entity<Client>(
+                o => o.OwnsOne(o => o.Address)
+            );
+        }
     }
 }

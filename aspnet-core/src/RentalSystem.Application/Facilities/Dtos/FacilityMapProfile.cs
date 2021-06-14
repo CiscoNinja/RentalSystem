@@ -12,7 +12,8 @@ namespace RentalSystem.Facilities.Dtos
     {
         public ClientMapProfile()
         {
-            CreateMap<Facility, FacilityDto>().ReverseMap(); ;
+            CreateMap<Facility, FacilityDto>().ReverseMap();
+            CreateMap<CreateUpdateFacilityDto, Facility>().ReverseMap();
         }
     }
 }

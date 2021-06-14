@@ -19,19 +19,21 @@ namespace RentalSystem.Entities
         public int Capacity { get; set; }
         [Required]
         public FacTypeEnum FacType { get; set; }
+        public bool Isbooked { get; set; }
 
         protected Facility()
         {
 
         }
         public Facility(string name, double price, int capacity,
-                FacTypeEnum factype)
+                FacTypeEnum factype, bool isbooked)
                : base()
         {
             Name = name;
             Price = price;
             Capacity = capacity;
             FacType = factype;
+            Isbooked = isbooked;
         }
     }
 }

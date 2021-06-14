@@ -13,5 +13,7 @@ namespace RentalSystem.Facilities
         public int Capacity { get; set; }
         [Required]
         public FacTypeEnum FacType { get; set; }
+        public bool Isbooked { get; set; }
+
     }
 }

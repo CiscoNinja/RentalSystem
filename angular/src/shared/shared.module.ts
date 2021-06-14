@@ -8,6 +8,7 @@ import { AppUrlService } from './nav/app-url.service';
 import { AppAuthService } from './auth/app-auth.service';
 import { AppRouteGuard } from './auth/auth-route-guard';
 import { LocalizePipe } from '@shared/pipes/localize.pipe';
+import { ENumAsStringPipe } from '@shared/pipes/enumasstring.pipe';
 
 import { AbpPaginationControlsComponent } from './components/pagination/abp-pagination-controls.component';
 import { AbpValidationSummaryComponent } from './components/validation/abp-validation.summary.component';
@@ -30,6 +31,7 @@ import { EqualValidator } from './directives/equal-validator.directive';
         AbpModalHeaderComponent,
         AbpModalFooterComponent,
         LocalizePipe,
+        ENumAsStringPipe,
         BusyDirective,
         EqualValidator
     ],
@@ -39,6 +41,7 @@ import { EqualValidator } from './directives/equal-validator.directive';
         AbpModalHeaderComponent,
         AbpModalFooterComponent,
         LocalizePipe,
+        ENumAsStringPipe,
         BusyDirective,
         EqualValidator
     ]

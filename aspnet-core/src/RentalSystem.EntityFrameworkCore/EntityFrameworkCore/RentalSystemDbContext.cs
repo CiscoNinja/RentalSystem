@@ -26,6 +26,9 @@ namespace RentalSystem.EntityFrameworkCore
             builder.Entity<Client>()
                 .HasIndex(u => u.Email).IsUnique();
 
+            builder.Entity<Facility>()
+                .HasIndex(u => u.Name).IsUnique();
+
             builder.Entity<Client>(
                 o => o.OwnsOne(o => o.Address)
             );

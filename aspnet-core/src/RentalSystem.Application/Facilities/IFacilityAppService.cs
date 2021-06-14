@@ -10,15 +10,16 @@ using System.Threading.Tasks;
 namespace RentalSystem.Facilities
 {
 
-        public interface IFacilityAppService : IAsyncCrudAppService<
-       FacilityDto,
-       int,
-       PagedAndSortedResultRequestDto,
-       CreateUpdateFacilityDto,
-       FacilityDto>
-        {
+    public interface IFacilityAppService : IAsyncCrudAppService<
+        FacilityDto,
+        int,
+        PagedAndSortedResultRequestDto,
+        CreateUpdateFacilityDto,
+        FacilityDto>
+    {
+        //List<KeyValuePair<string, int>> GetEnumList<T>();
+        List<KeyValuePair<string, int>> GetFacilityEnumList();
+    }
 
-        }
-    
 }
 

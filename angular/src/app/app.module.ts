@@ -38,6 +38,10 @@ import { SidebarComponent } from './layout/sidebar.component';
 import { SidebarLogoComponent } from './layout/sidebar-logo.component';
 import { SidebarUserPanelComponent } from './layout/sidebar-user-panel.component';
 import { SidebarMenuComponent } from './layout/sidebar-menu.component';
+// facilities
+import { FacilitysComponent } from '@app/facility/facilitys.component';
+import { CreateFacilityDialogComponent } from './facility/create-facility/create-facility-dialog.component';
+import { EditFacilityDialogComponent } from './facility/edit-facility/edit-facility-dialog.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +56,10 @@ import { SidebarMenuComponent } from './layout/sidebar-menu.component';
     RolesComponent,
     CreateRoleDialogComponent,
     EditRoleDialogComponent,
+    // facilities
+    FacilitysComponent,
+    CreateFacilityDialogComponent,
+    EditFacilityDialogComponent,
     // users
     UsersComponent,
     CreateUserDialogComponent,

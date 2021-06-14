@@ -30,6 +30,7 @@
     <text name="SavedSuccessfully" value="Saved successfully" />
     <text name="CreateNewTenant" value="Create new tenant" />
     <text name="CreateNewFacility" value="Create new Facility" />
+    <text name="CreateNewClient" value="Create new Client" />
     <text name="AdminEmailAddress" value="Admin email address" />
     <text name="AdminPassword" value="Admin password" />
     <text name="Save" value="Save" />
@@ -73,6 +74,7 @@
     <text name="EditRole">Edit role</text>
     <text name="EditTenant">Edit tenant</text>
     <text name="EditUser">Edit user</text>
+    <text name="EditClient">Edit client</text>
     <text name="EditFacility">Edit Facility</text>
     <text name="TenantIdIsNotActive{0}">TenantId {0} is not active</text>
     <text name="UnknownTenantId{0}">Unknown tenantId {0}</text>

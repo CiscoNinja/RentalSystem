@@ -13,7 +13,7 @@ namespace RentalSystem.Clients
         ClientDto,
         long,
         PagedAndSortedResultRequestDto,
-        CreateUpdatelientDto,
+        CreateUpdateClientDto,
         ClientDto>
     {
     }

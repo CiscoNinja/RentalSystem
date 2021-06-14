@@ -42,6 +42,10 @@ import { SidebarMenuComponent } from './layout/sidebar-menu.component';
 import { FacilitysComponent } from '@app/facility/facilitys.component';
 import { CreateFacilityDialogComponent } from './facility/create-facility/create-facility-dialog.component';
 import { EditFacilityDialogComponent } from './facility/edit-facility/edit-facility-dialog.component';
+// clients
+import { ClientsComponent } from '@app/clients/clients.component';
+import { CreateClientDialogComponent } from './clients/create-client/create-client-dialog.component';
+import { EditClientDialogComponent } from './clients/edit-client/edit-client-dialog.component';
 
 @NgModule({
   declarations: [
@@ -60,6 +64,10 @@ import { EditFacilityDialogComponent } from './facility/edit-facility/edit-facil
     FacilitysComponent,
     CreateFacilityDialogComponent,
     EditFacilityDialogComponent,
+    // clients
+    ClientsComponent,
+    CreateClientDialogComponent,
+    EditClientDialogComponent,
     // users
     UsersComponent,
     CreateUserDialogComponent,
@@ -98,6 +106,12 @@ import { EditFacilityDialogComponent } from './facility/edit-facility/edit-facil
     CreateTenantDialogComponent,
     EditTenantDialogComponent,
     // roles
+    CreateRoleDialogComponent,
+    EditRoleDialogComponent,
+    // clients
+    CreateClientDialogComponent,
+    EditClientDialogComponent,
+    // facilities
     CreateRoleDialogComponent,
     EditRoleDialogComponent,
     // users

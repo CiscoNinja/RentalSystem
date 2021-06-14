@@ -13,7 +13,7 @@ namespace RentalSystem.Clients.Dtos
         public ClientMapProfile()
         {
             CreateMap<Client, ClientDto>().ReverseMap();
-            CreateMap<CreateUpdatelientDto, Client>().ReverseMap();
+            CreateMap<CreateUpdateClientDto, Client>().ReverseMap();
         }
     }
 }

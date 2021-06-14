@@ -571,7 +571,7 @@ export class ClientServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    create(body: CreateUpdatelientDto | undefined): Observable<ClientDto> {
+    create(body: CreateUpdateClientDto | undefined): Observable<ClientDto> {
         let url_ = this.baseUrl + "/api/services/app/Client/Create";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -3419,60 +3419,71 @@ export interface IClientDtoPagedResultDto {
     items: ClientDto[] | undefined;
 }
 
-export class CreateUpdatelientDto implements ICreateUpdatelientDto {
-    name: string;
-    address: string;
+export class CreateUpdateClientDto implements ICreateUpdateClientDto {
+    firstName: string;
+    lastName: string;
+    otherName: string | undefined;
+    address: Address;
     email: string;
     phone: string;
     nationality: string | undefined;
 
-    constructor(data?: ICreateUpdatelientDto) {
+    constructor(data?: ICreateUpdateClientDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
         }
+        if (!data) {
+            this.address = new Address();
+        }
     }
 
     init(_data?: any) {
         if (_data) {
-            this.name = _data["name"];
-            this.address = _data["address"];
+            this.firstName = _data["firstName"];
+            this.lastName = _data["lastName"];
+            this.otherName = _data["otherName"];
+            this.address = _data["address"] ? Address.fromJS(_data["address"]) : new Address();
             this.email = _data["email"];
             this.phone = _data["phone"];
             this.nationality = _data["nationality"];
         }
     }
 
-    static fromJS(data: any): CreateUpdatelientDto {
+    static fromJS(data: any): CreateUpdateClientDto {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateUpdatelientDto();
+        let result = new CreateUpdateClientDto();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["address"] = this.address;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["otherName"] = this.otherName;
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["email"] = this.email;
         data["phone"] = this.phone;
         data["nationality"] = this.nationality;
         return data; 
     }
 
-    clone(): CreateUpdatelientDto {
+    clone(): CreateUpdateClientDto {
         const json = this.toJSON();
-        let result = new CreateUpdatelientDto();
+        let result = new CreateUpdateClientDto();
         result.init(json);
         return result;
     }
 }
 
-export interface ICreateUpdatelientDto {
-    name: string;
-    address: string;
+export interface ICreateUpdateClientDto {
+    firstName: string;
+    lastName: string;
+    otherName: string | undefined;
+    address: Address;
     email: string;
     phone: string;
     nationality: string | undefined;

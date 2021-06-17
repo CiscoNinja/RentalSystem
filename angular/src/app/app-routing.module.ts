@@ -10,6 +10,7 @@ import { RolesComponent } from 'app/roles/roles.component';
 import { ChangePasswordComponent } from './users/change-password/change-password.component';
 import { FacilitysComponent } from './facility/facilitys.component';
 import { ClientsComponent } from './clients/clients.component';
+import { BookingsComponent } from './bookings/bookings.component';
 
 @NgModule({
     imports: [
@@ -22,6 +23,7 @@ import { ClientsComponent } from './clients/clients.component';
                     { path: 'users', component: UsersComponent, data: { permission: 'Pages.Users' }, canActivate: [AppRouteGuard] },
                     { path: 'facility', component: FacilitysComponent, data: { permission: 'Pages.Facilities' }, canActivate: [AppRouteGuard] },
                     { path: 'clients', component: ClientsComponent, data: { permission: 'Pages.Clients' }, canActivate: [AppRouteGuard] },
+                    { path: 'bookings', component: BookingsComponent, data: { permission: 'Pages.Bookings' }, canActivate: [AppRouteGuard] },
                     { path: 'roles', component: RolesComponent, data: { permission: 'Pages.Roles' }, canActivate: [AppRouteGuard] },
                     { path: 'tenants', component: TenantsComponent, data: { permission: 'Pages.Tenants' }, canActivate: [AppRouteGuard] },
                     { path: 'about', component: AboutComponent, canActivate: [AppRouteGuard] },

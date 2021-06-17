@@ -48,7 +48,8 @@
               <thead class="bg-light">
                 <tr>
                   <th>{{ "ClientName" | localize }}</th>
-                  <th>{{ "DisplayName" | localize }}</th>
+                  <th>{{ "Email" | localize }}</th>
+                  <th>{{ "Phone" | localize }}</th>
                   <th style="width: 200px;">{{ "Actions" | localize }}</th>
                 </tr>
               </thead>
@@ -63,8 +64,9 @@
                           totalItems: totalItems
                         }
                 ">
-                  <td>{{ client.firstName }}</td>
-                  <td>{{ client.lastName }}</td>
+                  <td>{{ client.firstName + " " + client.otherName + " " + client.lastName}}</td>
+                  <td>{{ client.email }}</td>
+                  <td>{{ client.phone }}</td>
                   <td>
                     <button type="button"
                       class="btn btn-sm bg-secondary"

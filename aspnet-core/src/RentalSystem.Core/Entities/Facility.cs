@@ -2,6 +2,7 @@
 using RentalSystem.Shared;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,7 @@ namespace RentalSystem.Entities
         [Required]
         public FacTypeEnum FacType { get; set; }
         public bool Isbooked { get; set; }
+        public virtual ICollection<FacilityBooking> FacilityBookings { get; set; }
 
         protected Facility()
         {
@@ -34,6 +36,8 @@ namespace RentalSystem.Entities
             Capacity = capacity;
             FacType = factype;
             Isbooked = isbooked;
+
+            FacilityBookings = new Collection<FacilityBooking>();
         }
     }
 }

@@ -1151,6 +1151,302 @@ export class FacilityServiceProxy {
 }
 
 @Injectable()
+export class MiscellaneousServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    get(id: number | undefined): Observable<MiscellaneousDto> {
+        let url_ = this.baseUrl + "/api/services/app/Miscellaneous/Get?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGet(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGet(<any>response_);
+                } catch (e) {
+                    return <Observable<MiscellaneousDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<MiscellaneousDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGet(response: HttpResponseBase): Observable<MiscellaneousDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MiscellaneousDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<MiscellaneousDto>(<any>null);
+    }
+
+    /**
+     * @param sorting (optional) 
+     * @param skipCount (optional) 
+     * @param maxResultCount (optional) 
+     * @return Success
+     */
+    getAll(sorting: string | null | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<MiscellaneousDtoPagedResultDto> {
+        let url_ = this.baseUrl + "/api/services/app/Miscellaneous/GetAll?";
+        if (sorting !== undefined && sorting !== null)
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&";
+        if (skipCount === null)
+            throw new Error("The parameter 'skipCount' cannot be null.");
+        else if (skipCount !== undefined)
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&";
+        if (maxResultCount === null)
+            throw new Error("The parameter 'maxResultCount' cannot be null.");
+        else if (maxResultCount !== undefined)
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAll(<any>response_);
+                } catch (e) {
+                    return <Observable<MiscellaneousDtoPagedResultDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<MiscellaneousDtoPagedResultDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAll(response: HttpResponseBase): Observable<MiscellaneousDtoPagedResultDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MiscellaneousDtoPagedResultDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<MiscellaneousDtoPagedResultDto>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    create(body: CreateUpdateMiscellaneousDto | undefined): Observable<MiscellaneousDto> {
+        let url_ = this.baseUrl + "/api/services/app/Miscellaneous/Create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(<any>response_);
+                } catch (e) {
+                    return <Observable<MiscellaneousDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<MiscellaneousDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<MiscellaneousDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MiscellaneousDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<MiscellaneousDto>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    update(body: MiscellaneousDto | undefined): Observable<MiscellaneousDto> {
+        let url_ = this.baseUrl + "/api/services/app/Miscellaneous/Update";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdate(<any>response_);
+                } catch (e) {
+                    return <Observable<MiscellaneousDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<MiscellaneousDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdate(response: HttpResponseBase): Observable<MiscellaneousDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MiscellaneousDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<MiscellaneousDto>(<any>null);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    delete(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Miscellaneous/Delete?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDelete(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDelete(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDelete(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class RoleServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -2979,13 +3275,13 @@ export enum PaymentModeEnum {
 
 export class BookingDto implements IBookingDto {
     clientId: number;
-    faclityId: number;
     startDate: moment.Moment;
     endDate: moment.Moment;
     amountPaid: number;
     paymentMode: PaymentModeEnum;
-    facility: string | undefined;
     client: string | undefined;
+    facilities: string[] | undefined;
+    miscellaneous: string[] | undefined;
     isDeleted: boolean;
     deleterUserId: number | undefined;
     deletionTime: moment.Moment | undefined;
@@ -3007,13 +3303,21 @@ export class BookingDto implements IBookingDto {
     init(_data?: any) {
         if (_data) {
             this.clientId = _data["clientId"];
-            this.faclityId = _data["faclityId"];
             this.startDate = _data["startDate"] ? moment(_data["startDate"].toString()) : <any>undefined;
             this.endDate = _data["endDate"] ? moment(_data["endDate"].toString()) : <any>undefined;
             this.amountPaid = _data["amountPaid"];
             this.paymentMode = _data["paymentMode"];
-            this.facility = _data["facility"];
             this.client = _data["client"];
+            if (Array.isArray(_data["facilities"])) {
+                this.facilities = [] as any;
+                for (let item of _data["facilities"])
+                    this.facilities.push(item);
+            }
+            if (Array.isArray(_data["miscellaneous"])) {
+                this.miscellaneous = [] as any;
+                for (let item of _data["miscellaneous"])
+                    this.miscellaneous.push(item);
+            }
             this.isDeleted = _data["isDeleted"];
             this.deleterUserId = _data["deleterUserId"];
             this.deletionTime = _data["deletionTime"] ? moment(_data["deletionTime"].toString()) : <any>undefined;
@@ -3035,13 +3339,21 @@ export class BookingDto implements IBookingDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["clientId"] = this.clientId;
-        data["faclityId"] = this.faclityId;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["amountPaid"] = this.amountPaid;
         data["paymentMode"] = this.paymentMode;
-        data["facility"] = this.facility;
         data["client"] = this.client;
+        if (Array.isArray(this.facilities)) {
+            data["facilities"] = [];
+            for (let item of this.facilities)
+                data["facilities"].push(item);
+        }
+        if (Array.isArray(this.miscellaneous)) {
+            data["miscellaneous"] = [];
+            for (let item of this.miscellaneous)
+                data["miscellaneous"].push(item);
+        }
         data["isDeleted"] = this.isDeleted;
         data["deleterUserId"] = this.deleterUserId;
         data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
@@ -3063,13 +3375,13 @@ export class BookingDto implements IBookingDto {
 
 export interface IBookingDto {
     clientId: number;
-    faclityId: number;
     startDate: moment.Moment;
     endDate: moment.Moment;
     amountPaid: number;
     paymentMode: PaymentModeEnum;
-    facility: string | undefined;
     client: string | undefined;
+    facilities: string[] | undefined;
+    miscellaneous: string[] | undefined;
     isDeleted: boolean;
     deleterUserId: number | undefined;
     deletionTime: moment.Moment | undefined;
@@ -3137,11 +3449,12 @@ export interface IBookingDtoPagedResultDto {
 
 export class CreateUpdateBookingDto implements ICreateUpdateBookingDto {
     clientId: number;
-    faclityId: number;
     startDate: moment.Moment;
     endDate: moment.Moment;
     amountPaid: number;
     paymentMode: PaymentModeEnum;
+    facilities: string[] | undefined;
+    miscellaneous: string[] | undefined;
 
     constructor(data?: ICreateUpdateBookingDto) {
         if (data) {
@@ -3155,11 +3468,20 @@ export class CreateUpdateBookingDto implements ICreateUpdateBookingDto {
     init(_data?: any) {
         if (_data) {
             this.clientId = _data["clientId"];
-            this.faclityId = _data["faclityId"];
             this.startDate = _data["startDate"] ? moment(_data["startDate"].toString()) : <any>undefined;
             this.endDate = _data["endDate"] ? moment(_data["endDate"].toString()) : <any>undefined;
             this.amountPaid = _data["amountPaid"];
             this.paymentMode = _data["paymentMode"];
+            if (Array.isArray(_data["facilities"])) {
+                this.facilities = [] as any;
+                for (let item of _data["facilities"])
+                    this.facilities.push(item);
+            }
+            if (Array.isArray(_data["miscellaneous"])) {
+                this.miscellaneous = [] as any;
+                for (let item of _data["miscellaneous"])
+                    this.miscellaneous.push(item);
+            }
         }
     }
 
@@ -3173,11 +3495,20 @@ export class CreateUpdateBookingDto implements ICreateUpdateBookingDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["clientId"] = this.clientId;
-        data["faclityId"] = this.faclityId;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["amountPaid"] = this.amountPaid;
         data["paymentMode"] = this.paymentMode;
+        if (Array.isArray(this.facilities)) {
+            data["facilities"] = [];
+            for (let item of this.facilities)
+                data["facilities"].push(item);
+        }
+        if (Array.isArray(this.miscellaneous)) {
+            data["miscellaneous"] = [];
+            for (let item of this.miscellaneous)
+                data["miscellaneous"].push(item);
+        }
         return data; 
     }
 
@@ -3191,11 +3522,12 @@ export class CreateUpdateBookingDto implements ICreateUpdateBookingDto {
 
 export interface ICreateUpdateBookingDto {
     clientId: number;
-    faclityId: number;
     startDate: moment.Moment;
     endDate: moment.Moment;
     amountPaid: number;
     paymentMode: PaymentModeEnum;
+    facilities: string[] | undefined;
+    miscellaneous: string[] | undefined;
 }
 
 export class Address implements IAddress {
@@ -3269,6 +3601,7 @@ export class ClientDto implements IClientDto {
     firstName: string;
     lastName: string;
     otherName: string | undefined;
+    organisationName: string | undefined;
     address: Address;
     email: string;
     phone: string;
@@ -3296,6 +3629,7 @@ export class ClientDto implements IClientDto {
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
             this.otherName = _data["otherName"];
+            this.organisationName = _data["organisationName"];
             this.address = _data["address"] ? Address.fromJS(_data["address"]) : <any>undefined;
             this.email = _data["email"];
             this.phone = _data["phone"];
@@ -3323,6 +3657,7 @@ export class ClientDto implements IClientDto {
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["otherName"] = this.otherName;
+        data["organisationName"] = this.organisationName;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["email"] = this.email;
         data["phone"] = this.phone;
@@ -3350,6 +3685,7 @@ export interface IClientDto {
     firstName: string;
     lastName: string;
     otherName: string | undefined;
+    organisationName: string | undefined;
     address: Address;
     email: string;
     phone: string;
@@ -3423,6 +3759,7 @@ export class CreateUpdateClientDto implements ICreateUpdateClientDto {
     firstName: string;
     lastName: string;
     otherName: string | undefined;
+    organisationName: string | undefined;
     address: Address;
     email: string;
     phone: string;
@@ -3445,6 +3782,7 @@ export class CreateUpdateClientDto implements ICreateUpdateClientDto {
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
             this.otherName = _data["otherName"];
+            this.organisationName = _data["organisationName"];
             this.address = _data["address"] ? Address.fromJS(_data["address"]) : new Address();
             this.email = _data["email"];
             this.phone = _data["phone"];
@@ -3464,6 +3802,7 @@ export class CreateUpdateClientDto implements ICreateUpdateClientDto {
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["otherName"] = this.otherName;
+        data["organisationName"] = this.organisationName;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["email"] = this.email;
         data["phone"] = this.phone;
@@ -3483,6 +3822,7 @@ export interface ICreateUpdateClientDto {
     firstName: string;
     lastName: string;
     otherName: string | undefined;
+    organisationName: string | undefined;
     address: Address;
     email: string;
     phone: string;
@@ -3788,6 +4128,159 @@ export interface ICreateUpdateFacilityDto {
     capacity: number;
     facType: FacTypeEnum;
     isbooked: boolean;
+}
+
+export class MiscellaneousDto implements IMiscellaneousDto {
+    name: string;
+    price: number;
+    id: number;
+
+    constructor(data?: IMiscellaneousDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.price = _data["price"];
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): MiscellaneousDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MiscellaneousDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["price"] = this.price;
+        data["id"] = this.id;
+        return data; 
+    }
+
+    clone(): MiscellaneousDto {
+        const json = this.toJSON();
+        let result = new MiscellaneousDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IMiscellaneousDto {
+    name: string;
+    price: number;
+    id: number;
+}
+
+export class MiscellaneousDtoPagedResultDto implements IMiscellaneousDtoPagedResultDto {
+    totalCount: number;
+    items: MiscellaneousDto[] | undefined;
+
+    constructor(data?: IMiscellaneousDtoPagedResultDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.totalCount = _data["totalCount"];
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items.push(MiscellaneousDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): MiscellaneousDtoPagedResultDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MiscellaneousDtoPagedResultDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalCount"] = this.totalCount;
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+
+    clone(): MiscellaneousDtoPagedResultDto {
+        const json = this.toJSON();
+        let result = new MiscellaneousDtoPagedResultDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IMiscellaneousDtoPagedResultDto {
+    totalCount: number;
+    items: MiscellaneousDto[] | undefined;
+}
+
+export class CreateUpdateMiscellaneousDto implements ICreateUpdateMiscellaneousDto {
+    name: string;
+    price: number;
+
+    constructor(data?: ICreateUpdateMiscellaneousDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.price = _data["price"];
+        }
+    }
+
+    static fromJS(data: any): CreateUpdateMiscellaneousDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateUpdateMiscellaneousDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["price"] = this.price;
+        return data; 
+    }
+
+    clone(): CreateUpdateMiscellaneousDto {
+        const json = this.toJSON();
+        let result = new CreateUpdateMiscellaneousDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ICreateUpdateMiscellaneousDto {
+    name: string;
+    price: number;
 }
 
 export class CreateRoleDto implements ICreateRoleDto {

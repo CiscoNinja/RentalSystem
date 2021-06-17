@@ -46,7 +46,10 @@ import { EditFacilityDialogComponent } from './facility/edit-facility/edit-facil
 import { ClientsComponent } from '@app/clients/clients.component';
 import { CreateClientDialogComponent } from './clients/create-client/create-client-dialog.component';
 import { EditClientDialogComponent } from './clients/edit-client/edit-client-dialog.component';
-
+// bookings
+import { BookingsComponent } from '@app/bookings/bookings.component';
+import { CreateBookingDialogComponent } from './bookings/create-booking/create-booking-dialog.component';
+import { EditBookingDialogComponent } from './bookings/edit-booking/edit-booking-dialog.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -68,6 +71,10 @@ import { EditClientDialogComponent } from './clients/edit-client/edit-client-dia
     ClientsComponent,
     CreateClientDialogComponent,
     EditClientDialogComponent,
+    // bookings
+    BookingsComponent,
+    CreateBookingDialogComponent,
+    EditBookingDialogComponent,
     // users
     UsersComponent,
     CreateUserDialogComponent,
@@ -118,6 +125,9 @@ import { EditClientDialogComponent } from './clients/edit-client/edit-client-dia
     CreateUserDialogComponent,
     EditUserDialogComponent,
     ResetPasswordDialogComponent,
+    // bookings
+    CreateBookingDialogComponent,
+    EditBookingDialogComponent,
   ],
 })
 export class AppModule {}

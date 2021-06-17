@@ -1558,12 +1558,6 @@ namespace RentalSystem.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("FacilityId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("FaclityId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -1582,8 +1576,6 @@ namespace RentalSystem.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId1");
-
-                    b.HasIndex("FacilityId");
 
                     b.ToTable("Bookings");
                 });
@@ -1630,6 +1622,9 @@ namespace RentalSystem.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nationality")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrganisationName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OtherName")
@@ -1697,6 +1692,61 @@ namespace RentalSystem.Migrations
                         .IsUnique();
 
                     b.ToTable("Facilities");
+                });
+
+            modelBuilder.Entity("RentalSystem.Entities.FacilityBooking", b =>
+                {
+                    b.Property<int>("FacilityId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.HasKey("FacilityId", "BookingId");
+
+                    b.HasIndex("BookingId");
+
+                    b.ToTable("FacilityBookings");
+                });
+
+            modelBuilder.Entity("RentalSystem.Entities.Miscellaneous", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Miscellaneous");
+                });
+
+            modelBuilder.Entity("RentalSystem.Entities.MiscellaneousBooking", b =>
+                {
+                    b.Property<int>("MiscellaneousId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.HasKey("MiscellaneousId", "BookingId");
+
+                    b.HasIndex("BookingId");
+
+                    b.ToTable("MiscellaneousBookings");
                 });
 
             modelBuilder.Entity("RentalSystem.MultiTenancy.Tenant", b =>
@@ -1986,13 +2036,7 @@ namespace RentalSystem.Migrations
                         .WithMany()
                         .HasForeignKey("ClientId1");
 
-                    b.HasOne("RentalSystem.Entities.Facility", "Facility")
-                        .WithMany()
-                        .HasForeignKey("FacilityId");
-
                     b.Navigation("Client");
-
-                    b.Navigation("Facility");
                 });
 
             modelBuilder.Entity("RentalSystem.Entities.Client", b =>
@@ -2034,6 +2078,44 @@ namespace RentalSystem.Migrations
                         });
 
                     b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("RentalSystem.Entities.FacilityBooking", b =>
+                {
+                    b.HasOne("RentalSystem.Entities.Booking", "Booking")
+                        .WithMany("FacilityBookings")
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RentalSystem.Entities.Facility", "Facility")
+                        .WithMany("FacilityBookings")
+                        .HasForeignKey("FacilityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Booking");
+
+                    b.Navigation("Facility");
+                });
+
+            modelBuilder.Entity("RentalSystem.Entities.MiscellaneousBooking", b =>
+                {
+                    b.HasOne("RentalSystem.Entities.Booking", "Booking")
+                        .WithMany("MiscellaneousBookings")
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RentalSystem.Entities.Miscellaneous", "Miscellaneous")
+                        .WithMany("MiscellaneousBookings")
+                        .HasForeignKey("MiscellaneousId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Booking");
+
+                    b.Navigation("Miscellaneous");
                 });
 
             modelBuilder.Entity("RentalSystem.MultiTenancy.Tenant", b =>
@@ -2132,6 +2214,23 @@ namespace RentalSystem.Migrations
                     b.Navigation("Settings");
 
                     b.Navigation("Tokens");
+                });
+
+            modelBuilder.Entity("RentalSystem.Entities.Booking", b =>
+                {
+                    b.Navigation("FacilityBookings");
+
+                    b.Navigation("MiscellaneousBookings");
+                });
+
+            modelBuilder.Entity("RentalSystem.Entities.Facility", b =>
+                {
+                    b.Navigation("FacilityBookings");
+                });
+
+            modelBuilder.Entity("RentalSystem.Entities.Miscellaneous", b =>
+                {
+                    b.Navigation("MiscellaneousBookings");
                 });
 #pragma warning restore 612, 618
         }

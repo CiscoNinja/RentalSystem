@@ -17,6 +17,7 @@ namespace RentalSystem.Clients.Dtos
         [Required]
         public string LastName { get; set; }
         public string OtherName { get; set; }
+        public string OrganisationName { get; set; }
         public Address Address { get; set; }
         [Required]
         [EmailAddress]

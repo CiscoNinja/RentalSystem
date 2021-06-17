@@ -13,6 +13,9 @@ namespace RentalSystem.EntityFrameworkCore
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Client> Clients { get; set; }
         public DbSet<Facility> Facilities { get; set; }
+        public DbSet<Miscellaneous> Miscellaneous { get; set; }
+        public DbSet<FacilityBooking> FacilityBookings { get; set; }
+        public DbSet<MiscellaneousBooking> MiscellaneousBookings { get; set; }
 
         public RentalSystemDbContext(DbContextOptions<RentalSystemDbContext> options)
             : base(options)
@@ -32,6 +35,32 @@ namespace RentalSystem.EntityFrameworkCore
             builder.Entity<Client>(
                 o => o.OwnsOne(o => o.Address)
             );
+
+            builder.Entity<FacilityBooking>()
+                .HasKey(cs => new { cs.FacilityId, cs.BookingId });
+
+            builder.Entity<FacilityBooking>()
+                .HasOne(sl => sl.Facility)
+                .WithMany(s => s.FacilityBookings)
+                .HasForeignKey(sl => sl.FacilityId);
+
+            builder.Entity<FacilityBooking>()
+                .HasOne(sl => sl.Booking)
+                .WithMany(l => l.FacilityBookings)
+                .HasForeignKey(sl => sl.BookingId);
+
+            builder.Entity<MiscellaneousBooking>()
+               .HasKey(cs => new { cs.MiscellaneousId, cs.BookingId });
+
+            builder.Entity<MiscellaneousBooking>()
+                .HasOne(sl => sl.Miscellaneous)
+                .WithMany(s => s.MiscellaneousBookings)
+                .HasForeignKey(sl => sl.MiscellaneousId);
+
+            builder.Entity<MiscellaneousBooking>()
+                .HasOne(sl => sl.Booking)
+                .WithMany(l => l.MiscellaneousBookings)
+                .HasForeignKey(sl => sl.BookingId);
         }
     }
 }

@@ -12,12 +12,12 @@ namespace RentalSystem.Bookings.Dtos
     public class BookingDto : FullAuditedEntityDto<int>
     {
         public int ClientId { get; set; }
-        public int FaclityId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public double AmountPaid { get; set; }
         public PaymentModeEnum PaymentMode { get; set; }
-        public virtual string Facility { get; set; }
         public virtual string Client { get; set; }
+        public List<string> Facilities { get; set; }
+        public List<string> Miscellaneous { get; set; }
     }
 }

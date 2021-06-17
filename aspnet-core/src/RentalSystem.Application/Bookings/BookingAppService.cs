@@ -1,6 +1,8 @@
 ﻿using Abp.Application.Services;
 using Abp.Application.Services.Dto;
+using Abp.Authorization;
 using Abp.Domain.Repositories;
+using RentalSystem.Authorization;
 using RentalSystem.Bookings.Dtos;
 using RentalSystem.Clients.Dtos;
 using RentalSystem.Entities;
@@ -14,6 +16,7 @@ using System.Threading.Tasks;
 
 namespace RentalSystem.Bookings
 {
+    [AbpAuthorize(PermissionNames.Pages_Bookings)]
     public class BookingAppService : AsyncCrudAppService<
         Booking,
         BookingDto,

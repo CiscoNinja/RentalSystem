@@ -12,6 +12,7 @@
         public const string Pages_Facilities = "Pages.Facilities";
         public const string Pages_Clients = "Pages.Clients";
         public const string Pages_Miscellaneous = "Pages.Miscellaneous";
+        public const string Pages_Bookings = "Pages.Bookings";
 
     }
 }

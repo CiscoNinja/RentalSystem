@@ -14,6 +14,7 @@ namespace RentalSystem.Authorization
             context.CreatePermission(PermissionNames.Pages_Facilities, L("Facilities"));
             context.CreatePermission(PermissionNames.Pages_Clients, L("Clients"));
             context.CreatePermission(PermissionNames.Pages_Miscellaneous, L("Miscellaneous"));
+            context.CreatePermission(PermissionNames.Pages_Bookings, L("Bookings"));
             context.CreatePermission(PermissionNames.Pages_Tenants, L("Tenants"), multiTenancySides: MultiTenancySides.Host);
         }
 

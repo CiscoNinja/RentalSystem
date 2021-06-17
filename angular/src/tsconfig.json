@@ -1,4 +1,7 @@
 {
+  // "angularCompilerOptions" : {
+  //   "strictTemplates" : true
+  // },
   "compilerOptions": {
     "declaration": false,
     "downlevelIteration": true,

@@ -15,6 +15,9 @@ import { SharedModule } from '@shared/shared.module';
 import { HomeComponent } from '@app/home/home.component';
 import { AboutComponent } from '@app/about/about.component';
 import {DropdownModule} from 'primeng/dropdown';
+// import {BrowserModule} from '@angular/platform-browser';
+// import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {CalendarModule} from 'primeng/calendar';
 // tenants
 import { TenantsComponent } from '@app/tenants/tenants.component';
 import { CreateTenantDialogComponent } from './tenants/create-tenant/create-tenant-dialog.component';
@@ -108,6 +111,9 @@ import { EditBookingDialogComponent } from './bookings/edit-booking/edit-booking
     SharedModule,
     NgxPaginationModule,
     DropdownModule,
+    // BrowserModule,
+    // BrowserAnimationsModule,
+    CalendarModule,
   ],
   providers: [],
   entryComponents: [

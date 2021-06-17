@@ -2,6 +2,7 @@ import { Component, Injector, OnInit, Renderer2 } from '@angular/core';
 import { AppComponentBase } from '@shared/app-component-base';
 import { SignalRAspNetCoreHelper } from '@shared/helpers/SignalRAspNetCoreHelper';
 import { LayoutStoreService } from '@shared/layout/layout-store.service';
+import { PrimeNGConfig } from 'primeng/api';
 
 @Component({
   templateUrl: './app.component.html'
@@ -12,13 +13,15 @@ export class AppComponent extends AppComponentBase implements OnInit {
   constructor(
     injector: Injector,
     private renderer: Renderer2,
-    private _layoutStore: LayoutStoreService
+    private _layoutStore: LayoutStoreService,
+    private primengConfig: PrimeNGConfig
   ) {
     super(injector);
   }
 
   ngOnInit(): void {
     this.renderer.addClass(document.body, 'sidebar-mini');
+    this.primengConfig.ripple = true;
 
     SignalRAspNetCoreHelper.initSignalR();
 

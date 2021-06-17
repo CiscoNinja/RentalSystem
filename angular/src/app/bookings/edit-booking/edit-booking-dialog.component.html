@@ -1,13 +1,5 @@
-<form
-  class="form-horizontal"
-  autocomplete="off"
-  #editBookingForm="ngForm"
-  (ngSubmit)="save()"
->
-  <abp-modal-header
-    [title]="'EditBooking' | localize"
-    (onCloseClick)="bsModalRef.hide()"
-  ></abp-modal-header>
+<form class="form-horizontal" autocomplete="off" #editBookingForm="ngForm" (ngSubmit)="save()">
+  <abp-modal-header [title]="'EditBooking' | localize" (onCloseClick)="bsModalRef.hide()"></abp-modal-header>
   <div class="modal-body">
     <tabset>
       <tab [heading]="'Details' | localize" class="pt-3 px-2">
@@ -74,7 +66,7 @@
             {{ "Facility Group" | localize }}
           </label>
           <div class="col-md-9">
-            <select class="form-control" name="paymentMode" id="paymentMode" [(ngModel)]="facility.paymentMode"
+            <select class="form-control" name="paymentMode" id="paymentMode" [(ngModel)]="booking.paymentMode"
               #paymentModeModel="ngModel" #paymentModeEl required>
               <option>--select--</option>
               <option *ngFor="let key of paymentModeEnums" [value]="paymentModeEnums.indexOf(key)" [label]="key">
@@ -87,16 +79,11 @@
           <label class="col-md-3 col-form-label" for="amountPaid">
             {{ "Select Facility" | localize }}
           </label>
-          <ng-container *ngFor="let faciity of faciities; let i = index">
+          <ng-container *ngFor="let faciity of facilities; let i = index">
             <div class="col-md-6">
               <div class="custom-control custom-checkbox">
-                <input
-                  type="checkbox"
-                  class="custom-control-input"
-                  [id]="'faciity_' + i"
-                  [checked]="isFacilityChecked(faciity.name)"
-                  (change)="onFaciltyChange(faciity, $event)"
-                />
+                <input type="checkbox" class="custom-control-input" [id]="'faciity_' + i"
+                  [checked]="isFacilityChecked(faciity.name)" (change)="onFaciltyChange(faciity, $event)" />
                 <label class="custom-control-label" [for]="'faciity_' + i">
                   {{ faciity.name }}
                 </label>
@@ -111,13 +98,9 @@
           <ng-container *ngFor="let miscelleneous of miscelleneouss; let i = index">
             <div class="col-md-6">
               <div class="custom-control custom-checkbox">
-                <input
-                  type="checkbox"
-                  class="custom-control-input"
-                  [id]="'permission_' + i"
+                <input type="checkbox" class="custom-control-input" [id]="'permission_' + i"
                   [checked]="isMiscelleneousChecked(miscelleneous.name)"
-                  (change)="onMiscelleneousChange(miscelleneous, $event)"
-                />
+                  (change)="onMiscelleneousChange(miscelleneous, $event)" />
                 <label class="custom-control-label" [for]="'miscelleneous_' + i">
                   {{ miscelleneous.name }}
                 </label>
@@ -125,13 +108,9 @@
             </div>
           </ng-container>
         </div>
-  </div>
-  </tab>
+      </tab>
     </tabset>
   </div>
-  <abp-modal-footer
-    [cancelDisabled]="saving"
-    [saveDisabled]="!editBookingForm.form.valid || saving"
-    (onCancelClick)="bsModalRef.hide()"
-  ></abp-modal-footer>
+  <abp-modal-footer [cancelDisabled]="saving" [saveDisabled]="!editBookingForm.form.valid || saving"
+    (onCancelClick)="bsModalRef.hide()"></abp-modal-footer>
 </form>

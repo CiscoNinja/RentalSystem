@@ -15,7 +15,13 @@ import {
   CreateUpdateBookingDto,
   PermissionDtoListResultDto,
   Address,
-  PaymentModeEnum
+  PaymentModeEnum,
+  ClientDto,
+  ClientDtoListResultDto,
+  FacilityDto,
+  MiscellaneousDto,
+  FacilityDtoListResultDto,
+  MiscellaneousDtoListResultDto
 } from '@shared/service-proxies/service-proxies';
 import { forEach as _forEach, map as _map } from 'lodash-es';
 
@@ -26,11 +32,15 @@ export class CreateBookingDialogComponent extends AppComponentBase
   implements OnInit {
   saving = false;
   booking = new BookingDto();
-  permissions: PermissionDto[] = [];
-  checkedPermissionsMap: { [key: string]: boolean } = {};
-  defaultPermissionCheckedStatus = true;
+  checkedFacilitiesMap: { [key: string]: boolean } = {};
+  checkedMiscellaneoussMap: { [key: string]: boolean } = {};
+  defaultFacilityCheckedStatus = true;
+  defaultMiscellaneousCheckedStatus = true;
   paymentModeEnums: string[];
   paymentModeEnum = PaymentModeEnum;
+  clients: ClientDto[] = [];
+  miscelleneouss: MiscellaneousDto[] = [];
+  facilities: FacilityDto[] = [];
 
   @Output() onSave = new EventEmitter<any>();
 
@@ -43,52 +53,93 @@ export class CreateBookingDialogComponent extends AppComponentBase
   }
 
   ngOnInit(): void {
-    // this._bookingService
-    //   .getAllPermissions()
-    //   .subscribe((result: PermissionDtoListResultDto) => {
-    //     this.permissions = result.items;
-    //     this.setInitialPermissionsStatus();
-    //   });
+    this._bookingService
+      .getClients()
+      .subscribe((result: ClientDtoListResultDto) => {
+        this.clients = result.items;
+      });
+
+      this._bookingService
+      .getFacilities()
+      .subscribe((result: FacilityDtoListResultDto) => {
+        this.facilities = result.items;
+      });
+
+      this._bookingService
+      .getMiscellaneous()
+      .subscribe((result: MiscellaneousDtoListResultDto) => {
+        this.miscelleneouss = result.items;
+      });
+
     this.paymentModeEnums = Object.keys(this.paymentModeEnum).filter(f => isNaN(Number(f)));
 
   }
 
-  setInitialPermissionsStatus(): void {
-    _map(this.permissions, (item) => {
-      this.checkedPermissionsMap[item.name] = this.isPermissionChecked(
+  setInitialMiscellaneousStatus(): void {
+    _map(this.miscelleneouss, (item) => {
+      this.checkedMiscellaneoussMap[item.name] = this.isMiscellaneousChecked(
         item.name
       );
     });
   }
 
-  isPermissionChecked(permissionName: string): boolean {
-    // just return default permission checked status
+  isMiscellaneousChecked(miscllaneousName: string): boolean {
+    // just return default facility checked status
     // it's better to use a setting
-    return this.defaultPermissionCheckedStatus;
+    return this.defaultMiscellaneousCheckedStatus;
   }
 
-  onPermissionChange(permission: PermissionDto, $event) {
-    this.checkedPermissionsMap[permission.name] = $event.target.checked;
+  onMiscllaneousChange(miscellaneous: MiscellaneousDto, $event) {
+    this.checkedMiscellaneoussMap[miscellaneous.name] = $event.target.checked;
   }
 
-  getCheckedPermissions(): string[] {
-    const permissions: string[] = [];
-    _forEach(this.checkedPermissionsMap, function (value, key) {
+  getCheckedMiscellaneouss(): string[] {
+    const miscellaneous: string[] = [];
+    _forEach(this.checkedMiscellaneoussMap, function (value, key) {
       if (value) {
-        permissions.push(key);
+        miscellaneous.push(key);
       }
     });
-    return permissions;
+    return miscellaneous;
   }
+
+  setInitialFacilitiesStatus(): void {
+    _map(this.facilities, (item) => {
+      this.checkedFacilitiesMap[item.name] = this.isFacilityChecked(
+        item.name
+      );
+    });
+  }
+
+  isFacilityChecked(facilityName: string): boolean {
+    // just return default facility checked status
+    // it's better to use a setting
+    return this.defaultFacilityCheckedStatus;
+  }
+
+  onFaciltyChange(facility: FacilityDto, $event) {
+    this.checkedFacilitiesMap[facility.name] = $event.target.checked;
+  }
+
+  getCheckedFaclilities(): string[] {
+    const facilities: string[] = [];
+    _forEach(this.checkedFacilitiesMap, function (value, key) {
+      if (value) {
+        facilities.push(key);
+      }
+    });
+    return facilities;
+  }
+
 
   save(): void {
     this.saving = true;
 
     const booking = new CreateUpdateBookingDto();
-    this.booking.address = this.address;
+    booking.facilities = this.getCheckedFaclilities();
+    booking.miscellaneous = this.getCheckedMiscellaneouss();
     booking.init(this.booking);
-    // booking.grantedPermissions = this.getCheckedPermissions();
-
+    
     this._bookingService
       .create(booking)
       .pipe(

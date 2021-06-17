@@ -14,6 +14,7 @@ import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module
 import { SharedModule } from '@shared/shared.module';
 import { HomeComponent } from '@app/home/home.component';
 import { AboutComponent } from '@app/about/about.component';
+import {DropdownModule} from 'primeng/dropdown';
 // tenants
 import { TenantsComponent } from '@app/tenants/tenants.component';
 import { CreateTenantDialogComponent } from './tenants/create-tenant/create-tenant-dialog.component';
@@ -106,6 +107,7 @@ import { EditBookingDialogComponent } from './bookings/edit-booking/edit-booking
     ServiceProxyModule,
     SharedModule,
     NgxPaginationModule,
+    DropdownModule,
   ],
   providers: [],
   entryComponents: [

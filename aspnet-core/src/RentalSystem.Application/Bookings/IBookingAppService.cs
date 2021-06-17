@@ -1,6 +1,9 @@
 ﻿using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using RentalSystem.Bookings.Dtos;
+using RentalSystem.Clients.Dtos;
+using RentalSystem.Facilities.Dtos;
+using RentalSystem.Miscellaneouss.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +19,8 @@ namespace RentalSystem.Bookings
         CreateUpdateBookingDto,
         BookingDto>
     {
+        Task<ListResultDto<ClientDto>> GetClients();
+        Task<ListResultDto<FacilityDto>> GetFacilities();
+        Task<ListResultDto<MiscellaneousDto>> GetMiscellaneous();
     }
 }

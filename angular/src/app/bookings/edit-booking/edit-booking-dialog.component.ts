@@ -15,7 +15,14 @@ import {
   PermissionDto,
   CreateUpdateBookingDto,
   FlatPermissionDto,
-  Address
+  Address,
+  PaymentModeEnum,
+  ClientDto,
+  FacilityDto,
+  MiscellaneousDto,
+  ClientDtoListResultDto,
+  FacilityDtoListResultDto,
+  MiscellaneousDtoListResultDto
 } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -26,10 +33,15 @@ export class EditBookingDialogComponent extends AppComponentBase
   saving = false;
   id: number;
   booking = new CreateUpdateBookingDto();
-  permissions: FlatPermissionDto[];
-  grantedPermissionNames: string[];
-  checkedPermissionsMap: { [key: string]: boolean } = {};
-  address = new Address();
+  checkedFacilitiesMap: { [key: string]: boolean } = {};
+  checkedMiscellaneoussMap: { [key: string]: boolean } = {};
+  defaultFacilityCheckedStatus = true;
+  defaultMiscellaneousCheckedStatus = true;
+  paymentModeEnums: string[];
+  paymentModeEnum = PaymentModeEnum;
+  clients: ClientDto[] = [];
+  miscelleneouss: MiscellaneousDto[] = [];
+  facilities: FacilityDto[] = [];
 
   @Output() onSave = new EventEmitter<any>();
 
@@ -46,41 +58,91 @@ export class EditBookingDialogComponent extends AppComponentBase
       .get(this.id)
       .subscribe((result: CreateUpdateBookingDto) => {
         this.booking = result;
-        this.address = result.address;
       });
+
+      this._bookingService
+      .getClients()
+      .subscribe((result: ClientDtoListResultDto) => {
+        this.clients = result.items;
+      });
+
+      this._bookingService
+      .getFacilities()
+      .subscribe((result: FacilityDtoListResultDto) => {
+        this.facilities = result.items;
+      });
+
+      this._bookingService
+      .getMiscellaneous()
+      .subscribe((result: MiscellaneousDtoListResultDto) => {
+        this.miscelleneouss = result.items;
+      });
+
+    this.paymentModeEnums = Object.keys(this.paymentModeEnum).filter(f => isNaN(Number(f)));
   }
 
-  setInitialPermissionsStatus(): void {
-    _map(this.permissions, (item) => {
-      this.checkedPermissionsMap[item.name] = this.isPermissionChecked(
+  setInitialMiscellaneousStatus(): void {
+    _map(this.miscelleneouss, (item) => {
+      this.checkedMiscellaneoussMap[item.name] = this.isMiscellaneousChecked(
         item.name
       );
     });
   }
 
-  isPermissionChecked(permissionName: string): boolean {
-    return _includes(this.grantedPermissionNames, permissionName);
+  isMiscellaneousChecked(miscllaneousName: string): boolean {
+    // just return default facility checked status
+    // it's better to use a setting
+    return this.defaultMiscellaneousCheckedStatus;
   }
 
-  onPermissionChange(permission: PermissionDto, $event) {
-    this.checkedPermissionsMap[permission.name] = $event.target.checked;
+  onMiscllaneousChange(miscellaneous: MiscellaneousDto, $event) {
+    this.checkedMiscellaneoussMap[miscellaneous.name] = $event.target.checked;
   }
 
-  getCheckedPermissions(): string[] {
-    const permissions: string[] = [];
-    _forEach(this.checkedPermissionsMap, function (value, key) {
+  getCheckedMiscellaneouss(): string[] {
+    const miscellaneous: string[] = [];
+    _forEach(this.checkedMiscellaneoussMap, function (value, key) {
       if (value) {
-        permissions.push(key);
+        miscellaneous.push(key);
       }
     });
-    return permissions;
+    return miscellaneous;
+  }
+
+  setInitialFacilitiesStatus(): void {
+    _map(this.facilities, (item) => {
+      this.checkedFacilitiesMap[item.name] = this.isFacilityChecked(
+        item.name
+      );
+    });
+  }
+
+  isFacilityChecked(facilityName: string): boolean {
+    // just return default facility checked status
+    // it's better to use a setting
+    return this.defaultFacilityCheckedStatus;
+  }
+
+  onFaciltyChange(facility: FacilityDto, $event) {
+    this.checkedFacilitiesMap[facility.name] = $event.target.checked;
+  }
+
+  getCheckedFaclilities(): string[] {
+    const facilities: string[] = [];
+    _forEach(this.checkedFacilitiesMap, function (value, key) {
+      if (value) {
+        facilities.push(key);
+      }
+    });
+    return facilities;
   }
 
   save(): void {
     this.saving = true;
 
     const booking = new BookingDto();
-    this.booking.address = this.address;
+    booking.facilities = this.getCheckedFaclilities();
+    booking.miscellaneous = this.getCheckedMiscellaneouss();
     booking.init(this.booking);
 
     this._bookingService

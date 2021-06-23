@@ -3496,6 +3496,7 @@ export class ClientDto implements IClientDto {
     email: string;
     phone: string;
     nationality: string | undefined;
+    readonly fullName: string | undefined;
     isDeleted: boolean;
     deleterUserId: number | undefined;
     deletionTime: moment.Moment | undefined;
@@ -3524,6 +3525,7 @@ export class ClientDto implements IClientDto {
             this.email = _data["email"];
             this.phone = _data["phone"];
             this.nationality = _data["nationality"];
+            (<any>this).fullName = _data["fullName"];
             this.isDeleted = _data["isDeleted"];
             this.deleterUserId = _data["deleterUserId"];
             this.deletionTime = _data["deletionTime"] ? moment(_data["deletionTime"].toString()) : <any>undefined;
@@ -3552,6 +3554,7 @@ export class ClientDto implements IClientDto {
         data["email"] = this.email;
         data["phone"] = this.phone;
         data["nationality"] = this.nationality;
+        data["fullName"] = this.fullName;
         data["isDeleted"] = this.isDeleted;
         data["deleterUserId"] = this.deleterUserId;
         data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
@@ -3580,6 +3583,7 @@ export interface IClientDto {
     email: string;
     phone: string;
     nationality: string | undefined;
+    fullName: string | undefined;
     isDeleted: boolean;
     deleterUserId: number | undefined;
     deletionTime: moment.Moment | undefined;
@@ -3792,6 +3796,7 @@ export interface IFacilityDtoListResultDto {
 export class MiscellaneousDto implements IMiscellaneousDto {
     name: string;
     price: number;
+    quantity: number;
     id: number;
 
     constructor(data?: IMiscellaneousDto) {
@@ -3807,6 +3812,7 @@ export class MiscellaneousDto implements IMiscellaneousDto {
         if (_data) {
             this.name = _data["name"];
             this.price = _data["price"];
+            this.quantity = _data["quantity"];
             this.id = _data["id"];
         }
     }
@@ -3822,6 +3828,7 @@ export class MiscellaneousDto implements IMiscellaneousDto {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["price"] = this.price;
+        data["quantity"] = this.quantity;
         data["id"] = this.id;
         return data; 
     }
@@ -3837,6 +3844,7 @@ export class MiscellaneousDto implements IMiscellaneousDto {
 export interface IMiscellaneousDto {
     name: string;
     price: number;
+    quantity: number;
     id: number;
 }
 

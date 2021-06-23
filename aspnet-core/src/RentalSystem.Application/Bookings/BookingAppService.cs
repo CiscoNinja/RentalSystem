@@ -55,7 +55,7 @@ namespace RentalSystem.Bookings
 
         public async Task<ListResultDto<MiscellaneousDto>> GetMiscellaneous()
         {
-            var miscellaneous = await _facilityRepository.GetAllListAsync();
+            var miscellaneous = await _miscellaneousRepository.GetAllListAsync();
             return new ListResultDto<MiscellaneousDto>(ObjectMapper.Map<List<MiscellaneousDto>>(miscellaneous));
         }
     }

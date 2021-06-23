@@ -6,9 +6,8 @@
           <h1>{{ "Bookings" | localize }}</h1>
         </div>
         <div class="col-6 text-right">
-          <a href="javascript:;"
-            class="btn bg-blue"
-            (click)="createBooking()">
+          <a [routerLink]="['book']"
+            class="btn bg-blue">
             <i class="fa fa-plus-square"></i>
             {{ "Create" | localize }}
           </a>

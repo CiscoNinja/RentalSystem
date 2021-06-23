@@ -8,7 +8,7 @@
             {{ "Client" | localize }}
           </label>
           <div class="col-md-9">
-            <p-dropdown [options]="clients" [(ngModel)]="booking.clientId" optionLabel="name" [filter]="true"
+            <p-dropdown [options]="clients" [(ngModel)]="booking.clientId" name="clientId" optionLabel="name" [filter]="true"
               filterBy="name" [showClear]="true" placeholder="Select a Client">
               <ng-template pTemplate="selectedItem">
                 <div class="client-item client-item-value" *ngIf="booking.clientId">
@@ -34,7 +34,7 @@
           <div class="col-md-9">
             <div class="p-field p-col-12 p-md-4">
               <label for="time">Time</label>
-              <p-calendar [(ngModel)]="booking.startDate" [monthNavigator]="true" [yearNavigator]="true"
+              <p-calendar [(ngModel)]="booking.startDate" name="startDate" [monthNavigator]="true" [yearNavigator]="true"
                 yearRange="2020:" [showTime]="true" inputId="time"></p-calendar>
             </div>
           </div>
@@ -46,7 +46,7 @@
           <div class="col-md-9">
             <div class="p-field p-col-12 p-md-4">
               <label for="time">Time</label>
-              <p-calendar [(ngModel)]="booking.endDate" [monthNavigator]="true" [yearNavigator]="true" yearRange="2020:"
+              <p-calendar [(ngModel)]="booking.endDate" name="endDate" [monthNavigator]="true" [yearNavigator]="true" yearRange="2020:"
                 [showTime]="true" inputId="time"></p-calendar>
             </div>
           </div>
@@ -108,7 +108,7 @@
             </div>
           </ng-container>
         </div>
-      </tab>
+  </tab>
     </tabset>
   </div>
   <abp-modal-footer [cancelDisabled]="saving" [saveDisabled]="!editBookingForm.form.valid || saving"

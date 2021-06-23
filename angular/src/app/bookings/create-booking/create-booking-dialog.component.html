@@ -1,42 +1,49 @@
 <form class="form-horizontal" autocomplete="off" #createBookingForm="ngForm" (ngSubmit)="save()">
   <abp-modal-header [title]="'CreateNewBooking' | localize" (onCloseClick)="bsModalRef.hide()"></abp-modal-header>
   <div class="modal-body">
-    <tabset>
-      <tab [heading]="'Details' | localize" class="pt-3 px-2">
         <div class="form-group row required">
-          <label class="col-md-3 col-form-label" for="client">
-            {{ "Client" | localize }}
-          </label>
-          <div class="col-md-9">
-            <p-dropdown [options]="clients" [(ngModel)]="booking.clientId" optionLabel="name" [filter]="true"
-              filterBy="name" [showClear]="true" placeholder="Select a Client">
-              <ng-template pTemplate="selectedItem">
-                <div class="client-item client-item-value" *ngIf="booking.clientId">
-                  <img src="assets/showcase/images/demo/flag/flag_placeholder.png"
-                    [class]="'flag flag-' + booking.client.toLowerCase()" />
-                  <div>{{selectedCountry.name}}</div>
-                </div>
-              </ng-template>
-              <ng-template let-client pTemplate="item">
-                <div class="client-item">
-                  <img src="assets/showcase/images/demo/flag/flag_placeholder.png"
-                    [class]="'flag flag-' + client.name.toLowerCase()" />
-                  <div>{{client.name}}</div>
-                </div>
-              </ng-template>
-            </p-dropdown>
+          <div class="p-fluid p-grid">
+            <span class="p-float-label p-col-12 p-md-12">
+                <p-dropdown 
+                [options]="clients" 
+                [(ngModel)]="selectedClient" 
+                name="clientId" 
+                id="clientId"
+                optionLabel="firstName"
+                [filter]="true" 
+                filterBy="firstName" 
+                [showClear]="true">
+                  <ng-template pTemplate="selectedItem">
+                    <div class="client-item client-item-value" *ngIf="selectedClient">
+                      <div>{{selectedClient.firstName}}</div>
+                    </div>
+                  </ng-template>
+                  <ng-template let-client pTemplate="item">
+                    <div class="client-item">
+                      <div>{{client.firstName}}</div>
+                    </div>
+                  </ng-template>
+                </p-dropdown>
+                <label for="clientId">Client</label>
+            </span>
           </div>
         </div>
+        <!-- <div class="p-fluid p-grid">
+          <span class="p-float-label">
+            <label class="col-md-3 col-form-label" for="clientId">
+              {{ "Client" | localize }}
+            </label>
+          
+        </span>
+        </div> -->
         <div class="form-group row required">
-          <label class="col-md-3 col-form-label" for="startDate">
-            {{ "Start Date" | localize }}
-          </label>
-          <div class="col-md-9">
-            <div class="p-field p-col-12 p-md-4">
-              <label for="time">Time</label>
-              <p-calendar [(ngModel)]="booking.startDate" [monthNavigator]="true" [yearNavigator]="true"
-                yearRange="2020:" [showTime]="true" inputId="time"></p-calendar>
-            </div>
+          <div class="p-fluid p-grid">
+            <span class="p-float-label p-col-12 p-md-12">
+                <p-calendar [(ngModel)]="booking.startDate" name="startDate" [monthNavigator]="true"
+                  [yearNavigator]="true" yearRange="2020:2050" [showTime]="true" id="startDate" inputId="startDate">
+                </p-calendar>
+                <label for="startDate">Start Date</label>
+            </span>
           </div>
         </div>
         <div class="form-group row required">
@@ -46,8 +53,8 @@
           <div class="col-md-9">
             <div class="p-field p-col-12 p-md-4">
               <label for="time">Time</label>
-              <p-calendar [(ngModel)]="booking.endDate" [monthNavigator]="true" [yearNavigator]="true" yearRange="2020:"
-                [showTime]="true" inputId="time"></p-calendar>
+              <p-calendar [(ngModel)]="booking.endDate" name="endDate" [monthNavigator]="true" [yearNavigator]="true"
+                yearRange="2020:2050" [showTime]="true" inputId="endDate"></p-calendar>
             </div>
           </div>
         </div>
@@ -108,8 +115,6 @@
             </div>
           </ng-container>
         </div>
-  </tab>
-  </tabset>
   </div>
   <abp-modal-footer [cancelDisabled]="saving" [saveDisabled]="!createBookingForm.form.valid || saving"
     (onCancelClick)="bsModalRef.hide()"></abp-modal-footer>

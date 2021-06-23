@@ -27,5 +27,7 @@ namespace RentalSystem.Clients.Dtos
         [Phone]
         public string Phone { get; set; }
         public string Nationality { get; set; }
+        public string FullName => $"{FirstName} {OtherName} {LastName}";
+        //public string Fullname { get { return $"{FirstName} {LastName}"; } }
     }
 }

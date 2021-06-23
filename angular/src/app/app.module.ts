@@ -15,9 +15,18 @@ import { SharedModule } from '@shared/shared.module';
 import { HomeComponent } from '@app/home/home.component';
 import { AboutComponent } from '@app/about/about.component';
 import {DropdownModule} from 'primeng/dropdown';
+import { CardModule, } from 'primeng/card';
+import {ListboxModule} from 'primeng/listbox';
+import {TableModule} from 'primeng/table';
+import {MultiSelectModule} from 'primeng/multiselect';
+import {SplitterModule} from 'primeng/splitter';
+import {DividerModule} from 'primeng/divider';
+import {InputNumberModule} from 'primeng/inputnumber';
+import {CheckboxModule} from 'primeng/checkbox';
 // import {BrowserModule} from '@angular/platform-browser';
 // import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {CalendarModule} from 'primeng/calendar';
+import {TabViewModule} from 'primeng/tabview';
 // tenants
 import { TenantsComponent } from '@app/tenants/tenants.component';
 import { CreateTenantDialogComponent } from './tenants/create-tenant/create-tenant-dialog.component';
@@ -53,6 +62,7 @@ import { EditClientDialogComponent } from './clients/edit-client/edit-client-dia
 // bookings
 import { BookingsComponent } from '@app/bookings/bookings.component';
 import { CreateBookingDialogComponent } from './bookings/create-booking/create-booking-dialog.component';
+import { BookComponent } from './bookings/create-booking/book.component';
 import { EditBookingDialogComponent } from './bookings/edit-booking/edit-booking-dialog.component';
 @NgModule({
   declarations: [
@@ -79,6 +89,7 @@ import { EditBookingDialogComponent } from './bookings/edit-booking/edit-booking
     BookingsComponent,
     CreateBookingDialogComponent,
     EditBookingDialogComponent,
+    BookComponent,
     // users
     UsersComponent,
     CreateUserDialogComponent,
@@ -110,9 +121,18 @@ import { EditBookingDialogComponent } from './bookings/edit-booking/edit-booking
     ServiceProxyModule,
     SharedModule,
     NgxPaginationModule,
+    TabViewModule,
     DropdownModule,
+    ListboxModule,
+    TableModule,
+    MultiSelectModule,
+    SplitterModule,
+    DividerModule,
+    InputNumberModule,
+    CheckboxModule,
     // BrowserModule,
     // BrowserAnimationsModule,
+    CardModule,
     CalendarModule,
   ],
   providers: [],
@@ -136,6 +156,7 @@ import { EditBookingDialogComponent } from './bookings/edit-booking/edit-booking
     // bookings
     CreateBookingDialogComponent,
     EditBookingDialogComponent,
+    BookComponent
   ],
 })
 export class AppModule {}

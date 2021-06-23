@@ -15,5 +15,7 @@ namespace RentalSystem.Miscellaneouss.Dto
         public string Name { get; set; }
         [Required]
         public double Price { get; set; }
+        public int Quantity { get; set; } = 1;
+
     }
 }

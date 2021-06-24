@@ -10,9 +10,11 @@ namespace RentalSystem.Bookings.Dtos
      public class CreateUpdateBookingDto
     {
         public int ClientId { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-        public double AmountPaid { get; set; }
+        public DateTime CheckedInDate { get; set; }
+        public DateTime CheckedOutDate { get; set; }
+        public bool CheckedIn { get; set; }
+        public bool CheckedOut { get; set; }
+        public double TotalAmount { get; set; }
         public PaymentModeEnum PaymentMode { get; set; }
         public List<string> Facilities { get; set; }
         public List<string> Miscellaneous { get; set; }

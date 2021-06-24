@@ -56,6 +56,8 @@ export class BookComponent extends AppComponentBase
   facilityTotal: number = 0;
   facilityPlusMiscel: number = 0;
 
+  selectedDates: any[];
+  numberOfDays: number = 0;
   selectedFacilities: FacilityDto[] = [];
   selectedMiscels: MiscellaneousDto[] = [];
   selectedClient: ClientDto = new ClientDto();
@@ -165,11 +167,40 @@ export class BookComponent extends AppComponentBase
   getTotalFacilities(selectedFacils: FacilityDto[]): number {
     let total: number = 0;
     _forEach(selectedFacils, (item) => {
-      total += item.price
+      total += (this.getDateListLength2()* item.price);
     });
     this.facilityTotal = total
     this.facilityPlusMiscel = this.misscellTotal + this.facilityTotal
     return total;
+  }
+  getDateListLength(selecteddates: any[]): number {
+    if (this.selectedDates != null) {
+      this.numberOfDays = selecteddates.length;
+      return selecteddates.length;
+    }else{
+      this.numberOfDays = 0;
+    }
+  }
+
+  getDateListLength2(): number {
+    if(this.selectedDates != null){
+      this.numberOfDays = this.selectedDates.length;
+      return this.selectedDates.length;
+    }else{
+      this.numberOfDays = 0;
+    }
+  }
+
+  calculateDiff(starDate: any = 0, endDate: any = 0): number{
+    let days: number = 0;
+    if(endDate <= starDate){
+      alert("EndDate cannot be earleir or same as EndDate ")
+    } else if (endDate !=0 || starDate!=0){
+      days = Math.floor((endDate - starDate) / 1000 / 60 / 60 / 24);
+    }
+    console.log(days)
+    return days;
+
   }
 
 

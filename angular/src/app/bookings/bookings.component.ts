@@ -56,7 +56,7 @@ export class BookingsComponent extends PagedListingComponentBase<BookingDto> {
 
   delete(booking: BookingDto): void {
     abp.message.confirm(
-      this.l('BookingDeleteWarningMessage', booking.startDate),
+      this.l('BookingDeleteWarningMessage', booking.id),
       undefined,
       (result: boolean) => {
         if (result) {

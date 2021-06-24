@@ -23,6 +23,7 @@ import {SplitterModule} from 'primeng/splitter';
 import {DividerModule} from 'primeng/divider';
 import {InputNumberModule} from 'primeng/inputnumber';
 import {CheckboxModule} from 'primeng/checkbox';
+import {RadioButtonModule} from 'primeng/radiobutton';
 // import {BrowserModule} from '@angular/platform-browser';
 // import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {CalendarModule} from 'primeng/calendar';
@@ -130,6 +131,7 @@ import { EditBookingDialogComponent } from './bookings/edit-booking/edit-booking
     DividerModule,
     InputNumberModule,
     CheckboxModule,
+    RadioButtonModule,
     // BrowserModule,
     // BrowserAnimationsModule,
     CardModule,

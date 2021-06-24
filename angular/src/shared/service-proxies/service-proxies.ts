@@ -3656,7 +3656,7 @@ export class FacilityDto implements IFacilityDto {
     price: number;
     capacity: number;
     facType: FacTypeEnum;
-    isbooked: boolean;
+    bookedDates: string[] | undefined;
     isDeleted: boolean;
     deleterUserId: number | undefined;
     deletionTime: moment.Moment | undefined;
@@ -3681,7 +3681,11 @@ export class FacilityDto implements IFacilityDto {
             this.price = _data["price"];
             this.capacity = _data["capacity"];
             this.facType = _data["facType"];
-            this.isbooked = _data["isbooked"];
+            if (Array.isArray(_data["bookedDates"])) {
+                this.bookedDates = [] as any;
+                for (let item of _data["bookedDates"])
+                    this.bookedDates.push(item);
+            }
             this.isDeleted = _data["isDeleted"];
             this.deleterUserId = _data["deleterUserId"];
             this.deletionTime = _data["deletionTime"] ? moment(_data["deletionTime"].toString()) : <any>undefined;
@@ -3706,7 +3710,11 @@ export class FacilityDto implements IFacilityDto {
         data["price"] = this.price;
         data["capacity"] = this.capacity;
         data["facType"] = this.facType;
-        data["isbooked"] = this.isbooked;
+        if (Array.isArray(this.bookedDates)) {
+            data["bookedDates"] = [];
+            for (let item of this.bookedDates)
+                data["bookedDates"].push(item);
+        }
         data["isDeleted"] = this.isDeleted;
         data["deleterUserId"] = this.deleterUserId;
         data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
@@ -3731,7 +3739,7 @@ export interface IFacilityDto {
     price: number;
     capacity: number;
     facType: FacTypeEnum;
-    isbooked: boolean;
+    bookedDates: string[] | undefined;
     isDeleted: boolean;
     deleterUserId: number | undefined;
     deletionTime: moment.Moment | undefined;
@@ -3907,9 +3915,11 @@ export enum PaymentModeEnum {
 
 export class BookingDto implements IBookingDto {
     clientId: number;
-    startDate: moment.Moment;
-    endDate: moment.Moment;
-    amountPaid: number;
+    checkedInDate: moment.Moment;
+    checkedOutDate: moment.Moment;
+    checkedIn: boolean;
+    checkedOut: boolean;
+    totalAmount: number;
     paymentMode: PaymentModeEnum;
     client: string | undefined;
     facilities: string[] | undefined;
@@ -3935,9 +3945,11 @@ export class BookingDto implements IBookingDto {
     init(_data?: any) {
         if (_data) {
             this.clientId = _data["clientId"];
-            this.startDate = _data["startDate"] ? moment(_data["startDate"].toString()) : <any>undefined;
-            this.endDate = _data["endDate"] ? moment(_data["endDate"].toString()) : <any>undefined;
-            this.amountPaid = _data["amountPaid"];
+            this.checkedInDate = _data["checkedInDate"] ? moment(_data["checkedInDate"].toString()) : <any>undefined;
+            this.checkedOutDate = _data["checkedOutDate"] ? moment(_data["checkedOutDate"].toString()) : <any>undefined;
+            this.checkedIn = _data["checkedIn"];
+            this.checkedOut = _data["checkedOut"];
+            this.totalAmount = _data["totalAmount"];
             this.paymentMode = _data["paymentMode"];
             this.client = _data["client"];
             if (Array.isArray(_data["facilities"])) {
@@ -3971,9 +3983,11 @@ export class BookingDto implements IBookingDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["clientId"] = this.clientId;
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        data["amountPaid"] = this.amountPaid;
+        data["checkedInDate"] = this.checkedInDate ? this.checkedInDate.toISOString() : <any>undefined;
+        data["checkedOutDate"] = this.checkedOutDate ? this.checkedOutDate.toISOString() : <any>undefined;
+        data["checkedIn"] = this.checkedIn;
+        data["checkedOut"] = this.checkedOut;
+        data["totalAmount"] = this.totalAmount;
         data["paymentMode"] = this.paymentMode;
         data["client"] = this.client;
         if (Array.isArray(this.facilities)) {
@@ -4007,9 +4021,11 @@ export class BookingDto implements IBookingDto {
 
 export interface IBookingDto {
     clientId: number;
-    startDate: moment.Moment;
-    endDate: moment.Moment;
-    amountPaid: number;
+    checkedInDate: moment.Moment;
+    checkedOutDate: moment.Moment;
+    checkedIn: boolean;
+    checkedOut: boolean;
+    totalAmount: number;
     paymentMode: PaymentModeEnum;
     client: string | undefined;
     facilities: string[] | undefined;
@@ -4081,9 +4097,11 @@ export interface IBookingDtoPagedResultDto {
 
 export class CreateUpdateBookingDto implements ICreateUpdateBookingDto {
     clientId: number;
-    startDate: moment.Moment;
-    endDate: moment.Moment;
-    amountPaid: number;
+    checkedInDate: moment.Moment;
+    checkedOutDate: moment.Moment;
+    checkedIn: boolean;
+    checkedOut: boolean;
+    totalAmount: number;
     paymentMode: PaymentModeEnum;
     facilities: string[] | undefined;
     miscellaneous: string[] | undefined;
@@ -4100,9 +4118,11 @@ export class CreateUpdateBookingDto implements ICreateUpdateBookingDto {
     init(_data?: any) {
         if (_data) {
             this.clientId = _data["clientId"];
-            this.startDate = _data["startDate"] ? moment(_data["startDate"].toString()) : <any>undefined;
-            this.endDate = _data["endDate"] ? moment(_data["endDate"].toString()) : <any>undefined;
-            this.amountPaid = _data["amountPaid"];
+            this.checkedInDate = _data["checkedInDate"] ? moment(_data["checkedInDate"].toString()) : <any>undefined;
+            this.checkedOutDate = _data["checkedOutDate"] ? moment(_data["checkedOutDate"].toString()) : <any>undefined;
+            this.checkedIn = _data["checkedIn"];
+            this.checkedOut = _data["checkedOut"];
+            this.totalAmount = _data["totalAmount"];
             this.paymentMode = _data["paymentMode"];
             if (Array.isArray(_data["facilities"])) {
                 this.facilities = [] as any;
@@ -4127,9 +4147,11 @@ export class CreateUpdateBookingDto implements ICreateUpdateBookingDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["clientId"] = this.clientId;
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        data["amountPaid"] = this.amountPaid;
+        data["checkedInDate"] = this.checkedInDate ? this.checkedInDate.toISOString() : <any>undefined;
+        data["checkedOutDate"] = this.checkedOutDate ? this.checkedOutDate.toISOString() : <any>undefined;
+        data["checkedIn"] = this.checkedIn;
+        data["checkedOut"] = this.checkedOut;
+        data["totalAmount"] = this.totalAmount;
         data["paymentMode"] = this.paymentMode;
         if (Array.isArray(this.facilities)) {
             data["facilities"] = [];
@@ -4154,9 +4176,11 @@ export class CreateUpdateBookingDto implements ICreateUpdateBookingDto {
 
 export interface ICreateUpdateBookingDto {
     clientId: number;
-    startDate: moment.Moment;
-    endDate: moment.Moment;
-    amountPaid: number;
+    checkedInDate: moment.Moment;
+    checkedOutDate: moment.Moment;
+    checkedIn: boolean;
+    checkedOut: boolean;
+    totalAmount: number;
     paymentMode: PaymentModeEnum;
     facilities: string[] | undefined;
     miscellaneous: string[] | undefined;
@@ -4441,7 +4465,7 @@ export class CreateUpdateFacilityDto implements ICreateUpdateFacilityDto {
     price: number;
     capacity: number;
     facType: FacTypeEnum;
-    isbooked: boolean;
+    bookedDates: string[] | undefined;
 
     constructor(data?: ICreateUpdateFacilityDto) {
         if (data) {
@@ -4458,7 +4482,11 @@ export class CreateUpdateFacilityDto implements ICreateUpdateFacilityDto {
             this.price = _data["price"];
             this.capacity = _data["capacity"];
             this.facType = _data["facType"];
-            this.isbooked = _data["isbooked"];
+            if (Array.isArray(_data["bookedDates"])) {
+                this.bookedDates = [] as any;
+                for (let item of _data["bookedDates"])
+                    this.bookedDates.push(item);
+            }
         }
     }
 
@@ -4475,7 +4503,11 @@ export class CreateUpdateFacilityDto implements ICreateUpdateFacilityDto {
         data["price"] = this.price;
         data["capacity"] = this.capacity;
         data["facType"] = this.facType;
-        data["isbooked"] = this.isbooked;
+        if (Array.isArray(this.bookedDates)) {
+            data["bookedDates"] = [];
+            for (let item of this.bookedDates)
+                data["bookedDates"].push(item);
+        }
         return data; 
     }
 
@@ -4492,7 +4524,7 @@ export interface ICreateUpdateFacilityDto {
     price: number;
     capacity: number;
     facType: FacTypeEnum;
-    isbooked: boolean;
+    bookedDates: string[] | undefined;
 }
 
 export class MiscellaneousDtoPagedResultDto implements IMiscellaneousDtoPagedResultDto {
@@ -4553,6 +4585,7 @@ export interface IMiscellaneousDtoPagedResultDto {
 export class CreateUpdateMiscellaneousDto implements ICreateUpdateMiscellaneousDto {
     name: string;
     price: number;
+    quantity: number;
 
     constructor(data?: ICreateUpdateMiscellaneousDto) {
         if (data) {
@@ -4567,6 +4600,7 @@ export class CreateUpdateMiscellaneousDto implements ICreateUpdateMiscellaneousD
         if (_data) {
             this.name = _data["name"];
             this.price = _data["price"];
+            this.quantity = _data["quantity"];
         }
     }
 
@@ -4581,6 +4615,7 @@ export class CreateUpdateMiscellaneousDto implements ICreateUpdateMiscellaneousD
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["price"] = this.price;
+        data["quantity"] = this.quantity;
         return data; 
     }
 
@@ -4595,6 +4630,7 @@ export class CreateUpdateMiscellaneousDto implements ICreateUpdateMiscellaneousD
 export interface ICreateUpdateMiscellaneousDto {
     name: string;
     price: number;
+    quantity: number;
 }
 
 export class CreateRoleDto implements ICreateRoleDto {

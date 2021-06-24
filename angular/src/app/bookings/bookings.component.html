@@ -66,18 +66,18 @@
                   <td>{{ booking.client}}</td>
                   <td>{{ booking.startDate }}</td>
                   <td>{{ booking.endDate }}</td>
-                  <td>
+                  <td class="p-col p-grid">
                     <button type="button"
                       class="btn btn-sm bg-secondary"
                       (click)="editBooking(booking)">
                       <i class="fas fa-pencil-alt"></i>
-                      {{ "Edit" | localize }}
+                      {{ "Check In" | localize }}
                     </button>
                     <button type="button"
                       class="btn btn-sm bg-danger mx-2"
                       (click)="delete(booking)">
                       <i class="fas fa-trash"></i>
-                      {{ "Delete" | localize }}
+                      {{ "Check Out" | localize }}
                     </button>
                   </td>
                 </tr>

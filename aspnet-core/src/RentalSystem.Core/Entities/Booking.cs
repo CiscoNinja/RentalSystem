@@ -12,9 +12,11 @@ namespace RentalSystem.Entities
     public class Booking : FullAuditedAggregateRoot<int>
     {
         public int ClientId { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-        public double AmountPaid { get; set; }
+        public DateTime CheckedInDate { get; set; }
+        public DateTime CheckedOutDate { get; set; }
+        public bool CheckedIn { get; set; }
+        public bool CheckedOut { get; set; }
+        public double TotalAmount { get; set; }
         public PaymentModeEnum PaymentMode { get; set; }
         public virtual Client Client { get; set; }
         public virtual ICollection<FacilityBooking> FacilityBookings { get; set; }
@@ -25,15 +27,17 @@ namespace RentalSystem.Entities
 
         }
 
-        public Booking(int clientId, DateTime startDate,
-            DateTime endDate, double amountPaid, PaymentModeEnum paymentMode,
+        public Booking(int clientId, DateTime checkedInDate,
+            DateTime checkedOutDate, double totalAmount, bool checkedIn, bool checkedOut, PaymentModeEnum paymentMode,
             Client client)
             :base()
         {
             ClientId = clientId;
-            StartDate = startDate;
-            EndDate = endDate;
-            AmountPaid = amountPaid;
+            CheckedInDate = checkedInDate;
+            CheckedOutDate = checkedOutDate;
+            TotalAmount = totalAmount;
+            CheckedIn = checkedIn;
+            CheckedOut = checkedOut;
             PaymentMode = paymentMode;
             Client = client;
 

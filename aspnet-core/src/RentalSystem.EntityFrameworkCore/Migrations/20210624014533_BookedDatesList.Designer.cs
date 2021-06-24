@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RentalSystem.EntityFrameworkCore;
 
 namespace RentalSystem.Migrations
 {
     [DbContext(typeof(RentalSystemDbContext))]
-    partial class RentalSystemDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210624014533_BookedDatesList")]
+    partial class BookedDatesList
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1534,17 +1536,8 @@ namespace RentalSystem.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<bool>("CheckedIn")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("CheckedInDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("CheckedOut")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("CheckedOutDate")
-                        .HasColumnType("datetime2");
+                    b.Property<double>("AmountPaid")
+                        .HasColumnType("float");
 
                     b.Property<int>("ClientId")
                         .HasColumnType("int");
@@ -1564,6 +1557,9 @@ namespace RentalSystem.Migrations
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -1576,8 +1572,8 @@ namespace RentalSystem.Migrations
                     b.Property<int>("PaymentMode")
                         .HasColumnType("int");
 
-                    b.Property<double>("TotalAmount")
-                        .HasColumnType("float");
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 

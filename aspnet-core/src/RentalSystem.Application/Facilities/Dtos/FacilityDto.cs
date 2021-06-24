@@ -19,7 +19,6 @@ namespace RentalSystem.Facilities.Dtos
         public int Capacity { get; set; }
         [Required]
         public FacTypeEnum FacType { get; set; }
-        public bool Isbooked { get; set; }
-
+        public List<string> BookedDates { get; set; }
     }
 }

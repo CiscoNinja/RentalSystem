@@ -42,10 +42,10 @@
                     <i class="pi pi-clock"></i>
                   </span>
                   <span class="p-float-label">
-                    <p-calendar [(ngModel)]="booking.startDate" name="startDate" [monthNavigator]="true"
-                      [yearNavigator]="true" yearRange="2020:2050" id="startDate" inputId="startDate">
-                    </p-calendar>
-                    <label for="startDate">Start Date</label>
+                    <p-calendar [(ngModel)]="booking.checkedInDate" name="checkedInDate" [monthNavigator]="true"
+                      [yearNavigator]="true" yearRange="2020:2050" id="checkedInDate" inputId="checkedInDate" 
+                      ></p-calendar>
+                    <label for="checkedInDate">Check In Date</label>
                   </span>
                 </div>
               </div>
@@ -55,14 +55,29 @@
                     <i class="pi pi-clock"></i>
                   </span>
                   <span class="p-float-label">
-                    <p-calendar [(ngModel)]="booking.endDate" name="endDate" [monthNavigator]="true"
-                      [yearNavigator]="true" yearRange="2020:2050" id="endDate" inputId="startDate">
-                    </p-calendar>
-                    <label for="endDate">End Date</label>
+                    <p-calendar [(ngModel)]="booking.checkedOutDate" name="checkedOutDate" [monthNavigator]="true"
+                      [yearNavigator]="true" yearRange="2020:2050" id="checkedOutDate" inputId="checkedOutDate"
+                      ></p-calendar>
+                    <label for="checkedOutDate">Check Out Date</label>
                   </span>
                 </div>
               </div>
             </div>
+            <div class="p-field p-col-8 p-offset-2">
+              <div class="p-inputgroup">
+                <span class="p-inputgroup-addon">
+                  <i class="pi pi-calendar"></i>
+                </span>
+                <span class="p-float-label">
+                  <p-calendar [(ngModel)]="selectedDates" selectionMode="multiple" [readonlyInput]="true" inputId="selectedDates" name="selectedDates"
+                  (ngModelChange)="getDateListLength2()"></p-calendar>
+                  <!-- <p-calendar [(ngModel)]="booking.endDate" name="endDate" [monthNavigator]="true"
+                    [yearNavigator]="true" yearRange="2020:2050" id="endDate" inputId="startDate"
+                    (onSelect)="calculateDiff(booking.startDate, booking.endDate)"></p-calendar> -->
+                  <label for="selectedDates">Select Days</label>
+                </span>
+              </div>
+          </div>
 
             <div class="p-fluid p-grid p-col-12 p-md-12">
               <p-multiSelect [options]="facilities" name="facility" optionLabel="name" class="multiselect-custom"
@@ -84,10 +99,18 @@
                     <span class="">
                       <p-inputNumber [(ngModel)]="miscelleneous.quantity" [showButtons]="true" [min]="1"
                         [name]="'miscelleneous_' + i" placeholder="Qty" decrementButtonClass="p-button-danger"
-                        incrementButtonClass="p-button-success" (onBlur)="getTotalMiscellaneouss(selectedMiscels)" (onInput)="getTotalMiscellaneouss(selectedMiscels)"></p-inputNumber>
+                        incrementButtonClass="p-button-success" (ngModelChange)="getTotalMiscellaneouss(selectedMiscels)"></p-inputNumber>
                     </span>
                   </div>
                 </div>
+                <div class="p-col-12 p-md-12">
+                  <label class="">Payment Mode</label>
+                </div>
+                <div *ngFor="let key of paymentModeEnums" [label]="key" class="p-field-checkbox p-col">
+                  <p-radioButton name="group3" value="key" [value]="key" [(ngModel)]="booking.paymentMode"
+                  [inputId]="key"></p-radioButton>
+                  <label style="white-space: nowrap;" [for]="key">{{key | localize}}</label>
+              </div>
                 <!-- <ng-container *ngFor="let miscelleneous of miscelleneouss; let i = index">
                                 <div class="col-md-12">
                                   <div class="custom-control custom-checkbox p-grid p-jc-between"
@@ -187,8 +210,8 @@ Phone: (123) 456-7890
                       <td class="description">
                         {{selectedFacility.name}}
                       <td style="text-align: center;">{{selectedFacility.price}}</td>
-                      <td style="text-align: center;">1</td>
-                      <td style="text-align: center;"><span class="price">{{selectedFacility.price}}</span></td>
+                      <td style="text-align: center;">{{numberOfDays}}</td>
+                      <td style="text-align: center;"><span class="price">{{numberOfDays * selectedFacility.price}}</span></td>
                     </tr>
                     <tr>
                       <td colspan="5">Miscellaneous</td>

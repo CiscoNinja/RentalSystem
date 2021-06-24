@@ -10,18 +10,20 @@ namespace RentalSystem.Entities
     public class FacilityBooking : Entity
     {
         public virtual int BookingId { get; private set; }
-        public virtual Booking Booking { get; set; }
         public virtual int FacilityId { get; private set; }
+        public string BookedDates { get; set; }
+        public virtual Booking Booking { get; set; }
         public virtual Facility Facility { get; set; }
         protected FacilityBooking()
         {
 
         }
 
-        public FacilityBooking(int bookingid, int facilityid)
+        public FacilityBooking(int bookingid, int facilityid, string bookedDates)
         {
             BookingId = bookingid;
             FacilityId = facilityid;
+            BookedDates = bookedDates;
         }
     }
 }

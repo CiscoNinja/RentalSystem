@@ -20,7 +20,8 @@ namespace RentalSystem.Entities
         public int Capacity { get; set; }
         [Required]
         public FacTypeEnum FacType { get; set; }
-        public bool Isbooked { get; set; }
+        public string BookedDates { get; set; }
+        //public bool Isbooked { get; set; }
         public virtual ICollection<FacilityBooking> FacilityBookings { get; set; }
 
         protected Facility()
@@ -28,14 +29,14 @@ namespace RentalSystem.Entities
 
         }
         public Facility(string name, double price, int capacity,
-                FacTypeEnum factype, bool isbooked)
+                FacTypeEnum factype, string bookedDates)
                : base()
         {
             Name = name;
             Price = price;
             Capacity = capacity;
             FacType = factype;
-            Isbooked = isbooked;
+            BookedDates = bookedDates;
 
             FacilityBookings = new Collection<FacilityBooking>();
         }

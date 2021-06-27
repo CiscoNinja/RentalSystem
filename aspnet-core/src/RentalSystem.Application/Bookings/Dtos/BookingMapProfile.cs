@@ -12,9 +12,17 @@ namespace RentalSystem.Bookings.Dtos
     {
         public ClientMapProfile()
         {
-            CreateMap<Booking, BookingDto>().ReverseMap();
+            CreateMap<Booking, BookingDto>()
+                .ForMember(x => x.BookedDates, opt => opt.MapFrom(src => src.BookedDates.Split(new[] { ',' })));
 
-            CreateMap<CreateUpdateBookingDto, Booking>().ReverseMap();
+            CreateMap<BookingDto, Booking>()
+                .ForMember(x => x.BookedDates, opt => opt.MapFrom(src => string.Join(',', src.BookedDates)));
+
+            CreateMap<CreateUpdateBookingDto, Booking>()
+                .ForMember(x => x.BookedDates, opt => opt.MapFrom(src => string.Join(',', src.BookedDates)));
+
+            CreateMap<Booking, CreateUpdateBookingDto>()
+                .ForMember(x => x.BookedDates, opt => opt.MapFrom(src => src.BookedDates.Split(new[] { ',' })));
 
         }
     }

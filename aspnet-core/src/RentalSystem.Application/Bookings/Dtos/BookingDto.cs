@@ -1,5 +1,7 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.Domain.Entities.Auditing;
+using RentalSystem.Facilities.Dtos;
+using RentalSystem.Miscellaneouss.Dto;
 using RentalSystem.Shared;
 using System;
 using System.Collections.Generic;
@@ -19,7 +21,8 @@ namespace RentalSystem.Bookings.Dtos
         public double TotalAmount { get; set; }
         public PaymentModeEnum PaymentMode { get; set; }
         public virtual string Client { get; set; }
-        public List<string> Facilities { get; set; }
-        public List<string> Miscellaneous { get; set; }
+        public List<string> BookedDates { get; set; }
+        public List<FacilityDto> Facilities { get; set; }
+        public List<MiscellaneousDto> Miscellaneous { get; set; }
     }
 }

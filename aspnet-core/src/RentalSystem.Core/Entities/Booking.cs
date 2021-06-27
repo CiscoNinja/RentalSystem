@@ -18,6 +18,7 @@ namespace RentalSystem.Entities
         public bool CheckedOut { get; set; }
         public double TotalAmount { get; set; }
         public PaymentModeEnum PaymentMode { get; set; }
+        public string BookedDates { get; set; }
         public virtual Client Client { get; set; }
         public virtual ICollection<FacilityBooking> FacilityBookings { get; set; }
         public virtual ICollection<MiscellaneousBooking> MiscellaneousBookings { get; set; }

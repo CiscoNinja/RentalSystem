@@ -19,7 +19,7 @@
                   <span class="p-col-12 p-md-12">
                     <p-dropdown [options]="clients" [(ngModel)]="selectedClient" name="clientId" id="clientId"
                       optionLabel="fullName" [filter]="true" filterBy="fullName" [showClear]="true"
-                      placeholder="Select a Client" class="">
+                      placeholder="Select a Client" class="" (onChange)="assignToClient(selectedClient)">
                       <ng-template pTemplate="selectedItem" class="">
                         <div class="client-item client-item-value" *ngIf="selectedClient">
                           <div>{{selectedClient.fullName}}</div>
@@ -31,11 +31,26 @@
                         </div>
                       </ng-template>
                     </p-dropdown>
+
+                    <!-- <p-dropdown [options]="countries" [(ngModel)]="selectedCountries" name="name" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true" placeholder="Select a Country">
+                      <ng-template pTemplate="selectedItem">
+                          <div class="country-item country-item-value"  *ngIf="selectedCountry">
+                              <img src="assets/showcase/images/demo/flag/flag_placeholder.png" [class]="'flag flag-' + selectedCountry.code.toLowerCase()" />
+                              <div>{{selectedCountry.name}}</div>
+                          </div>
+                      </ng-template>
+                      <ng-template let-country pTemplate="item">
+                          <div class="country-item">
+                              <img src="assets/showcase/images/demo/flag/flag_placeholder.png" [class]="'flag flag-' + country.code.toLowerCase()" />
+                              <div>{{country.name}}</div>
+                          </div>
+                      </ng-template>
+                  </p-dropdown> -->
                   </span>
                 </div>
               </div>
             </div>
-            <div class="p-fluid p-grid p-formgrid">
+            <!-- <div class="p-fluid p-grid p-formgrid">
               <div class="p-field p-col-12 p-md-6">
                 <div class="p-inputgroup">
                   <span class="p-inputgroup-addon">
@@ -62,7 +77,7 @@
                   </span>
                 </div>
               </div>
-            </div>
+            </div> -->
             <div class="p-field p-col-8 p-offset-2">
               <div class="p-inputgroup">
                 <span class="p-inputgroup-addon">
@@ -70,7 +85,7 @@
                 </span>
                 <span class="p-float-label">
                   <p-calendar [(ngModel)]="selectedDates" selectionMode="multiple" [readonlyInput]="true" inputId="selectedDates" name="selectedDates"
-                  (ngModelChange)="getDateListLength2()"></p-calendar>
+                  (ngModelChange)="getDateListLength2(); getTotalFacilities(selectedFacilities)"></p-calendar>
                   <!-- <p-calendar [(ngModel)]="booking.endDate" name="endDate" [monthNavigator]="true"
                     [yearNavigator]="true" yearRange="2020:2050" id="endDate" inputId="startDate"
                     (onSelect)="calculateDiff(booking.startDate, booking.endDate)"></p-calendar> -->
@@ -160,7 +175,7 @@ Phone: (123) 456-7890
                     </pre>
 
                     <div class="p-fluid" id="logo">
-                      <img id="image" src="assets/img/logo.png" alt="logo" />
+                      <img id="image" src="assets/img/OIP.jpg" alt="logo" />
                     </div>
 
                   </div>
@@ -169,18 +184,17 @@ Phone: (123) 456-7890
 
                   <div class="p-grid p-jc-between" id="customer">
 
-                    <pre id="customer-title">{{ !selectedClient.fullName? "Client Name...":selectedClient.fullName }}
-{{ selectedClient.email }}
-{{ selectedClient.phone }}</pre>
+                    <pre id="customer-title">{{ thisclient.fullName == ""? "Client Name...":thisclient.fullName }}
+{{ thisclient.email }}
+{{ thisclient.phone }}</pre>
                     <table id="meta">
                       <tr>
                         <td class="meta-head">Invoice #</td>
                         <td><textarea disabled>000123</textarea></td>
                       </tr>
                       <tr>
-
                         <td class="meta-head">Date</td>
-                        <td><textarea id="date" disabled>{{thisDay}}</textarea></td>
+                        <td><textarea id="date" disabled>{{thisDay | date : 'd MMMM yyyy'}}</textarea></td>
                       </tr>
                       <tr>
                         <td class="meta-head">Amount Due</td>
@@ -259,11 +273,13 @@ Phone: (123) 456-7890
               </div>
             </div>
             <div class="p-col">
-              <div class="box p-grid">
+              <div class="box p-grid p-jc-between">
                 <!-- <button pButton pRipple type="button" label="Primary" class="p-button-raised p-md-6"></button> -->
-                <button pButton pRipple type="button" label="Save and Print"
-                  class="p-button-raised p-button-success p-md-6"></button>
-                <!-- <abp-modal-footer class="" [cancelDisabled]="saving"
+                <button pButton pRipple type="button" label="Print"
+                  class="p-button-raised p-button-success"></button>
+                  <button pButton pRipple type="submit" label="Submit"
+                  class="p-button-raised p-button-success"></button>
+                <!-- <abp-modal-footer class="" [cancelDisabled]="true"
                               [saveDisabled]="!createBookingForm.form.valid || saving" (onCancelClick)="cancel()"></abp-modal-footer> -->
               </div>
             </div>

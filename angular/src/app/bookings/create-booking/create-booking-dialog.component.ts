@@ -140,8 +140,8 @@ export class CreateBookingDialogComponent extends AppComponentBase
     this.saving = true;
 
     const booking = new CreateUpdateBookingDto();
-    booking.facilities = this.getCheckedFaclilities();
-    booking.miscellaneous = this.getCheckedMiscellaneouss();
+    // booking.facilities = this.getCheckedFaclilities();
+    // booking.miscellaneous = this.getCheckedMiscellaneouss();
     booking.init(this.booking);
     
     this._bookingService

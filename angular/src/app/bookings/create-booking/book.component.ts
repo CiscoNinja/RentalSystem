@@ -60,7 +60,8 @@ export class BookComponent extends AppComponentBase
   numberOfDays: number = 0;
   selectedFacilities: FacilityDto[] = [];
   selectedMiscels: MiscellaneousDto[] = [];
-  selectedClient: ClientDto = new ClientDto();
+  selectedClient: string;
+  thisclient: ClientDto = new ClientDto();
 
   @Output() onSave = new EventEmitter<any>();
 
@@ -161,6 +162,7 @@ export class BookComponent extends AppComponentBase
     });
     this.misscellTotal = total
     this.facilityPlusMiscel = this.misscellTotal + this.facilityTotal
+    this.booking.totalAmount = this.facilityPlusMiscel;
     return total;
   }
 
@@ -171,6 +173,7 @@ export class BookComponent extends AppComponentBase
     });
     this.facilityTotal = total
     this.facilityPlusMiscel = this.misscellTotal + this.facilityTotal
+    this.booking.totalAmount = this.facilityPlusMiscel;
     return total;
   }
   getDateListLength(selecteddates: any[]): number {
@@ -182,12 +185,20 @@ export class BookComponent extends AppComponentBase
     }
   }
 
+  assignToClient(selectedclients: any = null): ClientDto {
+    if (selectedclients != null) {
+      this.thisclient = selectedclients;
+      return this.thisclient;
+    }
+  }
+
   getDateListLength2(): number {
     if(this.selectedDates != null){
       this.numberOfDays = this.selectedDates.length;
       return this.selectedDates.length;
     }else{
       this.numberOfDays = 0;
+      return 0
     }
   }
 
@@ -242,30 +253,34 @@ export class BookComponent extends AppComponentBase
     return facilities;
   }
 
-  clear(table: Table) {
-    table.clear();
-  }
-  cancel() {
-  }
+  // clear(table: Table) {
+  //   table.clear();
+  // }
+  // cancel() {
+  // }
 
   save(): void {
     this.saving = true;
 
     const booking = new CreateUpdateBookingDto();
-    booking.facilities = this.getCheckedFaclilities();
-    booking.miscellaneous = this.getCheckedMiscellaneouss();
     booking.init(this.booking);
+    //booking.clientId = this.selectedClient.id;
+    booking.facilities = this.selectedFacilities;
+    booking.bookedDates = this.selectedDates;
+    booking.miscellaneous = this.selectedMiscels;
 
-    this._bookingService
-      .create(booking)
-      .pipe(
-        finalize(() => {
-          this.saving = false;
-        })
-      )
-      .subscribe(() => {
-        this.notify.info(this.l('SavedSuccessfully'));
-        this.onSave.emit();
-      });
+    console.log(booking)
+
+    // this._bookingService
+    //   .create(booking)
+    //   .pipe(
+    //     finalize(() => {
+    //       this.saving = false;
+    //     })
+    //   )
+    //   .subscribe(() => {
+    //     this.notify.info(this.l('SavedSuccessfully'));
+    //     this.onSave.emit();
+    //   });
   }
 }

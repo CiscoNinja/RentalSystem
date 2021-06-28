@@ -65,6 +65,10 @@ import { BookingsComponent } from '@app/bookings/bookings.component';
 import { CreateBookingDialogComponent } from './bookings/create-booking/create-booking-dialog.component';
 import { BookComponent } from './bookings/create-booking/book.component';
 import { EditBookingDialogComponent } from './bookings/edit-booking/edit-booking-dialog.component';
+// miscellaneouss
+import { MiscellaneoussComponent } from '@app/miscellaneouss/miscellaneouss.component';
+import { CreateMiscellaneousDialogComponent } from './miscellaneouss/create-miscellaneous/create-miscellaneous-dialog.component';
+import { EditMiscellaneousDialogComponent } from './miscellaneouss/edit-miscellaneous/edit-miscellaneous-dialog.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -86,6 +90,10 @@ import { EditBookingDialogComponent } from './bookings/edit-booking/edit-booking
     ClientsComponent,
     CreateClientDialogComponent,
     EditClientDialogComponent,
+    // miscellaneous
+    MiscellaneoussComponent,
+    CreateMiscellaneousDialogComponent,
+    EditMiscellaneousDialogComponent,
     // bookings
     BookingsComponent,
     CreateBookingDialogComponent,
@@ -158,7 +166,10 @@ import { EditBookingDialogComponent } from './bookings/edit-booking/edit-booking
     // bookings
     CreateBookingDialogComponent,
     EditBookingDialogComponent,
-    BookComponent
+    BookComponent,
+    // miscellaneous
+    CreateMiscellaneousDialogComponent,
+    EditMiscellaneousDialogComponent,
   ],
 })
 export class AppModule {}

@@ -12,6 +12,7 @@ import { FacilitysComponent } from './facility/facilitys.component';
 import { ClientsComponent } from './clients/clients.component';
 import { BookingsComponent } from './bookings/bookings.component';
 import { BookComponent } from './bookings/create-booking/book.component';
+import { MiscellaneoussComponent } from './miscellaneouss/miscellaneouss.component';
 
 @NgModule({
     imports: [
@@ -23,6 +24,7 @@ import { BookComponent } from './bookings/create-booking/book.component';
                     { path: 'home', component: HomeComponent,  canActivate: [AppRouteGuard] },
                     { path: 'users', component: UsersComponent, data: { permission: 'Pages.Users' }, canActivate: [AppRouteGuard] },
                     { path: 'facility', component: FacilitysComponent, data: { permission: 'Pages.Facilities' }, canActivate: [AppRouteGuard] },
+                    { path: 'miscellaneous', component: MiscellaneoussComponent, data: { permission: 'Pages.Miscellaneous' }, canActivate: [AppRouteGuard] },
                     { path: 'clients', component: ClientsComponent, data: { permission: 'Pages.Clients' }, canActivate: [AppRouteGuard] },
                     { path: 'bookings', component: BookingsComponent, data: { permission: 'Pages.Bookings' }, canActivate: [AppRouteGuard] },
                     { path: 'bookings/book', component: BookComponent, data: { permission: 'Pages.Bookings' }, canActivate: [AppRouteGuard] },

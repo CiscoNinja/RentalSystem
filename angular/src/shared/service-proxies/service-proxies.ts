@@ -152,6 +152,62 @@ export class BookingServiceProxy {
     }
 
     /**
+     * @param body (optional) 
+     * @return Success
+     */
+    create(body: CreateUpdateBookingDto | undefined): Observable<BookingDto> {
+        let url_ = this.baseUrl + "/api/services/app/Booking/Create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(<any>response_);
+                } catch (e) {
+                    return <Observable<BookingDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<BookingDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<BookingDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = BookingDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<BookingDto>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     getClients(): Observable<ClientDtoListResultDto> {
@@ -422,62 +478,6 @@ export class BookingServiceProxy {
             }));
         }
         return _observableOf<BookingDtoPagedResultDto>(<any>null);
-    }
-
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
-    create(body: CreateUpdateBookingDto | undefined): Observable<BookingDto> {
-        let url_ = this.baseUrl + "/api/services/app/Booking/Create";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json-patch+json",
-                "Accept": "text/plain"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreate(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreate(<any>response_);
-                } catch (e) {
-                    return <Observable<BookingDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<BookingDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreate(response: HttpResponseBase): Observable<BookingDto> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = BookingDto.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<BookingDto>(<any>null);
     }
 
     /**
@@ -3420,6 +3420,414 @@ export interface IRegisterOutput {
     canLogin: boolean;
 }
 
+export enum PaymentModeEnum {
+    Mobilemoney = <any>"Mobilemoney",
+    Cash = <any>"Cash",
+    Cheque = <any>"Cheque",
+}
+
+export enum FacTypeEnum {
+    Conference = <any>"Conference",
+    Guesthouse = <any>"Guesthouse",
+    Classroom = <any>"Classroom",
+}
+
+export class FacilityDto implements IFacilityDto {
+    name: string;
+    price: number;
+    capacity: number;
+    facType: FacTypeEnum;
+    bookedDates: string[] | undefined;
+    isDeleted: boolean;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment;
+    creatorUserId: number | undefined;
+    id: number;
+
+    constructor(data?: IFacilityDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.price = _data["price"];
+            this.capacity = _data["capacity"];
+            this.facType = _data["facType"];
+            if (Array.isArray(_data["bookedDates"])) {
+                this.bookedDates = [] as any;
+                for (let item of _data["bookedDates"])
+                    this.bookedDates.push(item);
+            }
+            this.isDeleted = _data["isDeleted"];
+            this.deleterUserId = _data["deleterUserId"];
+            this.deletionTime = _data["deletionTime"] ? moment(_data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = _data["lastModificationTime"] ? moment(_data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = _data["lastModifierUserId"];
+            this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = _data["creatorUserId"];
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): FacilityDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new FacilityDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["price"] = this.price;
+        data["capacity"] = this.capacity;
+        data["facType"] = this.facType;
+        if (Array.isArray(this.bookedDates)) {
+            data["bookedDates"] = [];
+            for (let item of this.bookedDates)
+                data["bookedDates"].push(item);
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+
+    clone(): FacilityDto {
+        const json = this.toJSON();
+        let result = new FacilityDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IFacilityDto {
+    name: string;
+    price: number;
+    capacity: number;
+    facType: FacTypeEnum;
+    bookedDates: string[] | undefined;
+    isDeleted: boolean;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment;
+    creatorUserId: number | undefined;
+    id: number;
+}
+
+export class MiscellaneousDto implements IMiscellaneousDto {
+    name: string;
+    price: number;
+    quantity: number;
+    id: number;
+
+    constructor(data?: IMiscellaneousDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.price = _data["price"];
+            this.quantity = _data["quantity"];
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): MiscellaneousDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MiscellaneousDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["price"] = this.price;
+        data["quantity"] = this.quantity;
+        data["id"] = this.id;
+        return data; 
+    }
+
+    clone(): MiscellaneousDto {
+        const json = this.toJSON();
+        let result = new MiscellaneousDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IMiscellaneousDto {
+    name: string;
+    price: number;
+    quantity: number;
+    id: number;
+}
+
+export class CreateUpdateBookingDto implements ICreateUpdateBookingDto {
+    clientId: number;
+    checkedInDate: moment.Moment;
+    checkedOutDate: moment.Moment;
+    checkedIn: boolean;
+    checkedOut: boolean;
+    totalAmount: number;
+    paymentMode: PaymentModeEnum;
+    bookedDates: string[] | undefined;
+    facilities: FacilityDto[] | undefined;
+    miscellaneous: MiscellaneousDto[] | undefined;
+
+    constructor(data?: ICreateUpdateBookingDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.clientId = _data["clientId"];
+            this.checkedInDate = _data["checkedInDate"] ? moment(_data["checkedInDate"].toString()) : <any>undefined;
+            this.checkedOutDate = _data["checkedOutDate"] ? moment(_data["checkedOutDate"].toString()) : <any>undefined;
+            this.checkedIn = _data["checkedIn"];
+            this.checkedOut = _data["checkedOut"];
+            this.totalAmount = _data["totalAmount"];
+            this.paymentMode = _data["paymentMode"];
+            if (Array.isArray(_data["bookedDates"])) {
+                this.bookedDates = [] as any;
+                for (let item of _data["bookedDates"])
+                    this.bookedDates.push(item);
+            }
+            if (Array.isArray(_data["facilities"])) {
+                this.facilities = [] as any;
+                for (let item of _data["facilities"])
+                    this.facilities.push(FacilityDto.fromJS(item));
+            }
+            if (Array.isArray(_data["miscellaneous"])) {
+                this.miscellaneous = [] as any;
+                for (let item of _data["miscellaneous"])
+                    this.miscellaneous.push(MiscellaneousDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateUpdateBookingDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateUpdateBookingDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["clientId"] = this.clientId;
+        data["checkedInDate"] = this.checkedInDate ? this.checkedInDate.toISOString() : <any>undefined;
+        data["checkedOutDate"] = this.checkedOutDate ? this.checkedOutDate.toISOString() : <any>undefined;
+        data["checkedIn"] = this.checkedIn;
+        data["checkedOut"] = this.checkedOut;
+        data["totalAmount"] = this.totalAmount;
+        data["paymentMode"] = this.paymentMode;
+        if (Array.isArray(this.bookedDates)) {
+            data["bookedDates"] = [];
+            for (let item of this.bookedDates)
+                data["bookedDates"].push(item);
+        }
+        if (Array.isArray(this.facilities)) {
+            data["facilities"] = [];
+            for (let item of this.facilities)
+                data["facilities"].push(item.toJSON());
+        }
+        if (Array.isArray(this.miscellaneous)) {
+            data["miscellaneous"] = [];
+            for (let item of this.miscellaneous)
+                data["miscellaneous"].push(item.toJSON());
+        }
+        return data; 
+    }
+
+    clone(): CreateUpdateBookingDto {
+        const json = this.toJSON();
+        let result = new CreateUpdateBookingDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ICreateUpdateBookingDto {
+    clientId: number;
+    checkedInDate: moment.Moment;
+    checkedOutDate: moment.Moment;
+    checkedIn: boolean;
+    checkedOut: boolean;
+    totalAmount: number;
+    paymentMode: PaymentModeEnum;
+    bookedDates: string[] | undefined;
+    facilities: FacilityDto[] | undefined;
+    miscellaneous: MiscellaneousDto[] | undefined;
+}
+
+export class BookingDto implements IBookingDto {
+    clientId: number;
+    checkedInDate: moment.Moment;
+    checkedOutDate: moment.Moment;
+    checkedIn: boolean;
+    checkedOut: boolean;
+    totalAmount: number;
+    paymentMode: PaymentModeEnum;
+    client: string | undefined;
+    bookedDates: string[] | undefined;
+    facilities: FacilityDto[] | undefined;
+    miscellaneous: MiscellaneousDto[] | undefined;
+    isDeleted: boolean;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment;
+    creatorUserId: number | undefined;
+    id: number;
+
+    constructor(data?: IBookingDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.clientId = _data["clientId"];
+            this.checkedInDate = _data["checkedInDate"] ? moment(_data["checkedInDate"].toString()) : <any>undefined;
+            this.checkedOutDate = _data["checkedOutDate"] ? moment(_data["checkedOutDate"].toString()) : <any>undefined;
+            this.checkedIn = _data["checkedIn"];
+            this.checkedOut = _data["checkedOut"];
+            this.totalAmount = _data["totalAmount"];
+            this.paymentMode = _data["paymentMode"];
+            this.client = _data["client"];
+            if (Array.isArray(_data["bookedDates"])) {
+                this.bookedDates = [] as any;
+                for (let item of _data["bookedDates"])
+                    this.bookedDates.push(item);
+            }
+            if (Array.isArray(_data["facilities"])) {
+                this.facilities = [] as any;
+                for (let item of _data["facilities"])
+                    this.facilities.push(FacilityDto.fromJS(item));
+            }
+            if (Array.isArray(_data["miscellaneous"])) {
+                this.miscellaneous = [] as any;
+                for (let item of _data["miscellaneous"])
+                    this.miscellaneous.push(MiscellaneousDto.fromJS(item));
+            }
+            this.isDeleted = _data["isDeleted"];
+            this.deleterUserId = _data["deleterUserId"];
+            this.deletionTime = _data["deletionTime"] ? moment(_data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = _data["lastModificationTime"] ? moment(_data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = _data["lastModifierUserId"];
+            this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = _data["creatorUserId"];
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): BookingDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new BookingDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["clientId"] = this.clientId;
+        data["checkedInDate"] = this.checkedInDate ? this.checkedInDate.toISOString() : <any>undefined;
+        data["checkedOutDate"] = this.checkedOutDate ? this.checkedOutDate.toISOString() : <any>undefined;
+        data["checkedIn"] = this.checkedIn;
+        data["checkedOut"] = this.checkedOut;
+        data["totalAmount"] = this.totalAmount;
+        data["paymentMode"] = this.paymentMode;
+        data["client"] = this.client;
+        if (Array.isArray(this.bookedDates)) {
+            data["bookedDates"] = [];
+            for (let item of this.bookedDates)
+                data["bookedDates"].push(item);
+        }
+        if (Array.isArray(this.facilities)) {
+            data["facilities"] = [];
+            for (let item of this.facilities)
+                data["facilities"].push(item.toJSON());
+        }
+        if (Array.isArray(this.miscellaneous)) {
+            data["miscellaneous"] = [];
+            for (let item of this.miscellaneous)
+                data["miscellaneous"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+
+    clone(): BookingDto {
+        const json = this.toJSON();
+        let result = new BookingDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IBookingDto {
+    clientId: number;
+    checkedInDate: moment.Moment;
+    checkedOutDate: moment.Moment;
+    checkedIn: boolean;
+    checkedOut: boolean;
+    totalAmount: number;
+    paymentMode: PaymentModeEnum;
+    client: string | undefined;
+    bookedDates: string[] | undefined;
+    facilities: FacilityDto[] | undefined;
+    miscellaneous: MiscellaneousDto[] | undefined;
+    isDeleted: boolean;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment;
+    creatorUserId: number | undefined;
+    id: number;
+}
+
 export class Address implements IAddress {
     line1: string | undefined;
     line2: string | undefined;
@@ -3645,111 +4053,6 @@ export interface IClientDtoListResultDto {
     items: ClientDto[] | undefined;
 }
 
-export enum FacTypeEnum {
-    Conference = <any>"Conference",
-    Guesthouse = <any>"Guesthouse",
-    Classroom = <any>"Classroom",
-}
-
-export class FacilityDto implements IFacilityDto {
-    name: string;
-    price: number;
-    capacity: number;
-    facType: FacTypeEnum;
-    bookedDates: string[] | undefined;
-    isDeleted: boolean;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment;
-    creatorUserId: number | undefined;
-    id: number;
-
-    constructor(data?: IFacilityDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.name = _data["name"];
-            this.price = _data["price"];
-            this.capacity = _data["capacity"];
-            this.facType = _data["facType"];
-            if (Array.isArray(_data["bookedDates"])) {
-                this.bookedDates = [] as any;
-                for (let item of _data["bookedDates"])
-                    this.bookedDates.push(item);
-            }
-            this.isDeleted = _data["isDeleted"];
-            this.deleterUserId = _data["deleterUserId"];
-            this.deletionTime = _data["deletionTime"] ? moment(_data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = _data["lastModificationTime"] ? moment(_data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = _data["lastModifierUserId"];
-            this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = _data["creatorUserId"];
-            this.id = _data["id"];
-        }
-    }
-
-    static fromJS(data: any): FacilityDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new FacilityDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["price"] = this.price;
-        data["capacity"] = this.capacity;
-        data["facType"] = this.facType;
-        if (Array.isArray(this.bookedDates)) {
-            data["bookedDates"] = [];
-            for (let item of this.bookedDates)
-                data["bookedDates"].push(item);
-        }
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-
-    clone(): FacilityDto {
-        const json = this.toJSON();
-        let result = new FacilityDto();
-        result.init(json);
-        return result;
-    }
-}
-
-export interface IFacilityDto {
-    name: string;
-    price: number;
-    capacity: number;
-    facType: FacTypeEnum;
-    bookedDates: string[] | undefined;
-    isDeleted: boolean;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment;
-    creatorUserId: number | undefined;
-    id: number;
-}
-
 export class FacilityDtoListResultDto implements IFacilityDtoListResultDto {
     items: FacilityDto[] | undefined;
 
@@ -3801,61 +4104,6 @@ export interface IFacilityDtoListResultDto {
     items: FacilityDto[] | undefined;
 }
 
-export class MiscellaneousDto implements IMiscellaneousDto {
-    name: string;
-    price: number;
-    quantity: number;
-    id: number;
-
-    constructor(data?: IMiscellaneousDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.name = _data["name"];
-            this.price = _data["price"];
-            this.quantity = _data["quantity"];
-            this.id = _data["id"];
-        }
-    }
-
-    static fromJS(data: any): MiscellaneousDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new MiscellaneousDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["price"] = this.price;
-        data["quantity"] = this.quantity;
-        data["id"] = this.id;
-        return data; 
-    }
-
-    clone(): MiscellaneousDto {
-        const json = this.toJSON();
-        let result = new MiscellaneousDto();
-        result.init(json);
-        return result;
-    }
-}
-
-export interface IMiscellaneousDto {
-    name: string;
-    price: number;
-    quantity: number;
-    id: number;
-}
-
 export class MiscellaneousDtoListResultDto implements IMiscellaneousDtoListResultDto {
     items: MiscellaneousDto[] | undefined;
 
@@ -3905,151 +4153,6 @@ export class MiscellaneousDtoListResultDto implements IMiscellaneousDtoListResul
 
 export interface IMiscellaneousDtoListResultDto {
     items: MiscellaneousDto[] | undefined;
-}
-
-export enum PaymentModeEnum {
-    Mobilemoney = <any>"Mobilemoney",
-    Cash = <any>"Cash",
-    Cheque = <any>"Cheque",
-}
-
-export class BookingDto implements IBookingDto {
-    clientId: number;
-    checkedInDate: moment.Moment;
-    checkedOutDate: moment.Moment;
-    checkedIn: boolean;
-    checkedOut: boolean;
-    totalAmount: number;
-    paymentMode: PaymentModeEnum;
-    client: string | undefined;
-    bookedDates: string[] | undefined;
-    facilities: FacilityDto[] | undefined;
-    miscellaneous: MiscellaneousDto[] | undefined;
-    isDeleted: boolean;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment;
-    creatorUserId: number | undefined;
-    id: number;
-
-    constructor(data?: IBookingDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.clientId = _data["clientId"];
-            this.checkedInDate = _data["checkedInDate"] ? moment(_data["checkedInDate"].toString()) : <any>undefined;
-            this.checkedOutDate = _data["checkedOutDate"] ? moment(_data["checkedOutDate"].toString()) : <any>undefined;
-            this.checkedIn = _data["checkedIn"];
-            this.checkedOut = _data["checkedOut"];
-            this.totalAmount = _data["totalAmount"];
-            this.paymentMode = _data["paymentMode"];
-            this.client = _data["client"];
-            if (Array.isArray(_data["bookedDates"])) {
-                this.bookedDates = [] as any;
-                for (let item of _data["bookedDates"])
-                    this.bookedDates.push(item);
-            }
-            if (Array.isArray(_data["facilities"])) {
-                this.facilities = [] as any;
-                for (let item of _data["facilities"])
-                    this.facilities.push(FacilityDto.fromJS(item));
-            }
-            if (Array.isArray(_data["miscellaneous"])) {
-                this.miscellaneous = [] as any;
-                for (let item of _data["miscellaneous"])
-                    this.miscellaneous.push(MiscellaneousDto.fromJS(item));
-            }
-            this.isDeleted = _data["isDeleted"];
-            this.deleterUserId = _data["deleterUserId"];
-            this.deletionTime = _data["deletionTime"] ? moment(_data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = _data["lastModificationTime"] ? moment(_data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = _data["lastModifierUserId"];
-            this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = _data["creatorUserId"];
-            this.id = _data["id"];
-        }
-    }
-
-    static fromJS(data: any): BookingDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new BookingDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["clientId"] = this.clientId;
-        data["checkedInDate"] = this.checkedInDate ? this.checkedInDate.toISOString() : <any>undefined;
-        data["checkedOutDate"] = this.checkedOutDate ? this.checkedOutDate.toISOString() : <any>undefined;
-        data["checkedIn"] = this.checkedIn;
-        data["checkedOut"] = this.checkedOut;
-        data["totalAmount"] = this.totalAmount;
-        data["paymentMode"] = this.paymentMode;
-        data["client"] = this.client;
-        if (Array.isArray(this.bookedDates)) {
-            data["bookedDates"] = [];
-            for (let item of this.bookedDates)
-                data["bookedDates"].push(item);
-        }
-        if (Array.isArray(this.facilities)) {
-            data["facilities"] = [];
-            for (let item of this.facilities)
-                data["facilities"].push(item.toJSON());
-        }
-        if (Array.isArray(this.miscellaneous)) {
-            data["miscellaneous"] = [];
-            for (let item of this.miscellaneous)
-                data["miscellaneous"].push(item.toJSON());
-        }
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-
-    clone(): BookingDto {
-        const json = this.toJSON();
-        let result = new BookingDto();
-        result.init(json);
-        return result;
-    }
-}
-
-export interface IBookingDto {
-    clientId: number;
-    checkedInDate: moment.Moment;
-    checkedOutDate: moment.Moment;
-    checkedIn: boolean;
-    checkedOut: boolean;
-    totalAmount: number;
-    paymentMode: PaymentModeEnum;
-    client: string | undefined;
-    bookedDates: string[] | undefined;
-    facilities: FacilityDto[] | undefined;
-    miscellaneous: MiscellaneousDto[] | undefined;
-    isDeleted: boolean;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment;
-    creatorUserId: number | undefined;
-    id: number;
 }
 
 export class BookingDtoPagedResultDto implements IBookingDtoPagedResultDto {
@@ -4105,109 +4208,6 @@ export class BookingDtoPagedResultDto implements IBookingDtoPagedResultDto {
 export interface IBookingDtoPagedResultDto {
     totalCount: number;
     items: BookingDto[] | undefined;
-}
-
-export class CreateUpdateBookingDto implements ICreateUpdateBookingDto {
-    clientId: number;
-    checkedInDate: moment.Moment;
-    checkedOutDate: moment.Moment;
-    checkedIn: boolean;
-    checkedOut: boolean;
-    totalAmount: number;
-    paymentMode: PaymentModeEnum;
-    bookedDates: string[] | undefined;
-    facilities: FacilityDto[] | undefined;
-    miscellaneous: MiscellaneousDto[] | undefined;
-
-    constructor(data?: ICreateUpdateBookingDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.clientId = _data["clientId"];
-            this.checkedInDate = _data["checkedInDate"] ? moment(_data["checkedInDate"].toString()) : <any>undefined;
-            this.checkedOutDate = _data["checkedOutDate"] ? moment(_data["checkedOutDate"].toString()) : <any>undefined;
-            this.checkedIn = _data["checkedIn"];
-            this.checkedOut = _data["checkedOut"];
-            this.totalAmount = _data["totalAmount"];
-            this.paymentMode = _data["paymentMode"];
-            if (Array.isArray(_data["bookedDates"])) {
-                this.bookedDates = [] as any;
-                for (let item of _data["bookedDates"])
-                    this.bookedDates.push(item);
-            }
-            if (Array.isArray(_data["facilities"])) {
-                this.facilities = [] as any;
-                for (let item of _data["facilities"])
-                    this.facilities.push(FacilityDto.fromJS(item));
-            }
-            if (Array.isArray(_data["miscellaneous"])) {
-                this.miscellaneous = [] as any;
-                for (let item of _data["miscellaneous"])
-                    this.miscellaneous.push(MiscellaneousDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): CreateUpdateBookingDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateUpdateBookingDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["clientId"] = this.clientId;
-        data["checkedInDate"] = this.checkedInDate ? this.checkedInDate.toISOString() : <any>undefined;
-        data["checkedOutDate"] = this.checkedOutDate ? this.checkedOutDate.toISOString() : <any>undefined;
-        data["checkedIn"] = this.checkedIn;
-        data["checkedOut"] = this.checkedOut;
-        data["totalAmount"] = this.totalAmount;
-        data["paymentMode"] = this.paymentMode;
-        if (Array.isArray(this.bookedDates)) {
-            data["bookedDates"] = [];
-            for (let item of this.bookedDates)
-                data["bookedDates"].push(item);
-        }
-        if (Array.isArray(this.facilities)) {
-            data["facilities"] = [];
-            for (let item of this.facilities)
-                data["facilities"].push(item.toJSON());
-        }
-        if (Array.isArray(this.miscellaneous)) {
-            data["miscellaneous"] = [];
-            for (let item of this.miscellaneous)
-                data["miscellaneous"].push(item.toJSON());
-        }
-        return data; 
-    }
-
-    clone(): CreateUpdateBookingDto {
-        const json = this.toJSON();
-        let result = new CreateUpdateBookingDto();
-        result.init(json);
-        return result;
-    }
-}
-
-export interface ICreateUpdateBookingDto {
-    clientId: number;
-    checkedInDate: moment.Moment;
-    checkedOutDate: moment.Moment;
-    checkedIn: boolean;
-    checkedOut: boolean;
-    totalAmount: number;
-    paymentMode: PaymentModeEnum;
-    bookedDates: string[] | undefined;
-    facilities: FacilityDto[] | undefined;
-    miscellaneous: MiscellaneousDto[] | undefined;
 }
 
 export class ClientDtoPagedResultDto implements IClientDtoPagedResultDto {

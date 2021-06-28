@@ -30,7 +30,7 @@ namespace RentalSystem.Entities
 
         public Booking(int clientId, DateTime checkedInDate,
             DateTime checkedOutDate, double totalAmount, bool checkedIn, bool checkedOut, PaymentModeEnum paymentMode,
-            Client client)
+            string bookedDates)
             :base()
         {
             ClientId = clientId;
@@ -40,7 +40,7 @@ namespace RentalSystem.Entities
             CheckedIn = checkedIn;
             CheckedOut = checkedOut;
             PaymentMode = paymentMode;
-            Client = client;
+            BookedDates = bookedDates;
 
             FacilityBookings = new Collection<FacilityBooking>();
             MiscellaneousBookings = new Collection<MiscellaneousBooking>();

@@ -264,23 +264,23 @@ export class BookComponent extends AppComponentBase
 
     const booking = new CreateUpdateBookingDto();
     booking.init(this.booking);
-    //booking.clientId = this.selectedClient.id;
+    booking.clientId = this.thisclient.id;
     booking.facilities = this.selectedFacilities;
     booking.bookedDates = this.selectedDates;
     booking.miscellaneous = this.selectedMiscels;
 
     console.log(booking)
 
-    // this._bookingService
-    //   .create(booking)
-    //   .pipe(
-    //     finalize(() => {
-    //       this.saving = false;
-    //     })
-    //   )
-    //   .subscribe(() => {
-    //     this.notify.info(this.l('SavedSuccessfully'));
-    //     this.onSave.emit();
-    //   });
+    this._bookingService
+      .create(booking)
+      .pipe(
+        finalize(() => {
+          this.saving = false;
+        })
+      )
+      .subscribe(() => {
+        this.notify.info(this.l('SavedSuccessfully'));
+        this.onSave.emit();
+      });
   }
 }

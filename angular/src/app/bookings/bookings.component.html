@@ -47,8 +47,8 @@
               <thead class="bg-light">
                 <tr>
                   <th>{{ "Client" | localize }}</th>
-                  <th>{{ "Start Date" | localize }}</th>
-                  <th>{{ "End Date" | localize }}</th>
+                  <th>{{ "Booked Dates" | localize }}</th>
+                  <th>{{ "Amount" | localize }}</th>
                   <th style="width: 200px;">{{ "Actions" | localize }}</th>
                 </tr>
               </thead>
@@ -64,9 +64,13 @@
                         }
                 ">
                   <td>{{ booking.client}}</td>
-                  <td>{{ booking.startDate }}</td>
-                  <td>{{ booking.endDate }}</td>
-                  <td class="p-col p-grid">
+                  <td>
+                    <span *ngFor="let date of booking.bookedDates; let i = index">
+                      {{ date | date : 'fullDate'}}{{ i+1 < booking.bookedDates.length? ". ":". "}}&nbsp;&nbsp; 
+                    </span>
+                  </td>
+                  <td>{{ booking.totalAmount }}</td>
+                  <td class="p-col-3">
                     <button type="button"
                       class="btn btn-sm bg-secondary"
                       (click)="editBooking(booking)">

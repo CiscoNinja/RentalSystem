@@ -152,6 +152,70 @@ export class BookingServiceProxy {
     }
 
     /**
+     * @param sorting (optional) 
+     * @param skipCount (optional) 
+     * @param maxResultCount (optional) 
+     * @return Success
+     */
+    getAll(sorting: string | null | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<BookingDtoPagedResultDto> {
+        let url_ = this.baseUrl + "/api/services/app/Booking/GetAll?";
+        if (sorting !== undefined && sorting !== null)
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&";
+        if (skipCount === null)
+            throw new Error("The parameter 'skipCount' cannot be null.");
+        else if (skipCount !== undefined)
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&";
+        if (maxResultCount === null)
+            throw new Error("The parameter 'maxResultCount' cannot be null.");
+        else if (maxResultCount !== undefined)
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAll(<any>response_);
+                } catch (e) {
+                    return <Observable<BookingDtoPagedResultDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<BookingDtoPagedResultDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAll(response: HttpResponseBase): Observable<BookingDtoPagedResultDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = BookingDtoPagedResultDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<BookingDtoPagedResultDto>(<any>null);
+    }
+
+    /**
      * @param body (optional) 
      * @return Success
      */
@@ -414,70 +478,6 @@ export class BookingServiceProxy {
             }));
         }
         return _observableOf<BookingDto>(<any>null);
-    }
-
-    /**
-     * @param sorting (optional) 
-     * @param skipCount (optional) 
-     * @param maxResultCount (optional) 
-     * @return Success
-     */
-    getAll(sorting: string | null | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<BookingDtoPagedResultDto> {
-        let url_ = this.baseUrl + "/api/services/app/Booking/GetAll?";
-        if (sorting !== undefined && sorting !== null)
-            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&";
-        if (skipCount === null)
-            throw new Error("The parameter 'skipCount' cannot be null.");
-        else if (skipCount !== undefined)
-            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&";
-        if (maxResultCount === null)
-            throw new Error("The parameter 'maxResultCount' cannot be null.");
-        else if (maxResultCount !== undefined)
-            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "text/plain"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetAll(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetAll(<any>response_);
-                } catch (e) {
-                    return <Observable<BookingDtoPagedResultDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<BookingDtoPagedResultDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetAll(response: HttpResponseBase): Observable<BookingDtoPagedResultDto> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = BookingDtoPagedResultDto.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<BookingDtoPagedResultDto>(<any>null);
     }
 
     /**
@@ -3586,109 +3586,6 @@ export interface IMiscellaneousDto {
     id: number;
 }
 
-export class CreateUpdateBookingDto implements ICreateUpdateBookingDto {
-    clientId: number;
-    checkedInDate: moment.Moment;
-    checkedOutDate: moment.Moment;
-    checkedIn: boolean;
-    checkedOut: boolean;
-    totalAmount: number;
-    paymentMode: PaymentModeEnum;
-    bookedDates: string[] | undefined;
-    facilities: FacilityDto[] | undefined;
-    miscellaneous: MiscellaneousDto[] | undefined;
-
-    constructor(data?: ICreateUpdateBookingDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.clientId = _data["clientId"];
-            this.checkedInDate = _data["checkedInDate"] ? moment(_data["checkedInDate"].toString()) : <any>undefined;
-            this.checkedOutDate = _data["checkedOutDate"] ? moment(_data["checkedOutDate"].toString()) : <any>undefined;
-            this.checkedIn = _data["checkedIn"];
-            this.checkedOut = _data["checkedOut"];
-            this.totalAmount = _data["totalAmount"];
-            this.paymentMode = _data["paymentMode"];
-            if (Array.isArray(_data["bookedDates"])) {
-                this.bookedDates = [] as any;
-                for (let item of _data["bookedDates"])
-                    this.bookedDates.push(item);
-            }
-            if (Array.isArray(_data["facilities"])) {
-                this.facilities = [] as any;
-                for (let item of _data["facilities"])
-                    this.facilities.push(FacilityDto.fromJS(item));
-            }
-            if (Array.isArray(_data["miscellaneous"])) {
-                this.miscellaneous = [] as any;
-                for (let item of _data["miscellaneous"])
-                    this.miscellaneous.push(MiscellaneousDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): CreateUpdateBookingDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateUpdateBookingDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["clientId"] = this.clientId;
-        data["checkedInDate"] = this.checkedInDate ? this.checkedInDate.toISOString() : <any>undefined;
-        data["checkedOutDate"] = this.checkedOutDate ? this.checkedOutDate.toISOString() : <any>undefined;
-        data["checkedIn"] = this.checkedIn;
-        data["checkedOut"] = this.checkedOut;
-        data["totalAmount"] = this.totalAmount;
-        data["paymentMode"] = this.paymentMode;
-        if (Array.isArray(this.bookedDates)) {
-            data["bookedDates"] = [];
-            for (let item of this.bookedDates)
-                data["bookedDates"].push(item);
-        }
-        if (Array.isArray(this.facilities)) {
-            data["facilities"] = [];
-            for (let item of this.facilities)
-                data["facilities"].push(item.toJSON());
-        }
-        if (Array.isArray(this.miscellaneous)) {
-            data["miscellaneous"] = [];
-            for (let item of this.miscellaneous)
-                data["miscellaneous"].push(item.toJSON());
-        }
-        return data; 
-    }
-
-    clone(): CreateUpdateBookingDto {
-        const json = this.toJSON();
-        let result = new CreateUpdateBookingDto();
-        result.init(json);
-        return result;
-    }
-}
-
-export interface ICreateUpdateBookingDto {
-    clientId: number;
-    checkedInDate: moment.Moment;
-    checkedOutDate: moment.Moment;
-    checkedIn: boolean;
-    checkedOut: boolean;
-    totalAmount: number;
-    paymentMode: PaymentModeEnum;
-    bookedDates: string[] | undefined;
-    facilities: FacilityDto[] | undefined;
-    miscellaneous: MiscellaneousDto[] | undefined;
-}
-
 export class BookingDto implements IBookingDto {
     clientId: number;
     checkedInDate: moment.Moment;
@@ -3826,6 +3723,164 @@ export interface IBookingDto {
     creationTime: moment.Moment;
     creatorUserId: number | undefined;
     id: number;
+}
+
+export class BookingDtoPagedResultDto implements IBookingDtoPagedResultDto {
+    totalCount: number;
+    items: BookingDto[] | undefined;
+
+    constructor(data?: IBookingDtoPagedResultDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.totalCount = _data["totalCount"];
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items.push(BookingDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): BookingDtoPagedResultDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new BookingDtoPagedResultDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalCount"] = this.totalCount;
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+
+    clone(): BookingDtoPagedResultDto {
+        const json = this.toJSON();
+        let result = new BookingDtoPagedResultDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IBookingDtoPagedResultDto {
+    totalCount: number;
+    items: BookingDto[] | undefined;
+}
+
+export class CreateUpdateBookingDto implements ICreateUpdateBookingDto {
+    clientId: number;
+    checkedInDate: moment.Moment;
+    checkedOutDate: moment.Moment;
+    checkedIn: boolean;
+    checkedOut: boolean;
+    totalAmount: number;
+    paymentMode: PaymentModeEnum;
+    bookedDates: string[] | undefined;
+    facilities: FacilityDto[] | undefined;
+    miscellaneous: MiscellaneousDto[] | undefined;
+
+    constructor(data?: ICreateUpdateBookingDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.clientId = _data["clientId"];
+            this.checkedInDate = _data["checkedInDate"] ? moment(_data["checkedInDate"].toString()) : <any>undefined;
+            this.checkedOutDate = _data["checkedOutDate"] ? moment(_data["checkedOutDate"].toString()) : <any>undefined;
+            this.checkedIn = _data["checkedIn"];
+            this.checkedOut = _data["checkedOut"];
+            this.totalAmount = _data["totalAmount"];
+            this.paymentMode = _data["paymentMode"];
+            if (Array.isArray(_data["bookedDates"])) {
+                this.bookedDates = [] as any;
+                for (let item of _data["bookedDates"])
+                    this.bookedDates.push(item);
+            }
+            if (Array.isArray(_data["facilities"])) {
+                this.facilities = [] as any;
+                for (let item of _data["facilities"])
+                    this.facilities.push(FacilityDto.fromJS(item));
+            }
+            if (Array.isArray(_data["miscellaneous"])) {
+                this.miscellaneous = [] as any;
+                for (let item of _data["miscellaneous"])
+                    this.miscellaneous.push(MiscellaneousDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateUpdateBookingDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateUpdateBookingDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["clientId"] = this.clientId;
+        data["checkedInDate"] = this.checkedInDate ? this.checkedInDate.toISOString() : <any>undefined;
+        data["checkedOutDate"] = this.checkedOutDate ? this.checkedOutDate.toISOString() : <any>undefined;
+        data["checkedIn"] = this.checkedIn;
+        data["checkedOut"] = this.checkedOut;
+        data["totalAmount"] = this.totalAmount;
+        data["paymentMode"] = this.paymentMode;
+        if (Array.isArray(this.bookedDates)) {
+            data["bookedDates"] = [];
+            for (let item of this.bookedDates)
+                data["bookedDates"].push(item);
+        }
+        if (Array.isArray(this.facilities)) {
+            data["facilities"] = [];
+            for (let item of this.facilities)
+                data["facilities"].push(item.toJSON());
+        }
+        if (Array.isArray(this.miscellaneous)) {
+            data["miscellaneous"] = [];
+            for (let item of this.miscellaneous)
+                data["miscellaneous"].push(item.toJSON());
+        }
+        return data; 
+    }
+
+    clone(): CreateUpdateBookingDto {
+        const json = this.toJSON();
+        let result = new CreateUpdateBookingDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ICreateUpdateBookingDto {
+    clientId: number;
+    checkedInDate: moment.Moment;
+    checkedOutDate: moment.Moment;
+    checkedIn: boolean;
+    checkedOut: boolean;
+    totalAmount: number;
+    paymentMode: PaymentModeEnum;
+    bookedDates: string[] | undefined;
+    facilities: FacilityDto[] | undefined;
+    miscellaneous: MiscellaneousDto[] | undefined;
 }
 
 export class Address implements IAddress {
@@ -4153,61 +4208,6 @@ export class MiscellaneousDtoListResultDto implements IMiscellaneousDtoListResul
 
 export interface IMiscellaneousDtoListResultDto {
     items: MiscellaneousDto[] | undefined;
-}
-
-export class BookingDtoPagedResultDto implements IBookingDtoPagedResultDto {
-    totalCount: number;
-    items: BookingDto[] | undefined;
-
-    constructor(data?: IBookingDtoPagedResultDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.totalCount = _data["totalCount"];
-            if (Array.isArray(_data["items"])) {
-                this.items = [] as any;
-                for (let item of _data["items"])
-                    this.items.push(BookingDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): BookingDtoPagedResultDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new BookingDtoPagedResultDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["totalCount"] = this.totalCount;
-        if (Array.isArray(this.items)) {
-            data["items"] = [];
-            for (let item of this.items)
-                data["items"].push(item.toJSON());
-        }
-        return data; 
-    }
-
-    clone(): BookingDtoPagedResultDto {
-        const json = this.toJSON();
-        let result = new BookingDtoPagedResultDto();
-        result.init(json);
-        return result;
-    }
-}
-
-export interface IBookingDtoPagedResultDto {
-    totalCount: number;
-    items: BookingDto[] | undefined;
 }
 
 export class ClientDtoPagedResultDto implements IClientDtoPagedResultDto {

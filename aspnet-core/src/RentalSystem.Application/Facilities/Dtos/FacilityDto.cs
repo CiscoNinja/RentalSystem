@@ -19,6 +19,7 @@ namespace RentalSystem.Facilities.Dtos
         public int Capacity { get; set; }
         [Required]
         public FacTypeEnum FacType { get; set; }
+        public int NumberOfDaysBooked { get; set; }
         public List<string> BookedDates { get; set; }
     }
 }

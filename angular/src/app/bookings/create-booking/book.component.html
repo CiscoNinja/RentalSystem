@@ -84,7 +84,8 @@
                   <i class="pi pi-calendar"></i>
                 </span>
                 <span class="p-float-label">
-                  <p-calendar [(ngModel)]="selectedDates" selectionMode="multiple" [readonlyInput]="true" inputId="selectedDates" name="selectedDates"
+                  <p-calendar [(ngModel)]="selectedDates" selectionMode="multiple" [readonlyInput]="true" 
+                  inputId="selectedDates" name="selectedDates" dateFormat="d MM yy" 
                   (ngModelChange)="getDateListLength2(); getTotalFacilities(selectedFacilities)"></p-calendar>
                   <!-- <p-calendar [(ngModel)]="booking.endDate" name="endDate" [monthNavigator]="true"
                     [yearNavigator]="true" yearRange="2020:2050" id="endDate" inputId="startDate"

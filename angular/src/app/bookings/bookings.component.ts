@@ -51,6 +51,7 @@ export class BookingsComponent extends PagedListingComponentBase<BookingDto> {
       .subscribe((result: BookingDtoPagedResultDto) => {
         this.bookings = result.items;
         this.showPaging(result, pageNumber);
+        console.log(this.bookings)
       });
   }
 

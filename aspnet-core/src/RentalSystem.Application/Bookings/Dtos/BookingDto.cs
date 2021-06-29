@@ -20,7 +20,7 @@ namespace RentalSystem.Bookings.Dtos
         public bool CheckedOut { get; set; }
         public double TotalAmount { get; set; }
         public PaymentModeEnum PaymentMode { get; set; }
-        public virtual string Client { get; set; }
+        public string Client { get; set; }
         public List<string> BookedDates { get; set; }
         public List<FacilityDto> Facilities { get; set; }
         public List<MiscellaneousDto> Miscellaneous { get; set; }

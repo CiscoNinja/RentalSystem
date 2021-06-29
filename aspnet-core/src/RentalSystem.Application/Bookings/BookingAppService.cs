@@ -2,6 +2,7 @@
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 using RentalSystem.Authorization;
 using RentalSystem.Bookings.Dtos;
 using RentalSystem.Clients.Dtos;
@@ -26,6 +27,7 @@ namespace RentalSystem.Bookings
         BookingDto>, IBookingAppService
     {
         private readonly IRepository<Client, long> _clientRepository;
+        private readonly IRepository<Booking> _bookingRepository;
         private readonly IRepository<Facility> _facilityRepository;
         private readonly IRepository<Miscellaneous> _miscellaneousRepository;
         private readonly IRepository<MiscellaneousBooking> _miscellaneousBookingRepository;
@@ -33,6 +35,7 @@ namespace RentalSystem.Bookings
 
 
         public BookingAppService(IRepository<Booking, int> repository,
+            IRepository<Booking> bookingRepository,
             IRepository<Client, long> clientRepository,
             IRepository<Facility> facilityRepository,
             IRepository<Miscellaneous> miscellaneousRepository,
@@ -41,11 +44,21 @@ namespace RentalSystem.Bookings
             )
             : base(repository)
         {
+            _bookingRepository = bookingRepository;
             _clientRepository = clientRepository;
             _facilityRepository = facilityRepository;
             _miscellaneousRepository = miscellaneousRepository;
             _miscellaneousBookingRepository = miscellaneousBookingRepository;
             _facilityBookingRepository = facilityBookingRepository;
+        }
+
+        public override async Task<PagedResultDto<BookingDto>> GetAllAsync(PagedAndSortedResultRequestDto input)
+        {
+            var bookings = await _bookingRepository.GetAllIncluding(x => x.Client).ToListAsync();
+
+            var res = ObjectMapper.Map<List<BookingDto>>(bookings);
+
+            return new PagedResultDto<BookingDto>(input.MaxResultCount, res);
         }
 
         public override async Task<BookingDto> CreateAsync(CreateUpdateBookingDto input)

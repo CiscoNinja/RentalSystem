@@ -27,6 +27,7 @@ namespace RentalSystem.Entities
         [Phone]
         public string Phone { get; set; }
         public string Nationality { get; set; }
+        public string FullName { get; set; }
 
         protected Client()
         {

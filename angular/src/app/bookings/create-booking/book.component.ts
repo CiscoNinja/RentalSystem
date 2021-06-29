@@ -33,7 +33,7 @@ import { Table } from 'primeng/table';
 export class BookComponent extends AppComponentBase
   implements OnInit {
   saving = false;
-  booking = new BookingDto();
+  booking: BookingDto = new BookingDto();
   checkedFacilitiesMap: { [key: string]: boolean } = {};
   checkedMiscellaneoussMap: { [key: string]: boolean } = {};
   defaultFacilityCheckedStatus = false;

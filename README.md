@@ -1,4 +1,4 @@
-# Important
+<!-- # Important
 
 Issues of this repository are tracked on https://github.com/aspnetboilerplate/aspnetboilerplate. Please create your issues on https://github.com/aspnetboilerplate/aspnetboilerplate/issues.
 
@@ -34,4 +34,4 @@ Create & download your project from https://aspnetboilerplate.com/Templates
 
 # License
 
-[MIT](LICENSE).
+[MIT](LICENSE). -->

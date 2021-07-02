@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RentalSystem.EntityFrameworkCore;
 
 namespace RentalSystem.Migrations
 {
     [DbContext(typeof(RentalSystemDbContext))]
-    partial class RentalSystemDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210629141936_IMayHaveTenant2")]
+    partial class IMayHaveTenant2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1549,7 +1551,10 @@ namespace RentalSystem.Migrations
                     b.Property<DateTime>("CheckedOutDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("ClientId")
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<long?>("ClientId1")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreationTime")
@@ -1584,7 +1589,7 @@ namespace RentalSystem.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId");
+                    b.HasIndex("ClientId1");
 
                     b.ToTable("Bookings");
                 });
@@ -1655,24 +1660,6 @@ namespace RentalSystem.Migrations
                         .IsUnique();
 
                     b.ToTable("Clients");
-                });
-
-            modelBuilder.Entity("RentalSystem.Entities.ClientBooking", b =>
-                {
-                    b.Property<long>("ClientId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("BookingId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.HasKey("ClientId", "BookingId");
-
-                    b.HasIndex("BookingId");
-
-                    b.ToTable("ClientBookings");
                 });
 
             modelBuilder.Entity("RentalSystem.Entities.Facility", b =>
@@ -2079,9 +2066,7 @@ namespace RentalSystem.Migrations
                 {
                     b.HasOne("RentalSystem.Entities.Client", "Client")
                         .WithMany()
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ClientId1");
 
                     b.Navigation("Client");
                 });
@@ -2125,25 +2110,6 @@ namespace RentalSystem.Migrations
                         });
 
                     b.Navigation("Address");
-                });
-
-            modelBuilder.Entity("RentalSystem.Entities.ClientBooking", b =>
-                {
-                    b.HasOne("RentalSystem.Entities.Booking", "Booking")
-                        .WithMany()
-                        .HasForeignKey("BookingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("RentalSystem.Entities.Client", "Client")
-                        .WithMany("ClientBookings")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Booking");
-
-                    b.Navigation("Client");
                 });
 
             modelBuilder.Entity("RentalSystem.Entities.FacilityBooking", b =>
@@ -2287,11 +2253,6 @@ namespace RentalSystem.Migrations
                     b.Navigation("FacilityBookings");
 
                     b.Navigation("MiscellaneousBookings");
-                });
-
-            modelBuilder.Entity("RentalSystem.Entities.Client", b =>
-                {
-                    b.Navigation("ClientBookings");
                 });
 
             modelBuilder.Entity("RentalSystem.Entities.Facility", b =>

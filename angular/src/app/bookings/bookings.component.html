@@ -63,10 +63,10 @@
                           totalItems: totalItems
                         }
                 ">
-                  <td>{{ booking.client}}</td>
+                  <td style="white-space: nowrap;">{{ booking.clientName}}</td>
                   <td>
                     <span *ngFor="let date of booking.bookedDates; let i = index">
-                      {{ date | date : 'fullDate'}}{{ i+1 < booking.bookedDates.length? ". ":". "}}&nbsp;&nbsp; 
+                      <i class="pi pi-calendar">{{ date | date : 'fullDate'}}{{ i+1 < booking.bookedDates.length? ".":"."}}&nbsp;</i>
                     </span>
                   </td>
                   <td>{{ booking.totalAmount }}</td>

@@ -31,6 +31,17 @@ namespace RentalSystem.Facilities
 
         }
 
+        public override async Task<FacilityDto> CreateAsync(CreateUpdateFacilityDto input)
+        {
+            CheckCreatePermission();
+            var facility = ObjectMapper.Map<Facility>(input);
+            facility.TenantId = AbpSession.TenantId;
+            await Repository.InsertAsync(facility);
+
+            CurrentUnitOfWork.SaveChanges();
+            return MapToEntityDto(facility);
+        }
+
         public List<KeyValuePair<string, int>> GetFacilityEnumList()
         {
             List<KeyValuePair<string, int>> list = GetEnumList<FacTypeEnum>();

@@ -1,4 +1,5 @@
-﻿using Abp.Domain.Entities.Auditing;
+﻿using Abp.Domain.Entities;
+using Abp.Domain.Entities.Auditing;
 using RentalSystem.Shared;
 using System;
 using System.Collections.Generic;
@@ -9,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace RentalSystem.Entities
 {
-    public class Booking : FullAuditedAggregateRoot<int>
+    public class Booking : FullAuditedAggregateRoot<int>, IMayHaveTenant
     {
-        public int ClientId { get; set; }
+        public virtual long ClientId { get; set; }
         public DateTime CheckedInDate { get; set; }
         public DateTime CheckedOutDate { get; set; }
         public bool CheckedIn { get; set; }
@@ -22,18 +23,19 @@ namespace RentalSystem.Entities
         public virtual Client Client { get; set; }
         public virtual ICollection<FacilityBooking> FacilityBookings { get; set; }
         public virtual ICollection<MiscellaneousBooking> MiscellaneousBookings { get; set; }
+        public int? TenantId { get; set; }
 
         protected Booking()
         {
 
         }
 
-        public Booking(int clientId, DateTime checkedInDate,
+        public Booking(DateTime checkedInDate, long clientid,
             DateTime checkedOutDate, double totalAmount, bool checkedIn, bool checkedOut, PaymentModeEnum paymentMode,
-            string bookedDates)
-            :base()
+            string bookedDates, Client client)
+            : base()
         {
-            ClientId = clientId;
+            ClientId = clientid;
             CheckedInDate = checkedInDate;
             CheckedOutDate = checkedOutDate;
             TotalAmount = totalAmount;
@@ -41,6 +43,7 @@ namespace RentalSystem.Entities
             CheckedOut = checkedOut;
             PaymentMode = paymentMode;
             BookedDates = bookedDates;
+            Client = client;
 
             FacilityBookings = new Collection<FacilityBooking>();
             MiscellaneousBookings = new Collection<MiscellaneousBooking>();

@@ -2,6 +2,7 @@
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
+using Abp.Runtime.Session;
 using RentalSystem.Authorization;
 using RentalSystem.Clients.Dtos;
 using RentalSystem.Entities;
@@ -26,6 +27,17 @@ namespace RentalSystem.Clients
             : base(repository)
         {
 
+        }
+
+        public override async Task<ClientDto> CreateAsync(CreateUpdateClientDto input)
+        {
+            CheckCreatePermission();
+            var client = ObjectMapper.Map<Client>(input);
+            client.TenantId = AbpSession.TenantId;
+            await Repository.InsertAsync(client);
+
+            CurrentUnitOfWork.SaveChanges();
+            return MapToEntityDto(client);
         }
     }
 }

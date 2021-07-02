@@ -2,6 +2,7 @@
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
+using Abp.Runtime.Session;
 using Microsoft.EntityFrameworkCore;
 using RentalSystem.Authorization;
 using RentalSystem.Bookings.Dtos;
@@ -32,6 +33,7 @@ namespace RentalSystem.Bookings
         private readonly IRepository<Miscellaneous> _miscellaneousRepository;
         private readonly IRepository<MiscellaneousBooking> _miscellaneousBookingRepository;
         private readonly IRepository<FacilityBooking> _facilityBookingRepository;
+        private readonly IRepository<ClientBooking> _clientBookingRepository;
 
 
         public BookingAppService(IRepository<Booking, int> repository,
@@ -40,7 +42,8 @@ namespace RentalSystem.Bookings
             IRepository<Facility> facilityRepository,
             IRepository<Miscellaneous> miscellaneousRepository,
             IRepository<MiscellaneousBooking> miscellaneousBookingRepository,
-            IRepository<FacilityBooking> facilityBookingRepository
+            IRepository<FacilityBooking> facilityBookingRepository,
+            IRepository<ClientBooking> clientBookingRepository
             )
             : base(repository)
         {
@@ -50,21 +53,63 @@ namespace RentalSystem.Bookings
             _miscellaneousRepository = miscellaneousRepository;
             _miscellaneousBookingRepository = miscellaneousBookingRepository;
             _facilityBookingRepository = facilityBookingRepository;
+            _clientBookingRepository = clientBookingRepository;
         }
 
-        public override async Task<PagedResultDto<BookingDto>> GetAllAsync(PagedAndSortedResultRequestDto input)
+        //public override async Task<PagedResultDto<BookingDto>> GetAllAsync(PagedAndSortedResultRequestDto input)
+        //{
+        //    var bookings = await _bookingRepository.GetAllIncluding(x => x.FacilityBookings, x => x.MiscellaneousBookings, x => x.Client).ToListAsync();
+
+        //    var res = ObjectMapper.Map<List<BookingDto>>(bookings);
+
+        //    return new PagedResultDto<BookingDto>(input.MaxResultCount, res);
+        //}
+
+        public async Task<PagedResultDto<BookingListDto>> GetAllBookings(PagedAndSortedResultRequestDto input)
         {
-            var bookings = await _bookingRepository.GetAllIncluding(x => x.Client).ToListAsync();
+            var splitchar = new[] { ',' };
+            var bookings = await _bookingRepository.GetAllIncluding(x => x.FacilityBookings, x => x.MiscellaneousBookings, x => x.Client)
+                .Select(x => new BookingListDto()
+                {
+                    Client = new ClientListDto() { Fullname = x.Client.FullName, Address = x.Client.Address, Email = x.Client.Email, Phone = x.Client.Phone },
+                    ClientId = x.ClientId,
+                    ClientName = x.Client.FullName,
+                    PaymentMode = x.PaymentMode.ToString(),
+                    TotalAmount = x.TotalAmount,
+                    CheckedIn = x.CheckedIn,
+                    CheckedOut = x.CheckedOut,
+                    CheckedInDate = x.CheckedInDate,
+                    CheckedOutDate = x.CheckedOutDate,
+                    BookedDates = x.BookedDates.Split(splitchar).ToList(),
 
-            var res = ObjectMapper.Map<List<BookingDto>>(bookings);
+                    Facilities = x.FacilityBookings.Select(x => new FacilityListDto()
+                    {
+                        BookedDates = x.BookedDates.Split(splitchar).ToList(),
+                        Capacity = x.Facility.Capacity,
+                        FacType = x.Facility.FacType.ToString(),
+                        Name = x.Facility.Name,
+                        NumberOfDaysBooked = x.BookedDates.Split(splitchar).Length,
+                        Price = x.Facility.Price
+                    }).ToList(),
+                    Miscellaneous = x.MiscellaneousBookings
+                    .Select(x => new MiscellaneousListDto()
+                    {
+                        Name = x.Miscellaneous.Name,
+                        Price = x.Miscellaneous.Price,
+                        Quantity = x.QuantityBooked
+                    }).ToList()
+                }).ToListAsync();
 
-            return new PagedResultDto<BookingDto>(input.MaxResultCount, res);
+            //var res = ObjectMapper.Map<List<BookingDto>>(bookings);
+
+            return new PagedResultDto<BookingListDto>(input.MaxResultCount, bookings);
         }
 
         public override async Task<BookingDto> CreateAsync(CreateUpdateBookingDto input)
         {
             CheckCreatePermission();
             var booking = ObjectMapper.Map<Booking>(input);
+            booking.TenantId = AbpSession.GetTenantId();
             booking.BookedDates = String.Join(",", input.BookedDates.Cast<string>().ToArray());
             await Repository.InsertAsync(booking);
 
@@ -96,6 +141,13 @@ namespace RentalSystem.Bookings
                 }
 
             }
+
+            var clientBooking = new ClientBooking(booking.Id, booking.ClientId)
+            {
+                
+            };
+            await _clientBookingRepository.InsertAsync(clientBooking);
+
             CurrentUnitOfWork.SaveChanges();
 
             return MapToEntityDto(booking);
@@ -195,7 +247,20 @@ namespace RentalSystem.Bookings
         //    return await GetAsync(input);
         //}
 
-        public int MyProperty { get; set; }
+        //private void AddRgistrationToAcadyr(Registration registration, int acadYrID, int semesterID)
+        //{
+        //    var acayr = _academicYrRepository.GetSingle(acadYrID);
+        //    if (acayr == null)
+        //        throw new ApplicationException("Semester doesn't exist.");
+
+        //    var yearReg = new AcademicYrRegistration()
+        //    {
+        //        AcademicYrID = acayr.ID,
+        //        RegistrationID = registration.ID,
+        //        SemesterID = semesterID
+        //    };
+        //    _academicYrRegRepository.Add(yearReg);
+        //}
 
         public async Task<ListResultDto<ClientDto>> GetClients()
         {

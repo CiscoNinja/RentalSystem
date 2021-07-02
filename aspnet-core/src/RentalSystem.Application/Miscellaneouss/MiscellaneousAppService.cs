@@ -2,6 +2,7 @@
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
+using Abp.Runtime.Session;
 using RentalSystem.Authorization;
 using RentalSystem.Entities;
 using RentalSystem.Miscellaneouss.Dto;
@@ -26,6 +27,17 @@ namespace RentalSystem.Miscellaneouss
             : base(repository)
         {
 
+        }
+
+        public override async Task<MiscellaneousDto> CreateAsync(CreateUpdateMiscellaneousDto input)
+        {
+            CheckCreatePermission();
+            var miscellaneous = ObjectMapper.Map<Miscellaneous>(input);
+            miscellaneous.TenantId = AbpSession.GetTenantId();
+            await Repository.InsertAsync(miscellaneous);
+
+            CurrentUnitOfWork.SaveChanges();
+            return MapToEntityDto(miscellaneous);
         }
     }
 }

@@ -9,13 +9,14 @@ using System.Threading.Tasks;
 
 namespace RentalSystem.Entities
 {
-    public class Miscellaneous : Entity<int>
+    public class Miscellaneous : Entity<int>, IMayHaveTenant
     {
         [Required]
         public string Name { get; set; }
         [Required]
         public double Price { get; set; }
         public virtual ICollection<MiscellaneousBooking> MiscellaneousBookings { get; set; }
+        public int? TenantId { get; set; }
 
         protected Miscellaneous()
         {

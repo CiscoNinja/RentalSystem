@@ -269,8 +269,6 @@ export class BookComponent extends AppComponentBase
     booking.bookedDates = this.selectedDates;
     booking.miscellaneous = this.selectedMiscels;
 
-    console.log(booking)
-
     this._bookingService
       .create(booking)
       .pipe(

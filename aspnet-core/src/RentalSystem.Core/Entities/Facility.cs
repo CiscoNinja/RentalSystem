@@ -1,4 +1,5 @@
-﻿using Abp.Domain.Entities.Auditing;
+﻿using Abp.Domain.Entities;
+using Abp.Domain.Entities.Auditing;
 using RentalSystem.Shared;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace RentalSystem.Entities
 {
-    public class Facility : FullAuditedAggregateRoot<int>
+    public class Facility : FullAuditedAggregateRoot<int>, IMayHaveTenant
     {
         [Required]
         public string Name { get; set; }
@@ -23,6 +24,7 @@ namespace RentalSystem.Entities
         public string BookedDates { get; set; }
         //public bool Isbooked { get; set; }
         public virtual ICollection<FacilityBooking> FacilityBookings { get; set; }
+        public int? TenantId { get; set; }
 
         protected Facility()
         {

@@ -13,6 +13,7 @@ namespace RentalSystem.Miscellaneouss.Dto
         public MiscellaneousMapProfile()
         {
             CreateMap<Miscellaneous, MiscellaneousDto>().ReverseMap();
+            CreateMap<Miscellaneous, MiscellaneousListDto>().ReverseMap();
             CreateMap<CreateUpdateMiscellaneousDto, Miscellaneous>().ReverseMap();
         }
     }

@@ -1,8 +1,10 @@
 ﻿using Abp.Authorization.Users;
+using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using RentalSystem.Entities;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -10,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace RentalSystem.Entities
 {
-    public class Client : FullAuditedEntity<long>
+    public class Client : FullAuditedEntity<long>, IMayHaveTenant
     {
         [Required]
         public string FirstName { get; set; }
@@ -27,14 +29,16 @@ namespace RentalSystem.Entities
         [Phone]
         public string Phone { get; set; }
         public string Nationality { get; set; }
-        public string FullName { get; set; }
+        public string FullName => $"{FirstName} {OtherName} {LastName}";
+        public int? TenantId { get; set; }
+        public virtual ICollection<ClientBooking> ClientBookings { get; set; }
 
         protected Client()
         {
         }
     public Client(string first, string last, string other, Address address, string email,
             string phone, string nationality)
-            : base()
+            //: base()
     {
             FirstName = first;
             LastName = last;
@@ -44,6 +48,7 @@ namespace RentalSystem.Entities
             Phone = phone;
             Nationality = nationality;
 
+            ClientBookings = new Collection<ClientBooking>();
     }
 }
 }

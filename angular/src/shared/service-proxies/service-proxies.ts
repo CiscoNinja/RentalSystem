@@ -157,8 +157,8 @@ export class BookingServiceProxy {
      * @param maxResultCount (optional) 
      * @return Success
      */
-    getAll(sorting: string | null | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<BookingDtoPagedResultDto> {
-        let url_ = this.baseUrl + "/api/services/app/Booking/GetAll?";
+    getAllBookings(sorting: string | null | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<BookingListDtoPagedResultDto> {
+        let url_ = this.baseUrl + "/api/services/app/Booking/GetAllBookings?";
         if (sorting !== undefined && sorting !== null)
             url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&";
         if (skipCount === null)
@@ -180,20 +180,20 @@ export class BookingServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetAll(response_);
+            return this.processGetAllBookings(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetAll(<any>response_);
+                    return this.processGetAllBookings(<any>response_);
                 } catch (e) {
-                    return <Observable<BookingDtoPagedResultDto>><any>_observableThrow(e);
+                    return <Observable<BookingListDtoPagedResultDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<BookingDtoPagedResultDto>><any>_observableThrow(response_);
+                return <Observable<BookingListDtoPagedResultDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetAll(response: HttpResponseBase): Observable<BookingDtoPagedResultDto> {
+    protected processGetAllBookings(response: HttpResponseBase): Observable<BookingListDtoPagedResultDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -204,7 +204,7 @@ export class BookingServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = BookingDtoPagedResultDto.fromJS(resultData200);
+            result200 = BookingListDtoPagedResultDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -212,7 +212,7 @@ export class BookingServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<BookingDtoPagedResultDto>(<any>null);
+        return _observableOf<BookingListDtoPagedResultDto>(<any>null);
     }
 
     /**
@@ -481,6 +481,70 @@ export class BookingServiceProxy {
     }
 
     /**
+     * @param sorting (optional) 
+     * @param skipCount (optional) 
+     * @param maxResultCount (optional) 
+     * @return Success
+     */
+    getAll(sorting: string | null | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<BookingDtoPagedResultDto> {
+        let url_ = this.baseUrl + "/api/services/app/Booking/GetAll?";
+        if (sorting !== undefined && sorting !== null)
+            url_ += "Sorting=" + encodeURIComponent("" + sorting) + "&";
+        if (skipCount === null)
+            throw new Error("The parameter 'skipCount' cannot be null.");
+        else if (skipCount !== undefined)
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&";
+        if (maxResultCount === null)
+            throw new Error("The parameter 'maxResultCount' cannot be null.");
+        else if (maxResultCount !== undefined)
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAll(<any>response_);
+                } catch (e) {
+                    return <Observable<BookingDtoPagedResultDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<BookingDtoPagedResultDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAll(response: HttpResponseBase): Observable<BookingDtoPagedResultDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = BookingDtoPagedResultDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<BookingDtoPagedResultDto>(<any>null);
+    }
+
+    /**
      * @param body (optional) 
      * @return Success
      */
@@ -601,6 +665,62 @@ export class ClientServiceProxy {
     }
 
     /**
+     * @param body (optional) 
+     * @return Success
+     */
+    create(body: CreateUpdateClientDto | undefined): Observable<ClientDto> {
+        let url_ = this.baseUrl + "/api/services/app/Client/Create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(<any>response_);
+                } catch (e) {
+                    return <Observable<ClientDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ClientDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<ClientDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ClientDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ClientDto>(<any>null);
+    }
+
+    /**
      * @param id (optional) 
      * @return Success
      */
@@ -718,62 +838,6 @@ export class ClientServiceProxy {
             }));
         }
         return _observableOf<ClientDtoPagedResultDto>(<any>null);
-    }
-
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
-    create(body: CreateUpdateClientDto | undefined): Observable<ClientDto> {
-        let url_ = this.baseUrl + "/api/services/app/Client/Create";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json-patch+json",
-                "Accept": "text/plain"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreate(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreate(<any>response_);
-                } catch (e) {
-                    return <Observable<ClientDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<ClientDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreate(response: HttpResponseBase): Observable<ClientDto> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = ClientDto.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<ClientDto>(<any>null);
     }
 
     /**
@@ -961,6 +1025,62 @@ export class FacilityServiceProxy {
     }
 
     /**
+     * @param body (optional) 
+     * @return Success
+     */
+    create(body: CreateUpdateFacilityDto | undefined): Observable<FacilityDto> {
+        let url_ = this.baseUrl + "/api/services/app/Facility/Create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(<any>response_);
+                } catch (e) {
+                    return <Observable<FacilityDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FacilityDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<FacilityDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = FacilityDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FacilityDto>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     getFacilityEnumList(): Observable<StringInt32KeyValuePair[]> {
@@ -1142,62 +1262,6 @@ export class FacilityServiceProxy {
      * @param body (optional) 
      * @return Success
      */
-    create(body: CreateUpdateFacilityDto | undefined): Observable<FacilityDto> {
-        let url_ = this.baseUrl + "/api/services/app/Facility/Create";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json-patch+json",
-                "Accept": "text/plain"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreate(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreate(<any>response_);
-                } catch (e) {
-                    return <Observable<FacilityDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<FacilityDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreate(response: HttpResponseBase): Observable<FacilityDto> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = FacilityDto.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<FacilityDto>(<any>null);
-    }
-
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
     update(body: FacilityDto | undefined): Observable<FacilityDto> {
         let url_ = this.baseUrl + "/api/services/app/Facility/Update";
         url_ = url_.replace(/[?&]$/, "");
@@ -1312,6 +1376,62 @@ export class MiscellaneousServiceProxy {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    create(body: CreateUpdateMiscellaneousDto | undefined): Observable<MiscellaneousDto> {
+        let url_ = this.baseUrl + "/api/services/app/Miscellaneous/Create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(<any>response_);
+                } catch (e) {
+                    return <Observable<MiscellaneousDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<MiscellaneousDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<MiscellaneousDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MiscellaneousDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<MiscellaneousDto>(<any>null);
     }
 
     /**
@@ -1432,62 +1552,6 @@ export class MiscellaneousServiceProxy {
             }));
         }
         return _observableOf<MiscellaneousDtoPagedResultDto>(<any>null);
-    }
-
-    /**
-     * @param body (optional) 
-     * @return Success
-     */
-    create(body: CreateUpdateMiscellaneousDto | undefined): Observable<MiscellaneousDto> {
-        let url_ = this.baseUrl + "/api/services/app/Miscellaneous/Create";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json-patch+json",
-                "Accept": "text/plain"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreate(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreate(<any>response_);
-                } catch (e) {
-                    return <Observable<MiscellaneousDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<MiscellaneousDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreate(response: HttpResponseBase): Observable<MiscellaneousDto> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = MiscellaneousDto.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<MiscellaneousDto>(<any>null);
     }
 
     /**
@@ -3420,6 +3484,416 @@ export interface IRegisterOutput {
     canLogin: boolean;
 }
 
+export class Address implements IAddress {
+    line1: string | undefined;
+    line2: string | undefined;
+    street: string | undefined;
+    city: string | undefined;
+    state: string | undefined;
+    country: string | undefined;
+    zipCode: string | undefined;
+
+    constructor(data?: IAddress) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.line1 = _data["line1"];
+            this.line2 = _data["line2"];
+            this.street = _data["street"];
+            this.city = _data["city"];
+            this.state = _data["state"];
+            this.country = _data["country"];
+            this.zipCode = _data["zipCode"];
+        }
+    }
+
+    static fromJS(data: any): Address {
+        data = typeof data === 'object' ? data : {};
+        let result = new Address();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["line1"] = this.line1;
+        data["line2"] = this.line2;
+        data["street"] = this.street;
+        data["city"] = this.city;
+        data["state"] = this.state;
+        data["country"] = this.country;
+        data["zipCode"] = this.zipCode;
+        return data; 
+    }
+
+    clone(): Address {
+        const json = this.toJSON();
+        let result = new Address();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IAddress {
+    line1: string | undefined;
+    line2: string | undefined;
+    street: string | undefined;
+    city: string | undefined;
+    state: string | undefined;
+    country: string | undefined;
+    zipCode: string | undefined;
+}
+
+export class ClientListDto implements IClientListDto {
+    address: Address;
+    email: string | undefined;
+    phone: string | undefined;
+    fullname: string | undefined;
+
+    constructor(data?: IClientListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.address = _data["address"] ? Address.fromJS(_data["address"]) : <any>undefined;
+            this.email = _data["email"];
+            this.phone = _data["phone"];
+            this.fullname = _data["fullname"];
+        }
+    }
+
+    static fromJS(data: any): ClientListDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ClientListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
+        data["fullname"] = this.fullname;
+        return data; 
+    }
+
+    clone(): ClientListDto {
+        const json = this.toJSON();
+        let result = new ClientListDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IClientListDto {
+    address: Address;
+    email: string | undefined;
+    phone: string | undefined;
+    fullname: string | undefined;
+}
+
+export class FacilityListDto implements IFacilityListDto {
+    name: string | undefined;
+    price: number;
+    capacity: number;
+    facType: string | undefined;
+    numberOfDaysBooked: number;
+    bookedDates: string[] | undefined;
+
+    constructor(data?: IFacilityListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.price = _data["price"];
+            this.capacity = _data["capacity"];
+            this.facType = _data["facType"];
+            this.numberOfDaysBooked = _data["numberOfDaysBooked"];
+            if (Array.isArray(_data["bookedDates"])) {
+                this.bookedDates = [] as any;
+                for (let item of _data["bookedDates"])
+                    this.bookedDates.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): FacilityListDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new FacilityListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["price"] = this.price;
+        data["capacity"] = this.capacity;
+        data["facType"] = this.facType;
+        data["numberOfDaysBooked"] = this.numberOfDaysBooked;
+        if (Array.isArray(this.bookedDates)) {
+            data["bookedDates"] = [];
+            for (let item of this.bookedDates)
+                data["bookedDates"].push(item);
+        }
+        return data; 
+    }
+
+    clone(): FacilityListDto {
+        const json = this.toJSON();
+        let result = new FacilityListDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IFacilityListDto {
+    name: string | undefined;
+    price: number;
+    capacity: number;
+    facType: string | undefined;
+    numberOfDaysBooked: number;
+    bookedDates: string[] | undefined;
+}
+
+export class MiscellaneousListDto implements IMiscellaneousListDto {
+    name: string | undefined;
+    price: number;
+    quantity: number;
+
+    constructor(data?: IMiscellaneousListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.price = _data["price"];
+            this.quantity = _data["quantity"];
+        }
+    }
+
+    static fromJS(data: any): MiscellaneousListDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MiscellaneousListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["price"] = this.price;
+        data["quantity"] = this.quantity;
+        return data; 
+    }
+
+    clone(): MiscellaneousListDto {
+        const json = this.toJSON();
+        let result = new MiscellaneousListDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IMiscellaneousListDto {
+    name: string | undefined;
+    price: number;
+    quantity: number;
+}
+
+export class BookingListDto implements IBookingListDto {
+    clientId: number;
+    checkedInDate: moment.Moment;
+    checkedOutDate: moment.Moment;
+    checkedIn: boolean;
+    checkedOut: boolean;
+    totalAmount: number;
+    paymentMode: string | undefined;
+    clientName: string | undefined;
+    client: ClientListDto;
+    bookedDates: string[] | undefined;
+    facilities: FacilityListDto[] | undefined;
+    miscellaneous: MiscellaneousListDto[] | undefined;
+
+    constructor(data?: IBookingListDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.clientId = _data["clientId"];
+            this.checkedInDate = _data["checkedInDate"] ? moment(_data["checkedInDate"].toString()) : <any>undefined;
+            this.checkedOutDate = _data["checkedOutDate"] ? moment(_data["checkedOutDate"].toString()) : <any>undefined;
+            this.checkedIn = _data["checkedIn"];
+            this.checkedOut = _data["checkedOut"];
+            this.totalAmount = _data["totalAmount"];
+            this.paymentMode = _data["paymentMode"];
+            this.clientName = _data["clientName"];
+            this.client = _data["client"] ? ClientListDto.fromJS(_data["client"]) : <any>undefined;
+            if (Array.isArray(_data["bookedDates"])) {
+                this.bookedDates = [] as any;
+                for (let item of _data["bookedDates"])
+                    this.bookedDates.push(item);
+            }
+            if (Array.isArray(_data["facilities"])) {
+                this.facilities = [] as any;
+                for (let item of _data["facilities"])
+                    this.facilities.push(FacilityListDto.fromJS(item));
+            }
+            if (Array.isArray(_data["miscellaneous"])) {
+                this.miscellaneous = [] as any;
+                for (let item of _data["miscellaneous"])
+                    this.miscellaneous.push(MiscellaneousListDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): BookingListDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new BookingListDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["clientId"] = this.clientId;
+        data["checkedInDate"] = this.checkedInDate ? this.checkedInDate.toISOString() : <any>undefined;
+        data["checkedOutDate"] = this.checkedOutDate ? this.checkedOutDate.toISOString() : <any>undefined;
+        data["checkedIn"] = this.checkedIn;
+        data["checkedOut"] = this.checkedOut;
+        data["totalAmount"] = this.totalAmount;
+        data["paymentMode"] = this.paymentMode;
+        data["clientName"] = this.clientName;
+        data["client"] = this.client ? this.client.toJSON() : <any>undefined;
+        if (Array.isArray(this.bookedDates)) {
+            data["bookedDates"] = [];
+            for (let item of this.bookedDates)
+                data["bookedDates"].push(item);
+        }
+        if (Array.isArray(this.facilities)) {
+            data["facilities"] = [];
+            for (let item of this.facilities)
+                data["facilities"].push(item.toJSON());
+        }
+        if (Array.isArray(this.miscellaneous)) {
+            data["miscellaneous"] = [];
+            for (let item of this.miscellaneous)
+                data["miscellaneous"].push(item.toJSON());
+        }
+        return data; 
+    }
+
+    clone(): BookingListDto {
+        const json = this.toJSON();
+        let result = new BookingListDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IBookingListDto {
+    clientId: number;
+    checkedInDate: moment.Moment;
+    checkedOutDate: moment.Moment;
+    checkedIn: boolean;
+    checkedOut: boolean;
+    totalAmount: number;
+    paymentMode: string | undefined;
+    clientName: string | undefined;
+    client: ClientListDto;
+    bookedDates: string[] | undefined;
+    facilities: FacilityListDto[] | undefined;
+    miscellaneous: MiscellaneousListDto[] | undefined;
+}
+
+export class BookingListDtoPagedResultDto implements IBookingListDtoPagedResultDto {
+    totalCount: number;
+    items: BookingListDto[] | undefined;
+
+    constructor(data?: IBookingListDtoPagedResultDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.totalCount = _data["totalCount"];
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items.push(BookingListDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): BookingListDtoPagedResultDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new BookingListDtoPagedResultDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalCount"] = this.totalCount;
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+
+    clone(): BookingListDtoPagedResultDto {
+        const json = this.toJSON();
+        let result = new BookingListDtoPagedResultDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IBookingListDtoPagedResultDto {
+    totalCount: number;
+    items: BookingListDto[] | undefined;
+}
+
 export enum PaymentModeEnum {
     Mobilemoney = <any>"Mobilemoney",
     Cash = <any>"Cash",
@@ -3437,6 +3911,7 @@ export class FacilityDto implements IFacilityDto {
     price: number;
     capacity: number;
     facType: FacTypeEnum;
+    numberOfDaysBooked: number;
     bookedDates: string[] | undefined;
     isDeleted: boolean;
     deleterUserId: number | undefined;
@@ -3462,6 +3937,7 @@ export class FacilityDto implements IFacilityDto {
             this.price = _data["price"];
             this.capacity = _data["capacity"];
             this.facType = _data["facType"];
+            this.numberOfDaysBooked = _data["numberOfDaysBooked"];
             if (Array.isArray(_data["bookedDates"])) {
                 this.bookedDates = [] as any;
                 for (let item of _data["bookedDates"])
@@ -3491,6 +3967,7 @@ export class FacilityDto implements IFacilityDto {
         data["price"] = this.price;
         data["capacity"] = this.capacity;
         data["facType"] = this.facType;
+        data["numberOfDaysBooked"] = this.numberOfDaysBooked;
         if (Array.isArray(this.bookedDates)) {
             data["bookedDates"] = [];
             for (let item of this.bookedDates)
@@ -3520,6 +3997,7 @@ export interface IFacilityDto {
     price: number;
     capacity: number;
     facType: FacTypeEnum;
+    numberOfDaysBooked: number;
     bookedDates: string[] | undefined;
     isDeleted: boolean;
     deleterUserId: number | undefined;
@@ -3584,200 +4062,6 @@ export interface IMiscellaneousDto {
     price: number;
     quantity: number;
     id: number;
-}
-
-export class BookingDto implements IBookingDto {
-    clientId: number;
-    checkedInDate: moment.Moment;
-    checkedOutDate: moment.Moment;
-    checkedIn: boolean;
-    checkedOut: boolean;
-    totalAmount: number;
-    paymentMode: PaymentModeEnum;
-    client: string | undefined;
-    bookedDates: string[] | undefined;
-    facilities: FacilityDto[] | undefined;
-    miscellaneous: MiscellaneousDto[] | undefined;
-    isDeleted: boolean;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment;
-    creatorUserId: number | undefined;
-    id: number;
-
-    constructor(data?: IBookingDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.clientId = _data["clientId"];
-            this.checkedInDate = _data["checkedInDate"] ? moment(_data["checkedInDate"].toString()) : <any>undefined;
-            this.checkedOutDate = _data["checkedOutDate"] ? moment(_data["checkedOutDate"].toString()) : <any>undefined;
-            this.checkedIn = _data["checkedIn"];
-            this.checkedOut = _data["checkedOut"];
-            this.totalAmount = _data["totalAmount"];
-            this.paymentMode = _data["paymentMode"];
-            this.client = _data["client"];
-            if (Array.isArray(_data["bookedDates"])) {
-                this.bookedDates = [] as any;
-                for (let item of _data["bookedDates"])
-                    this.bookedDates.push(item);
-            }
-            if (Array.isArray(_data["facilities"])) {
-                this.facilities = [] as any;
-                for (let item of _data["facilities"])
-                    this.facilities.push(FacilityDto.fromJS(item));
-            }
-            if (Array.isArray(_data["miscellaneous"])) {
-                this.miscellaneous = [] as any;
-                for (let item of _data["miscellaneous"])
-                    this.miscellaneous.push(MiscellaneousDto.fromJS(item));
-            }
-            this.isDeleted = _data["isDeleted"];
-            this.deleterUserId = _data["deleterUserId"];
-            this.deletionTime = _data["deletionTime"] ? moment(_data["deletionTime"].toString()) : <any>undefined;
-            this.lastModificationTime = _data["lastModificationTime"] ? moment(_data["lastModificationTime"].toString()) : <any>undefined;
-            this.lastModifierUserId = _data["lastModifierUserId"];
-            this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = _data["creatorUserId"];
-            this.id = _data["id"];
-        }
-    }
-
-    static fromJS(data: any): BookingDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new BookingDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["clientId"] = this.clientId;
-        data["checkedInDate"] = this.checkedInDate ? this.checkedInDate.toISOString() : <any>undefined;
-        data["checkedOutDate"] = this.checkedOutDate ? this.checkedOutDate.toISOString() : <any>undefined;
-        data["checkedIn"] = this.checkedIn;
-        data["checkedOut"] = this.checkedOut;
-        data["totalAmount"] = this.totalAmount;
-        data["paymentMode"] = this.paymentMode;
-        data["client"] = this.client;
-        if (Array.isArray(this.bookedDates)) {
-            data["bookedDates"] = [];
-            for (let item of this.bookedDates)
-                data["bookedDates"].push(item);
-        }
-        if (Array.isArray(this.facilities)) {
-            data["facilities"] = [];
-            for (let item of this.facilities)
-                data["facilities"].push(item.toJSON());
-        }
-        if (Array.isArray(this.miscellaneous)) {
-            data["miscellaneous"] = [];
-            for (let item of this.miscellaneous)
-                data["miscellaneous"].push(item.toJSON());
-        }
-        data["isDeleted"] = this.isDeleted;
-        data["deleterUserId"] = this.deleterUserId;
-        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
-        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
-        data["lastModifierUserId"] = this.lastModifierUserId;
-        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
-        data["id"] = this.id;
-        return data; 
-    }
-
-    clone(): BookingDto {
-        const json = this.toJSON();
-        let result = new BookingDto();
-        result.init(json);
-        return result;
-    }
-}
-
-export interface IBookingDto {
-    clientId: number;
-    checkedInDate: moment.Moment;
-    checkedOutDate: moment.Moment;
-    checkedIn: boolean;
-    checkedOut: boolean;
-    totalAmount: number;
-    paymentMode: PaymentModeEnum;
-    client: string | undefined;
-    bookedDates: string[] | undefined;
-    facilities: FacilityDto[] | undefined;
-    miscellaneous: MiscellaneousDto[] | undefined;
-    isDeleted: boolean;
-    deleterUserId: number | undefined;
-    deletionTime: moment.Moment | undefined;
-    lastModificationTime: moment.Moment | undefined;
-    lastModifierUserId: number | undefined;
-    creationTime: moment.Moment;
-    creatorUserId: number | undefined;
-    id: number;
-}
-
-export class BookingDtoPagedResultDto implements IBookingDtoPagedResultDto {
-    totalCount: number;
-    items: BookingDto[] | undefined;
-
-    constructor(data?: IBookingDtoPagedResultDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.totalCount = _data["totalCount"];
-            if (Array.isArray(_data["items"])) {
-                this.items = [] as any;
-                for (let item of _data["items"])
-                    this.items.push(BookingDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): BookingDtoPagedResultDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new BookingDtoPagedResultDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["totalCount"] = this.totalCount;
-        if (Array.isArray(this.items)) {
-            data["items"] = [];
-            for (let item of this.items)
-                data["items"].push(item.toJSON());
-        }
-        return data; 
-    }
-
-    clone(): BookingDtoPagedResultDto {
-        const json = this.toJSON();
-        let result = new BookingDtoPagedResultDto();
-        result.init(json);
-        return result;
-    }
-}
-
-export interface IBookingDtoPagedResultDto {
-    totalCount: number;
-    items: BookingDto[] | undefined;
 }
 
 export class CreateUpdateBookingDto implements ICreateUpdateBookingDto {
@@ -3883,16 +4167,11 @@ export interface ICreateUpdateBookingDto {
     miscellaneous: MiscellaneousDto[] | undefined;
 }
 
-export class Address implements IAddress {
-    line1: string | undefined;
-    line2: string | undefined;
-    street: string | undefined;
-    city: string | undefined;
-    state: string | undefined;
-    country: string | undefined;
-    zipCode: string | undefined;
+export class IEventData implements IIEventData {
+    eventTime: moment.Moment;
+    eventSource: any | undefined;
 
-    constructor(data?: IAddress) {
+    constructor(data?: IIEventData) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3903,51 +4182,820 @@ export class Address implements IAddress {
 
     init(_data?: any) {
         if (_data) {
-            this.line1 = _data["line1"];
-            this.line2 = _data["line2"];
-            this.street = _data["street"];
-            this.city = _data["city"];
-            this.state = _data["state"];
-            this.country = _data["country"];
-            this.zipCode = _data["zipCode"];
+            this.eventTime = _data["eventTime"] ? moment(_data["eventTime"].toString()) : <any>undefined;
+            this.eventSource = _data["eventSource"];
         }
     }
 
-    static fromJS(data: any): Address {
+    static fromJS(data: any): IEventData {
         data = typeof data === 'object' ? data : {};
-        let result = new Address();
+        let result = new IEventData();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["line1"] = this.line1;
-        data["line2"] = this.line2;
-        data["street"] = this.street;
-        data["city"] = this.city;
-        data["state"] = this.state;
-        data["country"] = this.country;
-        data["zipCode"] = this.zipCode;
+        data["eventTime"] = this.eventTime ? this.eventTime.toISOString() : <any>undefined;
+        data["eventSource"] = this.eventSource;
         return data; 
     }
 
-    clone(): Address {
+    clone(): IEventData {
         const json = this.toJSON();
-        let result = new Address();
+        let result = new IEventData();
         result.init(json);
         return result;
     }
 }
 
-export interface IAddress {
-    line1: string | undefined;
-    line2: string | undefined;
-    street: string | undefined;
-    city: string | undefined;
-    state: string | undefined;
-    country: string | undefined;
-    zipCode: string | undefined;
+export interface IIEventData {
+    eventTime: moment.Moment;
+    eventSource: any | undefined;
+}
+
+export class Facility implements IFacility {
+    name: string;
+    price: number;
+    capacity: number;
+    facType: FacTypeEnum;
+    bookedDates: string | undefined;
+    facilityBookings: FacilityBooking[] | undefined;
+    tenantId: number | undefined;
+    isDeleted: boolean;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment;
+    creatorUserId: number | undefined;
+    readonly domainEvents: IEventData[] | undefined;
+    id: number;
+
+    constructor(data?: IFacility) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.price = _data["price"];
+            this.capacity = _data["capacity"];
+            this.facType = _data["facType"];
+            this.bookedDates = _data["bookedDates"];
+            if (Array.isArray(_data["facilityBookings"])) {
+                this.facilityBookings = [] as any;
+                for (let item of _data["facilityBookings"])
+                    this.facilityBookings.push(FacilityBooking.fromJS(item));
+            }
+            this.tenantId = _data["tenantId"];
+            this.isDeleted = _data["isDeleted"];
+            this.deleterUserId = _data["deleterUserId"];
+            this.deletionTime = _data["deletionTime"] ? moment(_data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = _data["lastModificationTime"] ? moment(_data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = _data["lastModifierUserId"];
+            this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = _data["creatorUserId"];
+            if (Array.isArray(_data["domainEvents"])) {
+                (<any>this).domainEvents = [] as any;
+                for (let item of _data["domainEvents"])
+                    (<any>this).domainEvents.push(IEventData.fromJS(item));
+            }
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): Facility {
+        data = typeof data === 'object' ? data : {};
+        let result = new Facility();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["price"] = this.price;
+        data["capacity"] = this.capacity;
+        data["facType"] = this.facType;
+        data["bookedDates"] = this.bookedDates;
+        if (Array.isArray(this.facilityBookings)) {
+            data["facilityBookings"] = [];
+            for (let item of this.facilityBookings)
+                data["facilityBookings"].push(item.toJSON());
+        }
+        data["tenantId"] = this.tenantId;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        if (Array.isArray(this.domainEvents)) {
+            data["domainEvents"] = [];
+            for (let item of this.domainEvents)
+                data["domainEvents"].push(item.toJSON());
+        }
+        data["id"] = this.id;
+        return data; 
+    }
+
+    clone(): Facility {
+        const json = this.toJSON();
+        let result = new Facility();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IFacility {
+    name: string;
+    price: number;
+    capacity: number;
+    facType: FacTypeEnum;
+    bookedDates: string | undefined;
+    facilityBookings: FacilityBooking[] | undefined;
+    tenantId: number | undefined;
+    isDeleted: boolean;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment;
+    creatorUserId: number | undefined;
+    domainEvents: IEventData[] | undefined;
+    id: number;
+}
+
+export class FacilityBooking implements IFacilityBooking {
+    readonly bookingId: number;
+    readonly facilityId: number;
+    bookedDates: string | undefined;
+    booking: Booking;
+    facility: Facility;
+    id: number;
+
+    constructor(data?: IFacilityBooking) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            (<any>this).bookingId = _data["bookingId"];
+            (<any>this).facilityId = _data["facilityId"];
+            this.bookedDates = _data["bookedDates"];
+            this.booking = _data["booking"] ? Booking.fromJS(_data["booking"]) : <any>undefined;
+            this.facility = _data["facility"] ? Facility.fromJS(_data["facility"]) : <any>undefined;
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): FacilityBooking {
+        data = typeof data === 'object' ? data : {};
+        let result = new FacilityBooking();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["bookingId"] = this.bookingId;
+        data["facilityId"] = this.facilityId;
+        data["bookedDates"] = this.bookedDates;
+        data["booking"] = this.booking ? this.booking.toJSON() : <any>undefined;
+        data["facility"] = this.facility ? this.facility.toJSON() : <any>undefined;
+        data["id"] = this.id;
+        return data; 
+    }
+
+    clone(): FacilityBooking {
+        const json = this.toJSON();
+        let result = new FacilityBooking();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IFacilityBooking {
+    bookingId: number;
+    facilityId: number;
+    bookedDates: string | undefined;
+    booking: Booking;
+    facility: Facility;
+    id: number;
+}
+
+export class Miscellaneous implements IMiscellaneous {
+    name: string;
+    price: number;
+    miscellaneousBookings: MiscellaneousBooking[] | undefined;
+    tenantId: number | undefined;
+    id: number;
+
+    constructor(data?: IMiscellaneous) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.price = _data["price"];
+            if (Array.isArray(_data["miscellaneousBookings"])) {
+                this.miscellaneousBookings = [] as any;
+                for (let item of _data["miscellaneousBookings"])
+                    this.miscellaneousBookings.push(MiscellaneousBooking.fromJS(item));
+            }
+            this.tenantId = _data["tenantId"];
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): Miscellaneous {
+        data = typeof data === 'object' ? data : {};
+        let result = new Miscellaneous();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["price"] = this.price;
+        if (Array.isArray(this.miscellaneousBookings)) {
+            data["miscellaneousBookings"] = [];
+            for (let item of this.miscellaneousBookings)
+                data["miscellaneousBookings"].push(item.toJSON());
+        }
+        data["tenantId"] = this.tenantId;
+        data["id"] = this.id;
+        return data; 
+    }
+
+    clone(): Miscellaneous {
+        const json = this.toJSON();
+        let result = new Miscellaneous();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IMiscellaneous {
+    name: string;
+    price: number;
+    miscellaneousBookings: MiscellaneousBooking[] | undefined;
+    tenantId: number | undefined;
+    id: number;
+}
+
+export class MiscellaneousBooking implements IMiscellaneousBooking {
+    readonly bookingId: number;
+    readonly miscellaneousId: number;
+    quantityBooked: number;
+    booking: Booking;
+    miscellaneous: Miscellaneous;
+    id: number;
+
+    constructor(data?: IMiscellaneousBooking) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            (<any>this).bookingId = _data["bookingId"];
+            (<any>this).miscellaneousId = _data["miscellaneousId"];
+            this.quantityBooked = _data["quantityBooked"];
+            this.booking = _data["booking"] ? Booking.fromJS(_data["booking"]) : <any>undefined;
+            this.miscellaneous = _data["miscellaneous"] ? Miscellaneous.fromJS(_data["miscellaneous"]) : <any>undefined;
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): MiscellaneousBooking {
+        data = typeof data === 'object' ? data : {};
+        let result = new MiscellaneousBooking();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["bookingId"] = this.bookingId;
+        data["miscellaneousId"] = this.miscellaneousId;
+        data["quantityBooked"] = this.quantityBooked;
+        data["booking"] = this.booking ? this.booking.toJSON() : <any>undefined;
+        data["miscellaneous"] = this.miscellaneous ? this.miscellaneous.toJSON() : <any>undefined;
+        data["id"] = this.id;
+        return data; 
+    }
+
+    clone(): MiscellaneousBooking {
+        const json = this.toJSON();
+        let result = new MiscellaneousBooking();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IMiscellaneousBooking {
+    bookingId: number;
+    miscellaneousId: number;
+    quantityBooked: number;
+    booking: Booking;
+    miscellaneous: Miscellaneous;
+    id: number;
+}
+
+export class Booking implements IBooking {
+    clientId: number;
+    checkedInDate: moment.Moment;
+    checkedOutDate: moment.Moment;
+    checkedIn: boolean;
+    checkedOut: boolean;
+    totalAmount: number;
+    paymentMode: PaymentModeEnum;
+    bookedDates: string | undefined;
+    client: Client;
+    facilityBookings: FacilityBooking[] | undefined;
+    miscellaneousBookings: MiscellaneousBooking[] | undefined;
+    tenantId: number | undefined;
+    isDeleted: boolean;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment;
+    creatorUserId: number | undefined;
+    readonly domainEvents: IEventData[] | undefined;
+    id: number;
+
+    constructor(data?: IBooking) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.clientId = _data["clientId"];
+            this.checkedInDate = _data["checkedInDate"] ? moment(_data["checkedInDate"].toString()) : <any>undefined;
+            this.checkedOutDate = _data["checkedOutDate"] ? moment(_data["checkedOutDate"].toString()) : <any>undefined;
+            this.checkedIn = _data["checkedIn"];
+            this.checkedOut = _data["checkedOut"];
+            this.totalAmount = _data["totalAmount"];
+            this.paymentMode = _data["paymentMode"];
+            this.bookedDates = _data["bookedDates"];
+            this.client = _data["client"] ? Client.fromJS(_data["client"]) : <any>undefined;
+            if (Array.isArray(_data["facilityBookings"])) {
+                this.facilityBookings = [] as any;
+                for (let item of _data["facilityBookings"])
+                    this.facilityBookings.push(FacilityBooking.fromJS(item));
+            }
+            if (Array.isArray(_data["miscellaneousBookings"])) {
+                this.miscellaneousBookings = [] as any;
+                for (let item of _data["miscellaneousBookings"])
+                    this.miscellaneousBookings.push(MiscellaneousBooking.fromJS(item));
+            }
+            this.tenantId = _data["tenantId"];
+            this.isDeleted = _data["isDeleted"];
+            this.deleterUserId = _data["deleterUserId"];
+            this.deletionTime = _data["deletionTime"] ? moment(_data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = _data["lastModificationTime"] ? moment(_data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = _data["lastModifierUserId"];
+            this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = _data["creatorUserId"];
+            if (Array.isArray(_data["domainEvents"])) {
+                (<any>this).domainEvents = [] as any;
+                for (let item of _data["domainEvents"])
+                    (<any>this).domainEvents.push(IEventData.fromJS(item));
+            }
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): Booking {
+        data = typeof data === 'object' ? data : {};
+        let result = new Booking();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["clientId"] = this.clientId;
+        data["checkedInDate"] = this.checkedInDate ? this.checkedInDate.toISOString() : <any>undefined;
+        data["checkedOutDate"] = this.checkedOutDate ? this.checkedOutDate.toISOString() : <any>undefined;
+        data["checkedIn"] = this.checkedIn;
+        data["checkedOut"] = this.checkedOut;
+        data["totalAmount"] = this.totalAmount;
+        data["paymentMode"] = this.paymentMode;
+        data["bookedDates"] = this.bookedDates;
+        data["client"] = this.client ? this.client.toJSON() : <any>undefined;
+        if (Array.isArray(this.facilityBookings)) {
+            data["facilityBookings"] = [];
+            for (let item of this.facilityBookings)
+                data["facilityBookings"].push(item.toJSON());
+        }
+        if (Array.isArray(this.miscellaneousBookings)) {
+            data["miscellaneousBookings"] = [];
+            for (let item of this.miscellaneousBookings)
+                data["miscellaneousBookings"].push(item.toJSON());
+        }
+        data["tenantId"] = this.tenantId;
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        if (Array.isArray(this.domainEvents)) {
+            data["domainEvents"] = [];
+            for (let item of this.domainEvents)
+                data["domainEvents"].push(item.toJSON());
+        }
+        data["id"] = this.id;
+        return data; 
+    }
+
+    clone(): Booking {
+        const json = this.toJSON();
+        let result = new Booking();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IBooking {
+    clientId: number;
+    checkedInDate: moment.Moment;
+    checkedOutDate: moment.Moment;
+    checkedIn: boolean;
+    checkedOut: boolean;
+    totalAmount: number;
+    paymentMode: PaymentModeEnum;
+    bookedDates: string | undefined;
+    client: Client;
+    facilityBookings: FacilityBooking[] | undefined;
+    miscellaneousBookings: MiscellaneousBooking[] | undefined;
+    tenantId: number | undefined;
+    isDeleted: boolean;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment;
+    creatorUserId: number | undefined;
+    domainEvents: IEventData[] | undefined;
+    id: number;
+}
+
+export class ClientBooking implements IClientBooking {
+    readonly bookingId: number;
+    readonly clientId: number;
+    booking: Booking;
+    client: Client;
+    id: number;
+
+    constructor(data?: IClientBooking) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            (<any>this).bookingId = _data["bookingId"];
+            (<any>this).clientId = _data["clientId"];
+            this.booking = _data["booking"] ? Booking.fromJS(_data["booking"]) : <any>undefined;
+            this.client = _data["client"] ? Client.fromJS(_data["client"]) : <any>undefined;
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): ClientBooking {
+        data = typeof data === 'object' ? data : {};
+        let result = new ClientBooking();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["bookingId"] = this.bookingId;
+        data["clientId"] = this.clientId;
+        data["booking"] = this.booking ? this.booking.toJSON() : <any>undefined;
+        data["client"] = this.client ? this.client.toJSON() : <any>undefined;
+        data["id"] = this.id;
+        return data; 
+    }
+
+    clone(): ClientBooking {
+        const json = this.toJSON();
+        let result = new ClientBooking();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IClientBooking {
+    bookingId: number;
+    clientId: number;
+    booking: Booking;
+    client: Client;
+    id: number;
+}
+
+export class Client implements IClient {
+    firstName: string;
+    lastName: string;
+    otherName: string | undefined;
+    organisationName: string | undefined;
+    address: Address;
+    email: string;
+    phone: string;
+    nationality: string | undefined;
+    readonly fullName: string | undefined;
+    tenantId: number | undefined;
+    clientBookings: ClientBooking[] | undefined;
+    isDeleted: boolean;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment;
+    creatorUserId: number | undefined;
+    id: number;
+
+    constructor(data?: IClient) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.firstName = _data["firstName"];
+            this.lastName = _data["lastName"];
+            this.otherName = _data["otherName"];
+            this.organisationName = _data["organisationName"];
+            this.address = _data["address"] ? Address.fromJS(_data["address"]) : <any>undefined;
+            this.email = _data["email"];
+            this.phone = _data["phone"];
+            this.nationality = _data["nationality"];
+            (<any>this).fullName = _data["fullName"];
+            this.tenantId = _data["tenantId"];
+            if (Array.isArray(_data["clientBookings"])) {
+                this.clientBookings = [] as any;
+                for (let item of _data["clientBookings"])
+                    this.clientBookings.push(ClientBooking.fromJS(item));
+            }
+            this.isDeleted = _data["isDeleted"];
+            this.deleterUserId = _data["deleterUserId"];
+            this.deletionTime = _data["deletionTime"] ? moment(_data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = _data["lastModificationTime"] ? moment(_data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = _data["lastModifierUserId"];
+            this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = _data["creatorUserId"];
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): Client {
+        data = typeof data === 'object' ? data : {};
+        let result = new Client();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["otherName"] = this.otherName;
+        data["organisationName"] = this.organisationName;
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
+        data["nationality"] = this.nationality;
+        data["fullName"] = this.fullName;
+        data["tenantId"] = this.tenantId;
+        if (Array.isArray(this.clientBookings)) {
+            data["clientBookings"] = [];
+            for (let item of this.clientBookings)
+                data["clientBookings"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+
+    clone(): Client {
+        const json = this.toJSON();
+        let result = new Client();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IClient {
+    firstName: string;
+    lastName: string;
+    otherName: string | undefined;
+    organisationName: string | undefined;
+    address: Address;
+    email: string;
+    phone: string;
+    nationality: string | undefined;
+    fullName: string | undefined;
+    tenantId: number | undefined;
+    clientBookings: ClientBooking[] | undefined;
+    isDeleted: boolean;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment;
+    creatorUserId: number | undefined;
+    id: number;
+}
+
+export class BookingDto implements IBookingDto {
+    clientId: number;
+    checkedInDate: moment.Moment;
+    checkedOutDate: moment.Moment;
+    checkedIn: boolean;
+    checkedOut: boolean;
+    totalAmount: number;
+    paymentMode: PaymentModeEnum;
+    clientName: string | undefined;
+    client: Client;
+    bookedDates: string[] | undefined;
+    facilities: FacilityDto[] | undefined;
+    miscellaneous: MiscellaneousDto[] | undefined;
+    isDeleted: boolean;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment;
+    creatorUserId: number | undefined;
+    id: number;
+
+    constructor(data?: IBookingDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.clientId = _data["clientId"];
+            this.checkedInDate = _data["checkedInDate"] ? moment(_data["checkedInDate"].toString()) : <any>undefined;
+            this.checkedOutDate = _data["checkedOutDate"] ? moment(_data["checkedOutDate"].toString()) : <any>undefined;
+            this.checkedIn = _data["checkedIn"];
+            this.checkedOut = _data["checkedOut"];
+            this.totalAmount = _data["totalAmount"];
+            this.paymentMode = _data["paymentMode"];
+            this.clientName = _data["clientName"];
+            this.client = _data["client"] ? Client.fromJS(_data["client"]) : <any>undefined;
+            if (Array.isArray(_data["bookedDates"])) {
+                this.bookedDates = [] as any;
+                for (let item of _data["bookedDates"])
+                    this.bookedDates.push(item);
+            }
+            if (Array.isArray(_data["facilities"])) {
+                this.facilities = [] as any;
+                for (let item of _data["facilities"])
+                    this.facilities.push(FacilityDto.fromJS(item));
+            }
+            if (Array.isArray(_data["miscellaneous"])) {
+                this.miscellaneous = [] as any;
+                for (let item of _data["miscellaneous"])
+                    this.miscellaneous.push(MiscellaneousDto.fromJS(item));
+            }
+            this.isDeleted = _data["isDeleted"];
+            this.deleterUserId = _data["deleterUserId"];
+            this.deletionTime = _data["deletionTime"] ? moment(_data["deletionTime"].toString()) : <any>undefined;
+            this.lastModificationTime = _data["lastModificationTime"] ? moment(_data["lastModificationTime"].toString()) : <any>undefined;
+            this.lastModifierUserId = _data["lastModifierUserId"];
+            this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = _data["creatorUserId"];
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): BookingDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new BookingDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["clientId"] = this.clientId;
+        data["checkedInDate"] = this.checkedInDate ? this.checkedInDate.toISOString() : <any>undefined;
+        data["checkedOutDate"] = this.checkedOutDate ? this.checkedOutDate.toISOString() : <any>undefined;
+        data["checkedIn"] = this.checkedIn;
+        data["checkedOut"] = this.checkedOut;
+        data["totalAmount"] = this.totalAmount;
+        data["paymentMode"] = this.paymentMode;
+        data["clientName"] = this.clientName;
+        data["client"] = this.client ? this.client.toJSON() : <any>undefined;
+        if (Array.isArray(this.bookedDates)) {
+            data["bookedDates"] = [];
+            for (let item of this.bookedDates)
+                data["bookedDates"].push(item);
+        }
+        if (Array.isArray(this.facilities)) {
+            data["facilities"] = [];
+            for (let item of this.facilities)
+                data["facilities"].push(item.toJSON());
+        }
+        if (Array.isArray(this.miscellaneous)) {
+            data["miscellaneous"] = [];
+            for (let item of this.miscellaneous)
+                data["miscellaneous"].push(item.toJSON());
+        }
+        data["isDeleted"] = this.isDeleted;
+        data["deleterUserId"] = this.deleterUserId;
+        data["deletionTime"] = this.deletionTime ? this.deletionTime.toISOString() : <any>undefined;
+        data["lastModificationTime"] = this.lastModificationTime ? this.lastModificationTime.toISOString() : <any>undefined;
+        data["lastModifierUserId"] = this.lastModifierUserId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["id"] = this.id;
+        return data; 
+    }
+
+    clone(): BookingDto {
+        const json = this.toJSON();
+        let result = new BookingDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IBookingDto {
+    clientId: number;
+    checkedInDate: moment.Moment;
+    checkedOutDate: moment.Moment;
+    checkedIn: boolean;
+    checkedOut: boolean;
+    totalAmount: number;
+    paymentMode: PaymentModeEnum;
+    clientName: string | undefined;
+    client: Client;
+    bookedDates: string[] | undefined;
+    facilities: FacilityDto[] | undefined;
+    miscellaneous: MiscellaneousDto[] | undefined;
+    isDeleted: boolean;
+    deleterUserId: number | undefined;
+    deletionTime: moment.Moment | undefined;
+    lastModificationTime: moment.Moment | undefined;
+    lastModifierUserId: number | undefined;
+    creationTime: moment.Moment;
+    creatorUserId: number | undefined;
+    id: number;
 }
 
 export class ClientDto implements IClientDto {
@@ -4210,11 +5258,11 @@ export interface IMiscellaneousDtoListResultDto {
     items: MiscellaneousDto[] | undefined;
 }
 
-export class ClientDtoPagedResultDto implements IClientDtoPagedResultDto {
+export class BookingDtoPagedResultDto implements IBookingDtoPagedResultDto {
     totalCount: number;
-    items: ClientDto[] | undefined;
+    items: BookingDto[] | undefined;
 
-    constructor(data?: IClientDtoPagedResultDto) {
+    constructor(data?: IBookingDtoPagedResultDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4229,14 +5277,14 @@ export class ClientDtoPagedResultDto implements IClientDtoPagedResultDto {
             if (Array.isArray(_data["items"])) {
                 this.items = [] as any;
                 for (let item of _data["items"])
-                    this.items.push(ClientDto.fromJS(item));
+                    this.items.push(BookingDto.fromJS(item));
             }
         }
     }
 
-    static fromJS(data: any): ClientDtoPagedResultDto {
+    static fromJS(data: any): BookingDtoPagedResultDto {
         data = typeof data === 'object' ? data : {};
-        let result = new ClientDtoPagedResultDto();
+        let result = new BookingDtoPagedResultDto();
         result.init(data);
         return result;
     }
@@ -4252,17 +5300,17 @@ export class ClientDtoPagedResultDto implements IClientDtoPagedResultDto {
         return data; 
     }
 
-    clone(): ClientDtoPagedResultDto {
+    clone(): BookingDtoPagedResultDto {
         const json = this.toJSON();
-        let result = new ClientDtoPagedResultDto();
+        let result = new BookingDtoPagedResultDto();
         result.init(json);
         return result;
     }
 }
 
-export interface IClientDtoPagedResultDto {
+export interface IBookingDtoPagedResultDto {
     totalCount: number;
-    items: ClientDto[] | undefined;
+    items: BookingDto[] | undefined;
 }
 
 export class CreateUpdateClientDto implements ICreateUpdateClientDto {
@@ -4339,6 +5387,61 @@ export interface ICreateUpdateClientDto {
     nationality: string | undefined;
 }
 
+export class ClientDtoPagedResultDto implements IClientDtoPagedResultDto {
+    totalCount: number;
+    items: ClientDto[] | undefined;
+
+    constructor(data?: IClientDtoPagedResultDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.totalCount = _data["totalCount"];
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items.push(ClientDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): ClientDtoPagedResultDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ClientDtoPagedResultDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalCount"] = this.totalCount;
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+
+    clone(): ClientDtoPagedResultDto {
+        const json = this.toJSON();
+        let result = new ClientDtoPagedResultDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IClientDtoPagedResultDto {
+    totalCount: number;
+    items: ClientDto[] | undefined;
+}
+
 export class ChangeUiThemeInput implements IChangeUiThemeInput {
     theme: string;
 
@@ -4380,6 +5483,73 @@ export class ChangeUiThemeInput implements IChangeUiThemeInput {
 
 export interface IChangeUiThemeInput {
     theme: string;
+}
+
+export class CreateUpdateFacilityDto implements ICreateUpdateFacilityDto {
+    name: string;
+    price: number;
+    capacity: number;
+    facType: FacTypeEnum;
+    bookedDates: string[] | undefined;
+
+    constructor(data?: ICreateUpdateFacilityDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.price = _data["price"];
+            this.capacity = _data["capacity"];
+            this.facType = _data["facType"];
+            if (Array.isArray(_data["bookedDates"])) {
+                this.bookedDates = [] as any;
+                for (let item of _data["bookedDates"])
+                    this.bookedDates.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateUpdateFacilityDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateUpdateFacilityDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["price"] = this.price;
+        data["capacity"] = this.capacity;
+        data["facType"] = this.facType;
+        if (Array.isArray(this.bookedDates)) {
+            data["bookedDates"] = [];
+            for (let item of this.bookedDates)
+                data["bookedDates"].push(item);
+        }
+        return data; 
+    }
+
+    clone(): CreateUpdateFacilityDto {
+        const json = this.toJSON();
+        let result = new CreateUpdateFacilityDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface ICreateUpdateFacilityDto {
+    name: string;
+    price: number;
+    capacity: number;
+    facType: FacTypeEnum;
+    bookedDates: string[] | undefined;
 }
 
 export class StringInt32KeyValuePair implements IStringInt32KeyValuePair {
@@ -4484,14 +5654,12 @@ export interface IFacilityDtoPagedResultDto {
     items: FacilityDto[] | undefined;
 }
 
-export class CreateUpdateFacilityDto implements ICreateUpdateFacilityDto {
+export class CreateUpdateMiscellaneousDto implements ICreateUpdateMiscellaneousDto {
     name: string;
     price: number;
-    capacity: number;
-    facType: FacTypeEnum;
-    bookedDates: string[] | undefined;
+    quantity: number;
 
-    constructor(data?: ICreateUpdateFacilityDto) {
+    constructor(data?: ICreateUpdateMiscellaneousDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4504,19 +5672,13 @@ export class CreateUpdateFacilityDto implements ICreateUpdateFacilityDto {
         if (_data) {
             this.name = _data["name"];
             this.price = _data["price"];
-            this.capacity = _data["capacity"];
-            this.facType = _data["facType"];
-            if (Array.isArray(_data["bookedDates"])) {
-                this.bookedDates = [] as any;
-                for (let item of _data["bookedDates"])
-                    this.bookedDates.push(item);
-            }
+            this.quantity = _data["quantity"];
         }
     }
 
-    static fromJS(data: any): CreateUpdateFacilityDto {
+    static fromJS(data: any): CreateUpdateMiscellaneousDto {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateUpdateFacilityDto();
+        let result = new CreateUpdateMiscellaneousDto();
         result.init(data);
         return result;
     }
@@ -4525,30 +5687,22 @@ export class CreateUpdateFacilityDto implements ICreateUpdateFacilityDto {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["price"] = this.price;
-        data["capacity"] = this.capacity;
-        data["facType"] = this.facType;
-        if (Array.isArray(this.bookedDates)) {
-            data["bookedDates"] = [];
-            for (let item of this.bookedDates)
-                data["bookedDates"].push(item);
-        }
+        data["quantity"] = this.quantity;
         return data; 
     }
 
-    clone(): CreateUpdateFacilityDto {
+    clone(): CreateUpdateMiscellaneousDto {
         const json = this.toJSON();
-        let result = new CreateUpdateFacilityDto();
+        let result = new CreateUpdateMiscellaneousDto();
         result.init(json);
         return result;
     }
 }
 
-export interface ICreateUpdateFacilityDto {
+export interface ICreateUpdateMiscellaneousDto {
     name: string;
     price: number;
-    capacity: number;
-    facType: FacTypeEnum;
-    bookedDates: string[] | undefined;
+    quantity: number;
 }
 
 export class MiscellaneousDtoPagedResultDto implements IMiscellaneousDtoPagedResultDto {
@@ -4604,57 +5758,6 @@ export class MiscellaneousDtoPagedResultDto implements IMiscellaneousDtoPagedRes
 export interface IMiscellaneousDtoPagedResultDto {
     totalCount: number;
     items: MiscellaneousDto[] | undefined;
-}
-
-export class CreateUpdateMiscellaneousDto implements ICreateUpdateMiscellaneousDto {
-    name: string;
-    price: number;
-    quantity: number;
-
-    constructor(data?: ICreateUpdateMiscellaneousDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.name = _data["name"];
-            this.price = _data["price"];
-            this.quantity = _data["quantity"];
-        }
-    }
-
-    static fromJS(data: any): CreateUpdateMiscellaneousDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateUpdateMiscellaneousDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["price"] = this.price;
-        data["quantity"] = this.quantity;
-        return data; 
-    }
-
-    clone(): CreateUpdateMiscellaneousDto {
-        const json = this.toJSON();
-        let result = new CreateUpdateMiscellaneousDto();
-        result.init(json);
-        return result;
-    }
-}
-
-export interface ICreateUpdateMiscellaneousDto {
-    name: string;
-    price: number;
-    quantity: number;
 }
 
 export class CreateRoleDto implements ICreateRoleDto {

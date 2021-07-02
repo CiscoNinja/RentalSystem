@@ -15,6 +15,10 @@ namespace RentalSystem.Facilities.Dtos
             CreateMap<Facility, FacilityDto>()
                 .ForMember(x => x.BookedDates, opt => opt.MapFrom(src => src.BookedDates.Split(new[] { ',' })));
 
+            CreateMap<Facility, FacilityListDto>()
+               .ForMember(x => x.FacType, opt => opt.MapFrom(src => src.FacType.ToString()))
+               .ForMember(x => x.BookedDates, opt => opt.MapFrom(src => src.BookedDates.Split(new[] { ',' }))).ReverseMap();
+
             CreateMap<FacilityDto, Facility>()
                 .ForMember(x => x.BookedDates, opt => opt.MapFrom(src => string.Join(',', src.BookedDates)));
 

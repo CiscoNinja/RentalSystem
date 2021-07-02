@@ -9,7 +9,9 @@ import {
 import {
   BookingServiceProxy,
   BookingDto,
-  BookingDtoPagedResultDto
+  BookingDtoPagedResultDto,
+  BookingListDtoPagedResultDto,
+  BookingListDto
 } from '@shared/service-proxies/service-proxies';
 import { CreateBookingDialogComponent } from './create-booking/create-booking-dialog.component';
 import { EditBookingDialogComponent } from './edit-booking/edit-booking-dialog.component';
@@ -23,7 +25,7 @@ class PagedBookingsRequestDto extends PagedRequestDto {
   animations: [appModuleAnimation()]
 })
 export class BookingsComponent extends PagedListingComponentBase<BookingDto> {
-  bookings: BookingDto[] = [];
+  bookings: BookingListDto[] = [];
   keyword = '';
 
   constructor(
@@ -42,16 +44,15 @@ export class BookingsComponent extends PagedListingComponentBase<BookingDto> {
     request.keyword = this.keyword;
 
     this._bookingsService
-      .getAll(request.keyword, request.skipCount, request.maxResultCount)
+      .getAllBookings(request.keyword, request.skipCount, request.maxResultCount)
       .pipe(
         finalize(() => {
           finishedCallback();
         })
       )
-      .subscribe((result: BookingDtoPagedResultDto) => {
+      .subscribe((result: BookingListDtoPagedResultDto) => {
         this.bookings = result.items;
         this.showPaging(result, pageNumber);
-        console.log(this.bookings)
       });
   }
 

@@ -24,6 +24,7 @@ import {DividerModule} from 'primeng/divider';
 import {InputNumberModule} from 'primeng/inputnumber';
 import {CheckboxModule} from 'primeng/checkbox';
 import {RadioButtonModule} from 'primeng/radiobutton';
+import {ChartModule} from 'primeng/chart';
 // import {BrowserModule} from '@angular/platform-browser';
 // import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {CalendarModule} from 'primeng/calendar';
@@ -140,6 +141,7 @@ import { EditMiscellaneousDialogComponent } from './miscellaneouss/edit-miscella
     InputNumberModule,
     CheckboxModule,
     RadioButtonModule,
+    ChartModule,
     // BrowserModule,
     // BrowserAnimationsModule,
     CardModule,

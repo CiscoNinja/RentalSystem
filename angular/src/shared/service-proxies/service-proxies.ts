@@ -152,6 +152,57 @@ export class BookingServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getAllList(): Observable<BookingListDtoListResultDto> {
+        let url_ = this.baseUrl + "/api/services/app/Booking/GetAllList";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAllList(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAllList(<any>response_);
+                } catch (e) {
+                    return <Observable<BookingListDtoListResultDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<BookingListDtoListResultDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAllList(response: HttpResponseBase): Observable<BookingListDtoListResultDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = BookingListDtoListResultDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<BookingListDtoListResultDto>(<any>null);
+    }
+
+    /**
      * @param sorting (optional) 
      * @param skipCount (optional) 
      * @param maxResultCount (optional) 
@@ -3837,6 +3888,57 @@ export interface IBookingListDto {
     bookedDates: string[] | undefined;
     facilities: FacilityListDto[] | undefined;
     miscellaneous: MiscellaneousListDto[] | undefined;
+}
+
+export class BookingListDtoListResultDto implements IBookingListDtoListResultDto {
+    items: BookingListDto[] | undefined;
+
+    constructor(data?: IBookingListDtoListResultDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items.push(BookingListDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): BookingListDtoListResultDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new BookingListDtoListResultDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        return data; 
+    }
+
+    clone(): BookingListDtoListResultDto {
+        const json = this.toJSON();
+        let result = new BookingListDtoListResultDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IBookingListDtoListResultDto {
+    items: BookingListDto[] | undefined;
 }
 
 export class BookingListDtoPagedResultDto implements IBookingListDtoPagedResultDto {

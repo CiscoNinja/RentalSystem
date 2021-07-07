@@ -56,14 +56,47 @@ namespace RentalSystem.Bookings
             _clientBookingRepository = clientBookingRepository;
         }
 
-        //public override async Task<PagedResultDto<BookingDto>> GetAllAsync(PagedAndSortedResultRequestDto input)
-        //{
-        //    var bookings = await _bookingRepository.GetAllIncluding(x => x.FacilityBookings, x => x.MiscellaneousBookings, x => x.Client).ToListAsync();
+        public async Task<ListResultDto<BookingListDto>> GetAllList()
+        {
+            var splitchar = new[] { ',' };
+            var bookings = await _bookingRepository.GetAllIncluding(x => x.FacilityBookings, x => x.MiscellaneousBookings, x => x.Client)
+                .Where(y => y.IsDeleted != true).OrderByDescending(z => z.CreationTime)
+                .Select(x => new BookingListDto()
+                {
+                    Client = new ClientListDto() { Fullname = x.Client.FullName, Address = x.Client.Address, Email = x.Client.Email, Phone = x.Client.Phone },
+                    ClientId = x.ClientId,
+                    ClientName = x.Client.FullName,
+                    PaymentMode = x.PaymentMode.ToString(),
+                    TotalAmount = x.TotalAmount,
+                    CheckedIn = x.CheckedIn,
+                    CheckedOut = x.CheckedOut,
+                    CheckedInDate = x.CheckedInDate,
+                    CheckedOutDate = x.CheckedOutDate,
+                    BookedDates = x.BookedDates.Split(splitchar).ToList(),
 
-        //    var res = ObjectMapper.Map<List<BookingDto>>(bookings);
+                    Facilities = x.FacilityBookings.Select(x => new FacilityListDto()
+                    {
+                        BookedDates = x.BookedDates.Split(splitchar).ToList(),
+                        Capacity = x.Facility.Capacity,
+                        FacType = x.Facility.FacType.ToString(),
+                        Name = x.Facility.Name,
+                        NumberOfDaysBooked = x.BookedDates.Split(splitchar).Length,
+                        Price = x.Facility.Price
+                    }).ToList(),
+                    Miscellaneous = x.MiscellaneousBookings
+                    .Select(x => new MiscellaneousListDto()
+                    {
+                        Name = x.Miscellaneous.Name,
+                        Price = x.Miscellaneous.Price,
+                        Quantity = x.QuantityBooked
+                    }).ToList()
+                }).ToListAsync();
 
-        //    return new PagedResultDto<BookingDto>(input.MaxResultCount, res);
-        //}
+
+            var res = ObjectMapper.Map<List<BookingListDto>>(bookings);
+
+            return new ListResultDto<BookingListDto>(res);
+        }
 
         public async Task<PagedResultDto<BookingListDto>> GetAllBookings(PagedAndSortedResultRequestDto input)
         {

@@ -109,7 +109,7 @@
                     [inputId]="miscelleneous.id" (onChange)="getTotalMiscellaneouss(selectedMiscels)"></p-checkbox>
                   <label [for]="miscelleneous.id">{{miscelleneous.name}}</label>
                   <span class="custom-control">
-                    Unit Price: GHC {{ miscelleneous.price }}
+                    Unit Price: {{"Cedi" | localize}} {{ miscelleneous.price }}
                   </span>
                   <div class="custom-control col-md-4">
                     <span class="">
@@ -138,7 +138,7 @@
                                       {{ miscelleneous.name }}
                                     </label>
                                     <span class="custom-control">
-                                      Unit Price: GHC {{ miscelleneous.price }}
+                                      Unit Price: {{"Cedi" | localize}} {{ miscelleneous.price }}
                                     </span>
                                     <div class="custom-control col-md-4">
                                       <span class="">
@@ -200,7 +200,7 @@ Phone: (123) 456-7890
                       <tr>
                         <td class="meta-head">Amount Due</td>
                         <td>
-                          <div class="due">GHS {{facilityPlusMiscel}}</div>
+                          <div class="due">{{"Cedi" | localize}} {{facilityPlusMiscel}}</div>
                         </td>
                       </tr>
 
@@ -246,10 +246,10 @@ Phone: (123) 456-7890
                       <td colspan="1"> Subtotal</td>
                       <td colspan="2">
                           <tr class="p-col p-fluid p-grid p-jc-between" style="min-width: max-content;">
-                            <div>Facility </div><div id="subtotal">GHS {{facilityTotal}}</div>
+                            <div>Facility </div><div id="subtotal">{{"Cedi" | localize}} {{facilityTotal}}</div>
                           </tr>
                           <tr class="p-col p-fluid p-grid p-jc-between" style="min-width: max-content;">
-                            <div>Miscellaneous&nbsp;&nbsp; </div><div id="subtotal"> &nbsp;GHS {{misscellTotal}}</div>
+                            <div>Miscellaneous&nbsp;&nbsp; </div><div id="subtotal"> &nbsp;{{"Cedi" | localize}} {{misscellTotal}}</div>
                           </tr>
                       </td>
                     </tr>
@@ -258,7 +258,7 @@ Phone: (123) 456-7890
                       <td colspan="1" class="total-line balance" style="white-space: nowrap;">Grand Total</td>
                       <td colspan="2" class="total-value balance">
                         <tr class="p-col p-fluid p-grid p-jc-end"> 
-                          <div class="due">GHS {{facilityPlusMiscel}}</div>
+                          <div class="due">{{"Cedi" | localize}} {{facilityPlusMiscel}}</div>
                         </tr>
                       </td>
                     </tr>

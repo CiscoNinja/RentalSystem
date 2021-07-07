@@ -66,10 +66,11 @@
                   <td style="white-space: nowrap;">{{ booking.clientName}}</td>
                   <td>
                     <span *ngFor="let date of booking.bookedDates; let i = index">
-                      <i class="pi pi-calendar">{{ date | date : 'fullDate'}}{{ i+1 < booking.bookedDates.length? ".":"."}}&nbsp;</i>
+                      <i class="pi pi-calendar badge badge-info mx-1">{{ date | date : 'fullDate'}}</i>
+                      <!-- {{ i+1 < booking.bookedDates.length? ".":"."}}&nbsp; -->
                     </span>
                   </td>
-                  <td>{{ booking.totalAmount }}</td>
+                  <td style="white-space: nowrap;">{{"Cedi" | localize}} {{ booking.totalAmount }}</td>
                   <td class="p-col-3">
                     <button type="button"
                       class="btn btn-sm bg-secondary"

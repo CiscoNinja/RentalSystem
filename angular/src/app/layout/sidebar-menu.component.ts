@@ -44,17 +44,17 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
     getMenuItems(): MenuItem[] {
         return [
             // new MenuItem(this.l('About'), '/app/about', 'fas fa-info-circle'),
-            new MenuItem(this.l('HomePage'), '/app/home', 'fas fa-home'),
+            new MenuItem(this.l('Dashboard'), '/app/home', 'fas fa-home'),
             new MenuItem(
                 this.l('Roles'),
                 '/app/roles',
-                'fas fa-theater-masks',
+                'fas fa-user-tag',
                 'Pages.Roles'
             ),
             new MenuItem(
                 this.l('Tenants'),
                 '/app/tenants',
-                'fas fa-building',
+                'fas fa-house-user',
                 'Pages.Tenants'
             ),
             new MenuItem(
@@ -66,25 +66,25 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
             new MenuItem(
                 this.l('Facilities'),
                 '/app/facility',
-                'fas fa-building',
+                'fas fa-warehouse',
                 'Pages.Facilities'
             ),
             new MenuItem(
                 this.l('Clients'),
                 '/app/clients',
-                'fas fa-building',
+                'fas fa-user-tie',
                 'Pages.Clients'
             ),
             new MenuItem(
                 this.l('Miscellaneous'),
                 '/app/miscellaneous',
-                'fas fa-building',
+                'fas fa-gifts',
                 'Pages.Miscellaneous'
             ),
             new MenuItem(
                 this.l('Bookings'),
                 '/app/bookings',
-                'fas fa-building',
+                'fas fa-clipboard-list',
                 'Pages.Bookings'
             ),
             // new MenuItem(this.l('MultiLevelMenu'), '', 'fas fa-circle', '', [

@@ -73,6 +73,7 @@ namespace RentalSystem.Bookings
                     CheckedInDate = x.CheckedInDate,
                     CheckedOutDate = x.CheckedOutDate,
                     BookedDates = x.BookedDates.Split(splitchar).ToList(),
+                    CreationTime = x.CreationTime,
 
                     Facilities = x.FacilityBookings.Select(x => new FacilityListDto()
                     {
@@ -114,6 +115,7 @@ namespace RentalSystem.Bookings
                     CheckedInDate = x.CheckedInDate,
                     CheckedOutDate = x.CheckedOutDate,
                     BookedDates = x.BookedDates.Split(splitchar).ToList(),
+                    CreationTime = x.CreationTime,
 
                     Facilities = x.FacilityBookings.Select(x => new FacilityListDto()
                     {

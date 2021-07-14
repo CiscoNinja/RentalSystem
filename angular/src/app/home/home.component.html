@@ -23,12 +23,12 @@
           <div class="small-box bg-success">
             <div class="inner">
               <h3>{{"Cedi" | localize}} {{allTimeTotal}}</h3>
-              <p>Total Bookings</p>
+              <p>Total Earnings</p>
             </div>
             <div class="icon">
               <i class="fas fa-money-check-alt"></i>
             </div>
-            <a [routerLink]="['book']"
+            <a href="#"
               class="small-box-footer">
               More info
               <i class="fas fa-arrow-circle-right"></i>
@@ -39,14 +39,13 @@
           <div class="small-box bg-warning">
             <div class="inner">
               <h3>{{"Cedi" | localize}} {{currentYearTotal}}</h3>
-              <p>Booking for the year <strong>{{thisDay | date: 'YYYY'}}</strong> </p>
+              <p>Earnings for the year <strong>{{thisDay | date: 'YYYY'}}</strong> </p>
             </div>
             <div class="icon">
               <i class="fas fa-money-check-alt"></i>
             </div>
-            <a href="https://github.com/aspnetboilerplate/aspnetboilerplate/network/dependents"
-              class="small-box-footer"
-              target="_blank">
+            <a href="#"
+              class="small-box-footer">
               More info
               <i class="fas fa-arrow-circle-right"></i>
             </a>
@@ -56,14 +55,13 @@
           <div class="small-box bg-info">
             <div class="inner">
               <h3>{{"Cedi" | localize}} {{currentMonthTotal}}</h3>
-              <p>Booking for the month <strong>{{thisDay | date: 'MMMM'}}</strong> </p>
+              <p>Earnings for the month of <strong>{{thisDay | date: 'MMMM'}}</strong> </p>
             </div>
             <div class="icon">
               <i class="fas fa-money-check-alt"></i>
             </div>
-            <a href="https://github.com/aspnetboilerplate/aspnetboilerplate/graphs/contributors"
-              class="small-box-footer"
-              target="_blank">
+            <a href="#"
+              class="small-box-footer">
               More info
               <i class="fas fa-arrow-circle-right"></i>
             </a>
@@ -73,15 +71,14 @@
         <div class="col-lg-3 col-6">
           <div class="small-box bg-primary">
             <div class="inner">
-              <h3>{{"Cedi" | localize}} {{todaysTotal}}</h3>
-              <p>Booking for today <strong>{{thisDay | date : 'EEEE'}}</strong> </p>
+              <h3>{{"Cedi" | localize}} {{weekTotal}}</h3>
+              <p>Earnings for the week </p>
             </div>
             <div class="icon">
               <i class="fas fa-money-check-alt"></i>
             </div>
-            <a href="https://github.com/aspnetboilerplate/aspnetboilerplate/network/members"
-              class="small-box-footer"
-              target="_blank">
+            <a href="#"
+              class="small-box-footer">
               More info
               <i class="fas fa-arrow-circle-right"></i>
             </a>
@@ -92,10 +89,10 @@
         <div class="col-12 col-sm-6 col-md-6">
           <div class="card">
             <div class="card-header">
-              <h3 class="card-title">Open Bookings</h3>
+              <h3 class="card-title">Facility distribution by Category</h3>
             </div>
             <div class="card-body">
-              <p-chart type="polarArea" [data]="data2"></p-chart>
+              <p-chart type="pie" [data]="data2"></p-chart>
             </div>
           </div>
         </div>
@@ -132,8 +129,9 @@
                 <thead class="bg-light">
                   <tr>
                     <th>#</th>
+                    <th class="w-25">Date Created</th>
                     <th class="w-25">Name</th>
-                    <th class="w-25">Amount</th>
+                    <th>Amount</th>
                     <th>Check In Date</th>
                     <th>Check Out Date</th>
                   </tr>
@@ -145,6 +143,7 @@
                         {{i+1}}
                       </a>
                     </td>
+                    <td>{{booking.creationTime | date:'fullDate'}}</td>
                     <td>{{booking.clientName}}</td>
                     <td>
                       <span class="badge badge-primary mx-1">
@@ -167,7 +166,7 @@
               <h3 class="card-title">Monthly Bookings Overview</h3>
             </div>
             <div class="card-bodyp-0">
-              <p-chart type="bar" [data]="data"></p-chart>
+              <p-chart type="bar" [data]="data" [options]="chartOptions"></p-chart>
             </div>
           </div>
         </div>

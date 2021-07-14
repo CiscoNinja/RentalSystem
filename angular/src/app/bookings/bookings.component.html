@@ -46,6 +46,7 @@
               [busy]="isTableLoading">
               <thead class="bg-light">
                 <tr>
+                  <th style="white-space: nowrap;">Date Created</th>
                   <th>{{ "Client" | localize }}</th>
                   <th>{{ "Booked Dates" | localize }}</th>
                   <th>{{ "Amount" | localize }}</th>
@@ -63,6 +64,7 @@
                           totalItems: totalItems
                         }
                 ">
+                  <td>{{ booking.creationTime | date : 'fullDate'}}</td>
                   <td style="white-space: nowrap;">{{ booking.clientName}}</td>
                   <td>
                     <span *ngFor="let date of booking.bookedDates; let i = index">

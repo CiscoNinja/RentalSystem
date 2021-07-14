@@ -3783,6 +3783,7 @@ export class BookingListDto implements IBookingListDto {
     clientId: number;
     checkedInDate: moment.Moment;
     checkedOutDate: moment.Moment;
+    creationTime: moment.Moment;
     checkedIn: boolean;
     checkedOut: boolean;
     totalAmount: number;
@@ -3807,6 +3808,7 @@ export class BookingListDto implements IBookingListDto {
             this.clientId = _data["clientId"];
             this.checkedInDate = _data["checkedInDate"] ? moment(_data["checkedInDate"].toString()) : <any>undefined;
             this.checkedOutDate = _data["checkedOutDate"] ? moment(_data["checkedOutDate"].toString()) : <any>undefined;
+            this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
             this.checkedIn = _data["checkedIn"];
             this.checkedOut = _data["checkedOut"];
             this.totalAmount = _data["totalAmount"];
@@ -3843,6 +3845,7 @@ export class BookingListDto implements IBookingListDto {
         data["clientId"] = this.clientId;
         data["checkedInDate"] = this.checkedInDate ? this.checkedInDate.toISOString() : <any>undefined;
         data["checkedOutDate"] = this.checkedOutDate ? this.checkedOutDate.toISOString() : <any>undefined;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["checkedIn"] = this.checkedIn;
         data["checkedOut"] = this.checkedOut;
         data["totalAmount"] = this.totalAmount;
@@ -3879,6 +3882,7 @@ export interface IBookingListDto {
     clientId: number;
     checkedInDate: moment.Moment;
     checkedOutDate: moment.Moment;
+    creationTime: moment.Moment;
     checkedIn: boolean;
     checkedOut: boolean;
     totalAmount: number;

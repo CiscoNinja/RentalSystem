@@ -18,6 +18,7 @@ namespace RentalSystem.Bookings.Dtos
         public long ClientId { get; set; }
         public DateTime CheckedInDate { get; set; }
         public DateTime CheckedOutDate { get; set; }
+        public DateTime CreationTime { get; set; }
         public bool CheckedIn { get; set; }
         public bool CheckedOut { get; set; }
         public double TotalAmount { get; set; }

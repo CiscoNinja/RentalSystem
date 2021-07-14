@@ -25,6 +25,7 @@ import {
 import { forEach as _forEach, map as _map } from 'lodash-es';
 import { SelectItem, SelectItemGroup } from 'primeng/api';
 import { Table } from 'primeng/table';
+import { Router } from '@angular/router';
 
 @Component({
   templateUrl: 'book.component.html',
@@ -67,6 +68,7 @@ export class BookComponent extends AppComponentBase
 
   constructor(
     injector: Injector,
+    private router: Router,
     private _bookingService: BookingServiceProxy,
   ) {
     super(injector);
@@ -279,6 +281,7 @@ export class BookComponent extends AppComponentBase
       .subscribe(() => {
         this.notify.info(this.l('SavedSuccessfully'));
         this.onSave.emit();
+        this.router.navigate(['app/bookings'])
       });
   }
 }

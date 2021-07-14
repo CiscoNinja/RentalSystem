@@ -1,7 +1,9 @@
 import { Component, Injector, ChangeDetectionStrategy } from '@angular/core';
 import { AppComponentBase } from '@shared/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { BookingListDto, BookingListDtoPagedResultDto, BookingServiceProxy } from '@shared/service-proxies/service-proxies';
+import { BookingListDto, BookingListDtoListResultDto, BookingListDtoPagedResultDto, BookingServiceProxy, FacilityDto, FacilityDtoListResultDto, FacilityServiceProxy, FacTypeEnum } from '@shared/service-proxies/service-proxies';
+import { forEach } from 'lodash-es';
+import * as moment from 'moment';
 
 @Component({
   templateUrl: './home.component.html',
@@ -10,117 +12,128 @@ import { BookingListDto, BookingListDtoPagedResultDto, BookingServiceProxy } fro
 })
 export class HomeComponent extends AppComponentBase {
   thisDay = new Date();
+  momentDate =  moment(this.thisDay);
   data: any;
   data2: any;
   allTimeTotal: number = 0;
   currentYearTotal: number = 0;
   currentMonthTotal: number = 0;
-  todaysTotal: number = 0;
+  weekTotal: number = 0;
+  bookingCountEachMonth: number[] = [];
+  totalForEachMonth: number[] = [];
+  polarChartValues: number[] = [];
+  polarChartLabes: string[] = [];
+  polarChartColors: string[] = []
+  monthsOfYear = ['january', 'febuary', 'march', 'april', 'may', 'june', 'july',
+    'august', 'september', 'october', 'november', 'december'];
+
+  colors = ["#FF6384","#36A2EB","#FFCE56","#808000","#008000","#FF00FF","#00FFFF","#ADD8E6","#800080","#800000","#E78A61"]
+
+
 
   openBookings: any[];
 
   chartOptions: any;
   bookings: BookingListDto[] = [];
+  facilitys: FacilityDto[] = [];
   keyword = '';
+  facilitytypeenums: string[];
+  facTypeEnum = FacTypeEnum;
 
   constructor(
     injector: Injector,
-    private _bookingsService: BookingServiceProxy,) {
+    private _facilitysService: FacilityServiceProxy,
+    private _bookingsService: BookingServiceProxy) {
     super(injector);
   }
 
   ngOnInit() {
 
-    this._bookingsService
-      .getAllList().subscribe((result: BookingListDtoPagedResultDto) => {
-        this.bookings = result.items;
-        console.log(this.bookings);
-      this.allTimeTotal = this.getAllTimeTotal(this.bookings);
-      this.getCurrentMonthTotal(this.bookings);
-      this.getCurrentYearTotal(this.bookings);
-      this.getTodaysTotal(this.bookings);
-    });
+    this.facilitytypeenums = Object.keys(this.facTypeEnum).filter(f => isNaN(Number(f)));
 
-    this.data2 = {
-      datasets: [{
-          data: [
-              11,
-              16,
-              7,
-              3,
-              14
-          ],
-          backgroundColor: [
-              "#FF6384",
-              "#4BC0C0",
-              "#FFCE56",
-              "#E7E9ED",
-              "#36A2EB"
-          ],
-          label: 'My dataset'
-      }],
-      labels: [
-          "Red",
-          "Green",
-          "Yellow",
-          "Grey",
-          "Blue"
-      ]
+    this._bookingsService
+      .getAllList().subscribe((result: BookingListDtoListResultDto) => {
+        this.bookings = result.items;
+        // console.log(this.bookings);
+        this.allTimeTotal = this.getAllTimeTotal(this.bookings);
+        this.getCurrentMonthTotal(this.bookings);
+        this.getCurrentYearTotal(this.bookings);
+        this.getWeeksTotal(this.bookings);
+        this.getMonthlyCount(this.bookings);
+        this.getEachMonthTotal(this.bookings);
+
+      this.drawComboChart();
+
+      });
+
+      this._bookingsService
+      .getFacilities().subscribe((result: FacilityDtoListResultDto) => {
+        this.facilitys = result.items;
+
+        this.getPolarChartData(this.facilitys, this.facilitytypeenums);
+
+        this.drawPolarChart();
+      });
   }
 
+  drawComboChart(){
+   
     this.data = {
       labels: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
       datasets: [{
         type: 'line',
-        label: 'Dataset 1',
+        label: 'Number of Bookings',
         borderColor: '#42A5F5',
+        backgroundColor: '#42A5F5',
         borderWidth: 2,
         fill: false,
-        data: [
-          50,
-          25,
-          12,
-          48,
-          56,
-          76,
-          42,
-          12,
-          48,
-          56,
-          76,
-          42
-        ]
+        yAxisID: 'y-axis-2',
+        data: this.bookingCountEachMonth
       }, {
         type: 'bar',
-        label: 'Dataset 3',
+        label: 'Amount Realized',
         backgroundColor: '#FFA726',
-        data: [
-          41,
-          52,
-          24,
-          12,
-          48,
-          56,
-          76,
-          42,
-          74,
-          23,
-          21,
-          32
-        ]
-      }]
+        yAxisID: 'y-axis-1',
+        data: this.totalForEachMonth
+      }],
     };
     this.chartOptions = {
       responsive: true,
-      title: {
-        display: true,
-        text: 'Combo Bar Line Chart'
-      },
+      hoverMode: 'index',
+      stacked: false,
       tooltips: {
         mode: 'index',
         intersect: true
+    },
+      scales: {
+          yAxes: [{
+              type: 'linear',
+              display: true,
+              position: 'left',
+              id: 'y-axis-1',
+          }, {
+              type: 'linear',
+              display: true,
+              position: 'right',
+              id: 'y-axis-2',
+              gridLines: {
+                  drawOnChartArea: false
+              }
+          }]
       }
-    };
+  };
+  }
+
+  drawPolarChart(){
+    this.data2 = {
+      datasets: [{
+        data: this.polarChartValues,
+        backgroundColor: this.polarChartColors,
+      hoverBackgroundColor: this.polarChartColors
+      }],
+      labels: this.polarChartLabes
+    }
+    
   }
 
   getAllTimeTotal(bookings: BookingListDto[]): number {
@@ -134,32 +147,80 @@ export class HomeComponent extends AppComponentBase {
 
   getCurrentYearTotal(bookings: BookingListDto[]): number {
     var total = 0
-    bookings.filter(e => e.checkedInDate.toDate().getFullYear() == this.thisDay.getFullYear() )
-    .forEach(x => {
-      total += x.totalAmount;
-    })
+    bookings.filter(e => e.creationTime.toDate().getFullYear() == this.thisDay.getFullYear())
+      .forEach(x => {
+        total += x.totalAmount;
+      })
     this.currentYearTotal = total;
     return this.currentYearTotal
   }
 
   getCurrentMonthTotal(bookings: BookingListDto[]): number {
-    var total =  0;
-    bookings.filter(e => e.checkedInDate.toDate().getMonth() == this.thisDay.getMonth() )
-    .forEach(x => {
-      total += x.totalAmount;
-    })
+    var total = 0;
+    bookings.filter(e => e.creationTime.toDate().getMonth() == this.thisDay.getMonth())
+      .forEach(x => {
+        total += x.totalAmount;
+      })
     this.currentMonthTotal = total;
     return this.currentMonthTotal
   }
 
-  getTodaysTotal(bookings: BookingListDto[]): number {
-    var total =  0;
-    bookings.filter(e => e.checkedInDate.toDate().getDay() == this.thisDay.getDay() )
-    .forEach(x => {
-      total += x.totalAmount;
-    })
-    this.todaysTotal = total;
-    return this.todaysTotal
+  getWeeksTotal(bookings: BookingListDto[]): number {
+    var total = 0;
+    bookings.filter(e => e.creationTime.week() == this.momentDate.week())
+      .forEach(x => {
+        total += x.totalAmount;
+      })
+    this.weekTotal = total;
+    return this.weekTotal
   }
 
+  getEachMonthTotal(bookings: BookingListDto[]): number[] {
+    var bookingsThisYear = bookings.filter(e => e.creationTime.toDate().getFullYear() == this.thisDay.getFullYear());
+
+    this.monthsOfYear.forEach(thisMonth => {
+
+      var total = 0;
+      bookingsThisYear.filter(z => z.creationTime.toDate().getMonth() == this.monthsOfYear.indexOf(thisMonth))
+        .forEach(x => {
+          total += x.totalAmount;
+        })
+        this.totalForEachMonth.push(total);
+
+        // forEach(bookingsThisYear, function (x) {
+        //   if (x.creationTime.toDate().getMonth() == thisMonth) {
+        //     this.totalForEachMonth[thisMonth] += x.totalAmount;
+        //   }
+        // })
+    })
+    
+    return this.totalForEachMonth;
+  }
+
+  getMonthlyCount(bookings: BookingListDto[]): number[] {
+    var bookingsThisYear = bookings.filter(e => e.creationTime.toDate().getFullYear() == this.thisDay.getFullYear());
+
+    this.monthsOfYear.forEach(thisMonth => {
+
+      var total = bookingsThisYear.filter(z => z.creationTime.toDate().getMonth() == this.monthsOfYear.indexOf(thisMonth)).length
+        this.bookingCountEachMonth.push(total);
+    })
+    
+    return this.bookingCountEachMonth;
+  }
+
+  getPolarChartData(facility: FacilityDto[], facilityType: string[]): number[] {
+    var chartvalue: number[] = [];
+    var chartlabel: string[] = [];
+
+    forEach(facilityType, function (x) {
+        chartvalue.push(facility.filter(y => facilityType[y.facType] == x).length);
+        chartlabel.push(x);
+        });
+        
+        this.polarChartValues = chartvalue;
+        this.polarChartLabes = chartlabel;
+        this.polarChartColors = this.colors.slice(0,this.polarChartValues.length)
+    return this.polarChartValues;
+  }
 }

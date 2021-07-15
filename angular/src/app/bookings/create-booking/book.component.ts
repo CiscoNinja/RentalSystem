@@ -44,6 +44,8 @@ export class BookComponent extends AppComponentBase
   clients: ClientDto[] = [];
   miscelleneouss: MiscellaneousDto[] = [];
   facilities: FacilityDto[] = [];
+  disabledDates: Date[];
+  dateDisabled = true
 
   // PrimeNG 
   items: SelectItem[];
@@ -178,6 +180,22 @@ export class BookComponent extends AppComponentBase
     this.booking.totalAmount = this.facilityPlusMiscel;
     return total;
   }
+
+  getSetDisabledDates(selectedFacils: FacilityDto[]): Date[] {
+    selectedFacils.length != 0? this.dateDisabled = false : this.dateDisabled = true;
+    this.disabledDates = [];
+    _forEach(selectedFacils, (item) => {
+      item.bookedDates.forEach(x => {
+        var datelist = x.split(",")
+        datelist.forEach(d => {
+        this.disabledDates.push(new Date(d));
+      })
+      });
+    });
+
+    return this.disabledDates;
+  }
+
   getDateListLength(selecteddates: any[]): number {
     if (this.selectedDates != null) {
       this.numberOfDays = selecteddates.length;

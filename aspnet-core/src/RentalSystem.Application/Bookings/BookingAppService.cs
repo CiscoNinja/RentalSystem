@@ -94,9 +94,9 @@ namespace RentalSystem.Bookings
                 }).ToListAsync();
 
 
-            var res = ObjectMapper.Map<List<BookingListDto>>(bookings);
+            //var res = ObjectMapper.Map<List<BookingListDto>>(bookings);
 
-            return new ListResultDto<BookingListDto>(res);
+            return new ListResultDto<BookingListDto>(bookings);
         }
 
         public async Task<PagedResultDto<BookingListDto>> GetAllBookings(PagedAndSortedResultRequestDto input)
@@ -305,8 +305,20 @@ namespace RentalSystem.Bookings
 
         public async Task<ListResultDto<FacilityDto>> GetFacilities()
         {
-            var facilites = await _facilityRepository.GetAllListAsync();
-            return new ListResultDto<FacilityDto>(ObjectMapper.Map<List<FacilityDto>>(facilites));
+            var splitchar = new[] { ',' };
+
+            var facilites = await _facilityRepository.GetAllIncluding(x => x.FacilityBookings)
+                .Where(y => y.IsDeleted != true)
+                .Select(f => new FacilityDto() 
+                { 
+                    Capacity = f.Capacity,
+                    Name = f.Name,
+                    Price = f.Price,
+                    Id = f.Id,
+                    FacType = f.FacType,
+                    BookedDates = f.FacilityBookings.Where(x => x.Booking.CheckedOut == false).Select(x => x.BookedDates).ToList()
+                }).ToListAsync();
+            return new ListResultDto<FacilityDto>(facilites);
         }
 
         public async Task<ListResultDto<MiscellaneousDto>> GetMiscellaneous()

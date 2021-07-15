@@ -78,27 +78,31 @@
                 </div>
               </div>
             </div> -->
-            <div class="p-field p-col-8 p-offset-2">
-              <div class="p-inputgroup">
-                <span class="p-inputgroup-addon">
-                  <i class="pi pi-calendar"></i>
-                </span>
-                <span class="p-float-label">
-                  <p-calendar [(ngModel)]="selectedDates" selectionMode="multiple" [readonlyInput]="true" 
-                  inputId="selectedDates" name="selectedDates" dateFormat="d MM yy" 
-                  (ngModelChange)="getDateListLength2(); getTotalFacilities(selectedFacilities)"></p-calendar>
-                  <!-- <p-calendar [(ngModel)]="booking.endDate" name="endDate" [monthNavigator]="true"
-                    [yearNavigator]="true" yearRange="2020:2050" id="endDate" inputId="startDate"
-                    (onSelect)="calculateDiff(booking.startDate, booking.endDate)"></p-calendar> -->
-                  <label for="selectedDates">Select Days</label>
-                </span>
-              </div>
+            <div class="p-fluid p-grid p-col-12 p-md-12">
+              <p-multiSelect [options]="facilities" name="facility" optionLabel="name" class="multiselect-custom"
+                [(ngModel)]="selectedFacilities" defaultLabel="Select facility/facilities" [maxSelectedLabels]="2"
+                [selectedItemsLabel]="'{0} items selected'" (onChange)="getTotalFacilities(selectedFacilities); getSetDisabledDates(selectedFacilities)" class="p-col-12 p-md-12"></p-multiSelect>
+      
           </div>
 
             <div class="p-fluid p-grid p-col-12 p-md-12">
-              <p-multiSelect [options]="facilities" name="facility" optionLabel="name" class="multiselect-custom"
-                [(ngModel)]="selectedFacilities" defaultLabel="Select a facility" [maxSelectedLabels]="2"
-                [selectedItemsLabel]="'{0} items selected'" (onChange)="getTotalFacilities(selectedFacilities)" class="p-col-12 p-md-12"></p-multiSelect>
+              <div class="p-field p-col-8 p-offset-2">
+                <div class="p-inputgroup">
+                  <span class="p-inputgroup-addon">
+                    <i class="pi pi-calendar"></i>
+                  </span>
+                  <span class="p-float-label">
+                    <p-calendar [(ngModel)]="selectedDates" selectionMode="multiple" [readonlyInput]="true" [disabled]="dateDisabled"
+                    inputId="selectedDates" name="selectedDates" dateFormat="d MM yy" [disabledDates]="disabledDates"
+                    (ngModelChange)="getDateListLength2(); getTotalFacilities(selectedFacilities)"></p-calendar>
+                    <!-- <p-calendar [(ngModel)]="booking.endDate" name="endDate" [monthNavigator]="true"
+                      [yearNavigator]="true" yearRange="2020:2050" id="endDate" inputId="startDate"
+                      (onSelect)="calculateDiff(booking.startDate, booking.endDate)"></p-calendar> -->
+                    <label for="selectedDates">Select Days</label>
+                  </span>
+                </div>
+            </div>
+              
               <div class="form-group row mb-0 p-col-12 p-md-12">
                 <div class="p-col-12 p-md-12 p-grid p-jc-between">
                   <label class="">Additional Services</label>

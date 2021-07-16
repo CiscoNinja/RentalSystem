@@ -3780,6 +3780,7 @@ export interface IMiscellaneousListDto {
 }
 
 export class BookingListDto implements IBookingListDto {
+    id: number;
     clientId: number;
     checkedInDate: moment.Moment;
     checkedOutDate: moment.Moment;
@@ -3805,6 +3806,7 @@ export class BookingListDto implements IBookingListDto {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"];
             this.clientId = _data["clientId"];
             this.checkedInDate = _data["checkedInDate"] ? moment(_data["checkedInDate"].toString()) : <any>undefined;
             this.checkedOutDate = _data["checkedOutDate"] ? moment(_data["checkedOutDate"].toString()) : <any>undefined;
@@ -3842,6 +3844,7 @@ export class BookingListDto implements IBookingListDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["clientId"] = this.clientId;
         data["checkedInDate"] = this.checkedInDate ? this.checkedInDate.toISOString() : <any>undefined;
         data["checkedOutDate"] = this.checkedOutDate ? this.checkedOutDate.toISOString() : <any>undefined;
@@ -3879,6 +3882,7 @@ export class BookingListDto implements IBookingListDto {
 }
 
 export interface IBookingListDto {
+    id: number;
     clientId: number;
     checkedInDate: moment.Moment;
     checkedOutDate: moment.Moment;

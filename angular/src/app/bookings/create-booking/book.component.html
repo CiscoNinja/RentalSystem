@@ -31,53 +31,11 @@
                         </div>
                       </ng-template>
                     </p-dropdown>
-
-                    <!-- <p-dropdown [options]="countries" [(ngModel)]="selectedCountries" name="name" optionLabel="name" [filter]="true" filterBy="name" [showClear]="true" placeholder="Select a Country">
-                      <ng-template pTemplate="selectedItem">
-                          <div class="country-item country-item-value"  *ngIf="selectedCountry">
-                              <img src="assets/showcase/images/demo/flag/flag_placeholder.png" [class]="'flag flag-' + selectedCountry.code.toLowerCase()" />
-                              <div>{{selectedCountry.name}}</div>
-                          </div>
-                      </ng-template>
-                      <ng-template let-country pTemplate="item">
-                          <div class="country-item">
-                              <img src="assets/showcase/images/demo/flag/flag_placeholder.png" [class]="'flag flag-' + country.code.toLowerCase()" />
-                              <div>{{country.name}}</div>
-                          </div>
-                      </ng-template>
-                  </p-dropdown> -->
                   </span>
                 </div>
               </div>
             </div>
-            <!-- <div class="p-fluid p-grid p-formgrid">
-              <div class="p-field p-col-12 p-md-6">
-                <div class="p-inputgroup">
-                  <span class="p-inputgroup-addon">
-                    <i class="pi pi-clock"></i>
-                  </span>
-                  <span class="p-float-label">
-                    <p-calendar [(ngModel)]="booking.checkedInDate" name="checkedInDate" [monthNavigator]="true"
-                      [yearNavigator]="true" yearRange="2020:2050" id="checkedInDate" inputId="checkedInDate" 
-                      ></p-calendar>
-                    <label for="checkedInDate">Check In Date</label>
-                  </span>
-                </div>
-              </div>
-              <div class="p-field p-col-12 p-md-6">
-                <div class="p-inputgroup">
-                  <span class="p-inputgroup-addon">
-                    <i class="pi pi-clock"></i>
-                  </span>
-                  <span class="p-float-label">
-                    <p-calendar [(ngModel)]="booking.checkedOutDate" name="checkedOutDate" [monthNavigator]="true"
-                      [yearNavigator]="true" yearRange="2020:2050" id="checkedOutDate" inputId="checkedOutDate"
-                      ></p-calendar>
-                    <label for="checkedOutDate">Check Out Date</label>
-                  </span>
-                </div>
-              </div>
-            </div> -->
+            
             <div class="p-fluid p-grid p-col-12 p-md-12">
               <p-multiSelect [options]="facilities" name="facility" optionLabel="name" class="multiselect-custom"
                 [(ngModel)]="selectedFacilities" defaultLabel="Select facility/facilities" [maxSelectedLabels]="2"
@@ -95,9 +53,6 @@
                     <p-calendar [(ngModel)]="selectedDates" selectionMode="multiple" [readonlyInput]="true" [disabled]="dateDisabled"
                     inputId="selectedDates" name="selectedDates" dateFormat="d MM yy" [disabledDates]="disabledDates"
                     (ngModelChange)="getDateListLength2(); getTotalFacilities(selectedFacilities)"></p-calendar>
-                    <!-- <p-calendar [(ngModel)]="booking.endDate" name="endDate" [monthNavigator]="true"
-                      [yearNavigator]="true" yearRange="2020:2050" id="endDate" inputId="startDate"
-                      (onSelect)="calculateDiff(booking.startDate, booking.endDate)"></p-calendar> -->
                     <label for="selectedDates">Select Days</label>
                   </span>
                 </div>
@@ -131,29 +86,7 @@
                   [inputId]="key"></p-radioButton>
                   <label style="white-space: nowrap;" [for]="key">{{key | localize}}</label>
               </div>
-                <!-- <ng-container *ngFor="let miscelleneous of miscelleneouss; let i = index">
-                                <div class="col-md-12">
-                                  <div class="custom-control custom-checkbox p-grid p-jc-between"
-                                    style="margin-bottom: 10px; align-items: center;">
-                                    <input type="checkbox" class="custom-control-input" [id]="'miscelleneous_' + i"
-                                      [checked]="isMiscellaneousChecked(miscelleneous.name)"
-                                      (change)="onMiscellaneousChange(miscelleneous, $event)" />
-                                    <label class="custom-control-label" [for]="'miscelleneous_' + i">
-                                      {{ miscelleneous.name }}
-                                    </label>
-                                    <span class="custom-control">
-                                      Unit Price: {{"Cedi" | localize}} {{ miscelleneous.price }}
-                                    </span>
-                                    <div class="custom-control col-md-4">
-                                      <span class="">
-                                        <p-inputNumber [(ngModel)]="miscelleneous.quantity" [showButtons]="true" [min]="0"
-                                          [name]="'miscelleneous_' + i" placeholder="Qty" decrementButtonClass="p-button-danger"
-                                          incrementButtonClass="p-button-success"></p-inputNumber>
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
-                </ng-container> -->
+                
               </div>
             </div>
             <br>
@@ -282,7 +215,8 @@ Phone: (123) 456-7890
                 <!-- <button pButton pRipple type="button" label="Primary" class="p-button-raised p-md-6"></button> -->
                 <button pButton pRipple type="button" label="Print"
                   class="p-button-raised p-button-success"></button>
-                  <button pButton pRipple type="submit" label="Submit"
+                  <p-confirmPopup></p-confirmPopup>
+                  <button pButton pRipple type="button" (click)="confirm($event)" label="Submit"
                   class="p-button-raised p-button-success"></button>
                 <!-- <abp-modal-footer class="" [cancelDisabled]="true"
                               [saveDisabled]="!createBookingForm.form.valid || saving" (onCancelClick)="cancel()"></abp-modal-footer> -->

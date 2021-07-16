@@ -15,6 +15,7 @@ namespace RentalSystem.Bookings.Dtos
 {
     public class BookingListDto
     {
+        public int Id { get; set; }
         public long ClientId { get; set; }
         public DateTime CheckedInDate { get; set; }
         public DateTime CheckedOutDate { get; set; }

@@ -22,10 +22,12 @@ class PagedBookingsRequestDto extends PagedRequestDto {
 
 @Component({
   templateUrl: './bookings.component.html',
-  animations: [appModuleAnimation()]
+  animations: [appModuleAnimation()],
+  styleUrls: ['invoice.css']
 })
 export class BookingsComponent extends PagedListingComponentBase<BookingDto> {
   bookings: BookingListDto[] = [];
+  selectedBoking: BookingListDto;
   keyword = '';
 
   constructor(
@@ -82,6 +84,10 @@ export class BookingsComponent extends PagedListingComponentBase<BookingDto> {
 
   editBooking(booking: BookingDto): void {
     this.showCreateOrEditBookingDialog(booking.id);
+  }
+
+  setSelectedBooking(booking: BookingListDto): void {
+    this.selectedBoking = booking;
   }
 
   showCreateOrEditBookingDialog(id?: number): void {

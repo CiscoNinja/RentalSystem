@@ -25,6 +25,10 @@ import {InputNumberModule} from 'primeng/inputnumber';
 import {CheckboxModule} from 'primeng/checkbox';
 import {RadioButtonModule} from 'primeng/radiobutton';
 import {ChartModule} from 'primeng/chart';
+import {ConfirmPopupModule} from 'primeng/confirmpopup';
+import {ConfirmationService} from 'primeng/api';
+import {OverlayPanelModule} from 'primeng/overlaypanel';
+import { TagModule } from 'primeng/tag';
 // import {BrowserModule} from '@angular/platform-browser';
 // import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {CalendarModule} from 'primeng/calendar';
@@ -142,12 +146,17 @@ import { EditMiscellaneousDialogComponent } from './miscellaneouss/edit-miscella
     CheckboxModule,
     RadioButtonModule,
     ChartModule,
+    ConfirmPopupModule,
+    OverlayPanelModule,
+    TagModule,
     // BrowserModule,
     // BrowserAnimationsModule,
     CardModule,
     CalendarModule,
   ],
-  providers: [],
+  providers: [
+    ConfirmationService
+  ],
   entryComponents: [
     // tenants
     CreateTenantDialogComponent,

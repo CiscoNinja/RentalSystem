@@ -23,13 +23,13 @@ import {
   MiscellaneousDtoListResultDto
 } from '@shared/service-proxies/service-proxies';
 import { forEach as _forEach, map as _map } from 'lodash-es';
-import { SelectItem, SelectItemGroup } from 'primeng/api';
+import { ConfirmationService, SelectItem, SelectItemGroup } from 'primeng/api';
 import { Table } from 'primeng/table';
 import { Router } from '@angular/router';
 
 @Component({
   templateUrl: 'book.component.html',
-  styleUrls: ['invoice.css', 'print.css']
+  styleUrls: ['../invoice.css', '../print.css']
 })
 export class BookComponent extends AppComponentBase
   implements OnInit {
@@ -72,6 +72,7 @@ export class BookComponent extends AppComponentBase
     injector: Injector,
     private router: Router,
     private _bookingService: BookingServiceProxy,
+    private confirmationService: ConfirmationService
   ) {
     super(injector);
   }
@@ -278,6 +279,20 @@ export class BookComponent extends AppComponentBase
   // }
   // cancel() {
   // }
+
+  confirm(event: Event) {
+    this.confirmationService.confirm({
+        target: event.target,
+        message: 'Are you sure that you want to proceed?',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+            this.save();
+        },
+        reject: () => {
+            //reject action
+        }
+    });
+}
 
   save(): void {
     this.saving = true;

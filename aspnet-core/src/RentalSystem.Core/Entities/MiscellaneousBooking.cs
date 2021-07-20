@@ -12,6 +12,7 @@ namespace RentalSystem.Entities
         public virtual int BookingId { get; private set; }
         public virtual int MiscellaneousId { get; private set; }
         public int QuantityBooked { get; set; }
+        public double SalePrice { get; set; }
         public virtual Booking Booking { get; set; }
         public virtual Miscellaneous Miscellaneous { get; set; }
         protected MiscellaneousBooking()
@@ -19,11 +20,12 @@ namespace RentalSystem.Entities
 
         }
 
-        public MiscellaneousBooking(int bookingid, int miscellaneousId, int quantityBooked)
+        public MiscellaneousBooking(int bookingid, int miscellaneousId, int quantityBooked, double salePrice)
         {
             BookingId = bookingid;
             MiscellaneousId = miscellaneousId;
             QuantityBooked = quantityBooked;
+            SalePrice = salePrice;
         }
     }
 }

@@ -11,10 +11,13 @@ import {
   BookingDto,
   BookingDtoPagedResultDto,
   BookingListDtoPagedResultDto,
-  BookingListDto
+  BookingListDto,
+  MiscellaneousListDto,
+  FacilityListDto
 } from '@shared/service-proxies/service-proxies';
 import { CreateBookingDialogComponent } from './create-booking/create-booking-dialog.component';
 import { EditBookingDialogComponent } from './edit-booking/edit-booking-dialog.component';
+import { forEach } from 'lodash-es';
 
 class PagedBookingsRequestDto extends PagedRequestDto {
   keyword: string;
@@ -29,6 +32,8 @@ export class BookingsComponent extends PagedListingComponentBase<BookingDto> {
   bookings: BookingListDto[] = [];
   selectedBoking: BookingListDto;
   keyword = '';
+  misscellTotal: number;
+  facilityTotal: number;
 
   constructor(
     injector: Injector,
@@ -80,6 +85,24 @@ export class BookingsComponent extends PagedListingComponentBase<BookingDto> {
 
   createBooking(): void {
     this.showCreateOrEditBookingDialog();
+  }
+
+  getTotalMiscellaneouss(selectedMiscellaneous: MiscellaneousListDto[]): number {
+    let total: number = 0;
+    forEach(selectedMiscellaneous, (item) => {
+      total += (item.quantity * item.price)
+    });
+    this.misscellTotal = total
+    return total;
+  }
+
+  getTotalFacilities(selectedFacils: FacilityListDto[]): number {
+    let total: number = 0;
+    forEach(selectedFacils, (item) => {
+      total += (item.numberOfDaysBooked* item.price);
+    });
+    this.facilityTotal = total
+    return total;
   }
 
   editBooking(booking: BookingDto): void {

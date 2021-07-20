@@ -124,13 +124,13 @@ namespace RentalSystem.Bookings
                         FacType = x.Facility.FacType.ToString(),
                         Name = x.Facility.Name,
                         NumberOfDaysBooked = x.BookedDates.Split(splitchar).Length,
-                        Price = x.Facility.Price
+                        Price = x.SalePrice
                     }).ToList(),
                     Miscellaneous = x.MiscellaneousBookings
                     .Select(x => new MiscellaneousListDto()
                     {
                         Name = x.Miscellaneous.Name,
-                        Price = x.Miscellaneous.Price,
+                        Price = x.SalePrice,
                         Quantity = x.QuantityBooked
                     }).ToList()
                 }).ToListAsync();
@@ -157,7 +157,7 @@ namespace RentalSystem.Bookings
                     //var selectedMi = _miscellaneousRepository.GetAll()
                     //    .Where(p => p.Name == miscellaneous.Name)
                     //    .FirstOrDefault();
-                    var miscellaneousBooking = new MiscellaneousBooking(booking.Id, miscellaneous.Id, miscellaneous.Quantity)
+                    var miscellaneousBooking = new MiscellaneousBooking(booking.Id, miscellaneous.Id, miscellaneous.Quantity, miscellaneous.Price)
                     {
                     };
                     //booking.MiscellaneousBookings.Add(miscellaneousBooking);
@@ -169,7 +169,7 @@ namespace RentalSystem.Bookings
             {
                 foreach (var facility in input.Facilities)
                 {
-                    var facilityBooking = new FacilityBooking(booking.Id, facility.Id, booking.BookedDates)
+                    var facilityBooking = new FacilityBooking(booking.Id, facility.Id, booking.BookedDates, facility.Price)
                     {
                     };
                     await _facilityBookingRepository.InsertAsync(facilityBooking);

@@ -4447,6 +4447,7 @@ export class FacilityBooking implements IFacilityBooking {
     readonly bookingId: number;
     readonly facilityId: number;
     bookedDates: string | undefined;
+    salePrice: number;
     booking: Booking;
     facility: Facility;
     id: number;
@@ -4465,6 +4466,7 @@ export class FacilityBooking implements IFacilityBooking {
             (<any>this).bookingId = _data["bookingId"];
             (<any>this).facilityId = _data["facilityId"];
             this.bookedDates = _data["bookedDates"];
+            this.salePrice = _data["salePrice"];
             this.booking = _data["booking"] ? Booking.fromJS(_data["booking"]) : <any>undefined;
             this.facility = _data["facility"] ? Facility.fromJS(_data["facility"]) : <any>undefined;
             this.id = _data["id"];
@@ -4483,6 +4485,7 @@ export class FacilityBooking implements IFacilityBooking {
         data["bookingId"] = this.bookingId;
         data["facilityId"] = this.facilityId;
         data["bookedDates"] = this.bookedDates;
+        data["salePrice"] = this.salePrice;
         data["booking"] = this.booking ? this.booking.toJSON() : <any>undefined;
         data["facility"] = this.facility ? this.facility.toJSON() : <any>undefined;
         data["id"] = this.id;
@@ -4501,6 +4504,7 @@ export interface IFacilityBooking {
     bookingId: number;
     facilityId: number;
     bookedDates: string | undefined;
+    salePrice: number;
     booking: Booking;
     facility: Facility;
     id: number;
@@ -4577,6 +4581,7 @@ export class MiscellaneousBooking implements IMiscellaneousBooking {
     readonly bookingId: number;
     readonly miscellaneousId: number;
     quantityBooked: number;
+    salePrice: number;
     booking: Booking;
     miscellaneous: Miscellaneous;
     id: number;
@@ -4595,6 +4600,7 @@ export class MiscellaneousBooking implements IMiscellaneousBooking {
             (<any>this).bookingId = _data["bookingId"];
             (<any>this).miscellaneousId = _data["miscellaneousId"];
             this.quantityBooked = _data["quantityBooked"];
+            this.salePrice = _data["salePrice"];
             this.booking = _data["booking"] ? Booking.fromJS(_data["booking"]) : <any>undefined;
             this.miscellaneous = _data["miscellaneous"] ? Miscellaneous.fromJS(_data["miscellaneous"]) : <any>undefined;
             this.id = _data["id"];
@@ -4613,6 +4619,7 @@ export class MiscellaneousBooking implements IMiscellaneousBooking {
         data["bookingId"] = this.bookingId;
         data["miscellaneousId"] = this.miscellaneousId;
         data["quantityBooked"] = this.quantityBooked;
+        data["salePrice"] = this.salePrice;
         data["booking"] = this.booking ? this.booking.toJSON() : <any>undefined;
         data["miscellaneous"] = this.miscellaneous ? this.miscellaneous.toJSON() : <any>undefined;
         data["id"] = this.id;
@@ -4631,6 +4638,7 @@ export interface IMiscellaneousBooking {
     bookingId: number;
     miscellaneousId: number;
     quantityBooked: number;
+    salePrice: number;
     booking: Booking;
     miscellaneous: Miscellaneous;
     id: number;

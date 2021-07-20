@@ -12,6 +12,7 @@ namespace RentalSystem.Entities
         public virtual int BookingId { get; private set; }
         public virtual int FacilityId { get; private set; }
         public string BookedDates { get; set; }
+        public double SalePrice { get; set; }
         public virtual Booking Booking { get; set; }
         public virtual Facility Facility { get; set; }
         protected FacilityBooking()
@@ -19,11 +20,12 @@ namespace RentalSystem.Entities
 
         }
 
-        public FacilityBooking(int bookingid, int facilityid, string bookedDates)
+        public FacilityBooking(int bookingid, int facilityid, string bookedDates, double salePrice)
         {
             BookingId = bookingid;
             FacilityId = facilityid;
             BookedDates = bookedDates;
+            SalePrice = salePrice;
         }
     }
 }

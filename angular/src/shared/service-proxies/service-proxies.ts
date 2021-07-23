@@ -323,6 +323,128 @@ export class BookingServiceProxy {
     }
 
     /**
+     * @param checkInDate (optional) 
+     * @param body (optional) 
+     * @return Success
+     */
+    checkIn(checkInDate: moment.Moment | undefined, body: Int32EntityDto | undefined): Observable<BookingDto> {
+        let url_ = this.baseUrl + "/api/services/app/Booking/CheckIn?";
+        if (checkInDate === null)
+            throw new Error("The parameter 'checkInDate' cannot be null.");
+        else if (checkInDate !== undefined)
+            url_ += "CheckInDate=" + encodeURIComponent(checkInDate ? "" + checkInDate.toJSON() : "") + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCheckIn(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCheckIn(<any>response_);
+                } catch (e) {
+                    return <Observable<BookingDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<BookingDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCheckIn(response: HttpResponseBase): Observable<BookingDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = BookingDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<BookingDto>(<any>null);
+    }
+
+    /**
+     * @param checkOutDate (optional) 
+     * @param body (optional) 
+     * @return Success
+     */
+    checkOut(checkOutDate: moment.Moment | undefined, body: Int32EntityDto | undefined): Observable<BookingDto> {
+        let url_ = this.baseUrl + "/api/services/app/Booking/CheckOut?";
+        if (checkOutDate === null)
+            throw new Error("The parameter 'checkOutDate' cannot be null.");
+        else if (checkOutDate !== undefined)
+            url_ += "CheckOutDate=" + encodeURIComponent(checkOutDate ? "" + checkOutDate.toJSON() : "") + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json-patch+json",
+                "Accept": "text/plain"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCheckOut(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCheckOut(<any>response_);
+                } catch (e) {
+                    return <Observable<BookingDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<BookingDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCheckOut(response: HttpResponseBase): Observable<BookingDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = BookingDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<BookingDto>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     getClients(): Observable<ClientDtoListResultDto> {
@@ -5113,6 +5235,49 @@ export interface IBookingDto {
     lastModifierUserId: number | undefined;
     creationTime: moment.Moment;
     creatorUserId: number | undefined;
+    id: number;
+}
+
+export class Int32EntityDto implements IInt32EntityDto {
+    id: number;
+
+    constructor(data?: IInt32EntityDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+        }
+    }
+
+    static fromJS(data: any): Int32EntityDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new Int32EntityDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data; 
+    }
+
+    clone(): Int32EntityDto {
+        const json = this.toJSON();
+        let result = new Int32EntityDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IInt32EntityDto {
     id: number;
 }
 

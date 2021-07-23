@@ -103,6 +103,7 @@ namespace RentalSystem.Bookings
         {
             var splitchar = new[] { ',' };
             var bookings = await _bookingRepository.GetAllIncluding(x => x.FacilityBookings, x => x.MiscellaneousBookings, x => x.Client)
+                .OrderByDescending(z => z.CreationTime)
                 .Select(x => new BookingListDto()
                 {
                     Client = new ClientListDto() { Fullname = x.Client.FullName, Address = x.Client.Address, Email = x.Client.Email, Phone = x.Client.Phone },
@@ -187,6 +188,51 @@ namespace RentalSystem.Bookings
 
             return MapToEntityDto(booking);
         }
+
+        public async Task<BookingDto> CheckIn(EntityDto<int> input, DateTime CheckInDate)
+        {
+            CheckUpdatePermission();
+
+            var booking = Repository.Get(input.Id);
+
+            //enrollment = ObjectMapper.Map<Enrollment>(input);
+
+            //MapToEntity(input, booking);
+
+            //await Repository.UpdateAsync(booking);
+
+            if (booking != null)
+            {
+                booking.CheckedInDate = CheckInDate;
+                booking.CheckedIn = true;
+            }
+            CurrentUnitOfWork.SaveChanges();
+
+            return await GetAsync(input);
+        }
+
+        public async Task<BookingDto> CheckOut(EntityDto<int> input, DateTime CheckOutDate)
+        {
+            CheckUpdatePermission();
+
+            var booking = Repository.Get(input.Id);
+
+            //enrollment = ObjectMapper.Map<Enrollment>(input);
+
+            //MapToEntity(input, booking);
+
+            //await Repository.UpdateAsync(booking);
+
+            if (booking != null)
+            {
+                booking.CheckedOutDate = CheckOutDate;
+                booking.CheckedOut = true;
+            }
+            CurrentUnitOfWork.SaveChanges();
+
+            return await GetAsync(input);
+        }
+
 
         //public override async Task<BookingDto> UpdateAsync(BookingDto input)
         //{

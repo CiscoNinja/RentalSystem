@@ -13,11 +13,14 @@ import {
   BookingListDtoPagedResultDto,
   BookingListDto,
   MiscellaneousListDto,
-  FacilityListDto
+  FacilityListDto,
+  BookingListDtoListResultDto
 } from '@shared/service-proxies/service-proxies';
 import { CreateBookingDialogComponent } from './create-booking/create-booking-dialog.component';
 import { EditBookingDialogComponent } from './edit-booking/edit-booking-dialog.component';
 import { forEach } from 'lodash-es';
+import { Moment } from 'moment';
+import * as moment from 'moment';
 
 class PagedBookingsRequestDto extends PagedRequestDto {
   keyword: string;
@@ -34,6 +37,8 @@ export class BookingsComponent extends PagedListingComponentBase<BookingDto> {
   keyword = '';
   misscellTotal: number;
   facilityTotal: number;
+  thisDay = new Date();
+  momentDate =  moment(this.thisDay);
 
   constructor(
     injector: Injector,
@@ -83,9 +88,63 @@ export class BookingsComponent extends PagedListingComponentBase<BookingDto> {
     );
   }
 
+  checkIn(booking: BookingDto): void {
+    abp.message.confirm(
+      this.l('CheckInWarningMessage', booking.clientName),
+      undefined,
+      (result: boolean) => {
+        if (result) {
+          this._bookingsService
+            .checkIn(this.momentDate, booking)
+            .pipe(
+              finalize(() => {
+                abp.notify.success(this.l('SuccessfullyCheckedIn'));
+                this.refresh();
+              })
+            )
+            .subscribe(() => {});
+        }
+      }
+    );
+  }
+
   createBooking(): void {
     this.showCreateOrEditBookingDialog();
   }
+
+  checkOut(booking: BookingDto): void {
+    abp.message.confirm(
+      this.l('CheckOutWarningMessage', booking.clientName),
+      undefined,
+      (result: boolean) => {
+        if (result) {
+          this._bookingsService
+            .checkOut(this.momentDate, booking)
+            .pipe(
+              finalize(() => {
+                abp.notify.success(this.l('SuccessfullyCheckedOut'));
+                this.refresh();
+              })
+            )
+            .subscribe(() => {});
+        }
+      }
+    );
+  }
+
+  // checkIn(booking: BookingDto): void {
+  //   this._bookingsService
+  //     .checkIn(this.momentDate, booking).subscribe(() => {
+  //       this.refresh();
+  //     });
+  // }
+
+  // checkOut(booking: BookingDto ): void {
+  //   this._bookingsService
+  //     .checkOut(this.momentDate, booking).subscribe(() => {
+  //       this.refresh();
+  //     });
+  // }
 
   getTotalMiscellaneouss(selectedMiscellaneous: MiscellaneousListDto[]): number {
     let total: number = 0;

@@ -23,6 +23,8 @@ namespace RentalSystem.Bookings
         Task<ListResultDto<FacilityDto>> GetFacilities();
         Task<ListResultDto<MiscellaneousDto>> GetMiscellaneous();
         Task<ListResultDto<BookingListDto>> GetAllList();
+        Task<BookingDto> CheckOut(EntityDto<int> input, DateTime CheckOutDate);
+        Task<BookingDto> CheckIn(EntityDto<int> input, DateTime CheckInDate);
         Task<PagedResultDto<BookingListDto>> GetAllBookings(PagedAndSortedResultRequestDto input);
     }
 }

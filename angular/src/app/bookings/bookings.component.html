@@ -75,8 +75,10 @@
                   <td style="white-space: nowrap;">{{"Cedi" | localize}} {{ booking.totalAmount }}</td>
                   <td>
                     <div  class="p-d-flex">
-                      <p-tag (click)="editBooking(booking)" styleClass="p-mr-2" icon="pi pi-check" severity="success" value="CheckIn"></p-tag>
-                      <p-tag (click)="delete(booking)" styleClass="p-mr-2" icon="pi pi-times" severity="warning" value="CheckOut"></p-tag>
+                      <p-tag *ngIf="!booking.checkedIn" (click)="checkIn(booking)" styleClass="p-mr-2" icon="pi pi-check" severity="success" value="CheckIn"></p-tag>
+                      <p-tag *ngIf="booking.checkedIn" styleClass="p-mr-2" severity="info">Checked in {{ booking.checkedInDate }}</p-tag>
+                      <p-tag *ngIf="booking.checkedIn && !booking.checkedOut" (click)="checkOut(booking)" styleClass="p-mr-2" icon="pi pi-times" severity="warning" value="CheckOut"></p-tag>
+                      <p-tag *ngIf="booking.checkedOut" styleClass="p-mr-2" severity="info">Checked out {{ booking.checkedOutDate }}</p-tag>
                       <p-tag (click)="setSelectedBooking(booking); op.toggle($event)" icon="pi pi-info-circle" severity="info" value="Info"></p-tag>
                     </div>
                    </td>

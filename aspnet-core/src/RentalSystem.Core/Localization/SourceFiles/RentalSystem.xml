@@ -97,6 +97,7 @@
     <text name="Off">Off</text>
     <text name="AreYouSureWantToDelete">Are you sure want to delete {0}?</text>
     <text name="SuccessfullyDeleted">Successfully deleted</text>
+    <text name="SuccessfullyCheckedIn">Successfully checked in</text>
     <text name="StartTyping">Start Typing</text>
     <text name="Skins">Skins</text>
     <text name="Settings">Settings</text>
@@ -106,6 +107,9 @@
     <text name="ConfirmNewPassword">Confirm New Password</text>
     <text name="PasswordsDoNotMatch">Passwords do not match</text>
     <text name="PasswordsMustBeAtLeast8CharactersContainLowercaseUppercaseNumber">Passwords must be at least 8 characters, contain a lowercase, uppercase, and number</text>
+    <text name="CheckOutWarningMessage">You are about to check out {0}. Action is irreversible. Are you sure you want to continue</text>
+    <text name="CheckInWarningMessage">You are about to check in {0}. Action is irreversible. Are you sure you want to continue</text>
+    <text name="BookingDeleteWarningMessage">Booking {0} will be deleted.</text>
     <text name="UserDeleteWarningMessage">User {0} will be deleted.</text>
     <text name="RoleDeleteWarningMessage">Role {0} will be deleted and unassigned from all assigned users.</text>
     <text name="TenantDeleteWarningMessage">Tenant {0} will be deleted.</text>

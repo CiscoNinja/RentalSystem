@@ -37,8 +37,6 @@ export class BookingsComponent extends PagedListingComponentBase<BookingDto> {
   keyword = '';
   misscellTotal: number;
   facilityTotal: number;
-  thisDay = new Date();
-  momentDate =  moment(this.thisDay);
 
   constructor(
     injector: Injector,
@@ -95,7 +93,7 @@ export class BookingsComponent extends PagedListingComponentBase<BookingDto> {
       (result: boolean) => {
         if (result) {
           this._bookingsService
-            .checkIn(this.momentDate, booking)
+            .checkIn(moment(new Date()), booking)
             .pipe(
               finalize(() => {
                 abp.notify.success(this.l('SuccessfullyCheckedIn'));
@@ -119,7 +117,7 @@ export class BookingsComponent extends PagedListingComponentBase<BookingDto> {
       (result: boolean) => {
         if (result) {
           this._bookingsService
-            .checkOut(this.momentDate, booking)
+            .checkOut(moment(new Date()), booking)
             .pipe(
               finalize(() => {
                 abp.notify.success(this.l('SuccessfullyCheckedOut'));

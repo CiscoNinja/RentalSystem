@@ -35,3 +35,4 @@ Create & download your project from https://aspnetboilerplate.com/Templates
 # License
 
 [MIT](LICENSE). -->
+![Rental Management System Demo](Animation.gif)

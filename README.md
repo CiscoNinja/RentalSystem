@@ -1,38 +1,47 @@
-<!-- # Important
 
-Issues of this repository are tracked on https://github.com/aspnetboilerplate/aspnetboilerplate. Please create your issues on https://github.com/aspnetboilerplate/aspnetboilerplate/issues.
-
-# Introduction
-
-This is a template to create **ASP.NET Core MVC / Angular** based startup projects for [ASP.NET Boilerplate](https://aspnetboilerplate.com/Pages/Documents). It has 2 different versions:
-
-1. [ASP.NET Core MVC & jQuery](https://aspnetboilerplate.com/Pages/Documents/Zero/Startup-Template-Core) (server rendered multi-page application).
-2. [ASP.NET Core & Angular](https://aspnetboilerplate.com/Pages/Documents/Zero/Startup-Template-Angular) (single page application).
- 
-User Interface is based on [AdminLTE theme](https://github.com/ColorlibHQ/AdminLTE).
- 
-# Download
-
-Create & download your project from https://aspnetboilerplate.com/Templates
-
-# Screenshots
-
-#### Sample Dashboard Page
-![](_screenshots/module-zero-core-template-ui-home.png)
-
-#### User Creation Modal
-![](_screenshots/module-zero-core-template-ui-user-create-modal.png)
-
-#### Login Page
-
-![](_screenshots/module-zero-core-template-ui-login.png)
-
-# Documentation
-
-* [ASP.NET Core MVC & jQuery version.](https://aspnetboilerplate.com/Pages/Documents/Zero/Startup-Template-Core)
-* [ASP.NET Core & Angular  version.](https://aspnetboilerplate.com/Pages/Documents/Zero/Startup-Template-Angular)
-
-# License
-
-[MIT](LICENSE). -->
+<h1>Client Introduction</h1>
+<hr>
+<p>
+UGLC-TDI is medium-scale business. They have some assets/facilities that they put out for rentals. Records are kept using a paper based record keeping system which they wish to migrate to a paperless system. Following the customer’s request, they plan to develop a simple web app to efficiently manage their assets database and their asset rentals.
+</p>
+<h1>Project Introduction</h1>
+<p>
+UGLC-TDI (Client) wants to develope a web based application to migrate their business operation to a paperless system. The application should have the following features :
+<ul>
+    <li>
+        manage the inventory by adding or editing assets
+    </li>
+    <li>
+        asssets should be grouped into categories
+    </li>
+    <li>
+        manage end users by adding or editing users
+    </li>
+    <li>
+        determine the level of accessibility for users
+    </li>
+    <li>
+        have a database of clients who rent their assets/facilitiies
+    </li>
+    <li>
+        the end user/front desk attendant should be able to create bookings for clients and generate invoices/receipts and
+    </li>
+    <li>
+         be able to check in or check out a client as and when they access the facility/assets booked
+    </li>
+    <li>
+        the dashboard should display summary of assets and bookings using graphs/tables where necessary
+    </li>
+</ul>
+</p>
 ![Rental Management System Demo](Animation.gif)
+
+
+This project uses ASP.NET Boilerplate [ASP.NET Boilerplate](https://aspnetboilerplate.com/Pages/Documents). 
+
+User Interface is based on [AdminLTE theme](https://github.com/ColorlibHQ/AdminLTE). 
+and [PrimeNG](https://primefaces.org/primeng/showcase/#/)
+ 
+
+[MIT](LICENSE).
+

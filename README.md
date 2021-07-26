@@ -1,6 +1,5 @@
 
 <h1>Client Introduction</h1>
-<hr>
 <p>
 UGLC-TDI is medium-scale business. They have some assets/facilities that they put out for rentals. Records are kept using a paper based record keeping system which they wish to migrate to a paperless system. Following the customer’s request, they plan to develop a simple web app to efficiently manage their assets database and their asset rentals.
 </p>
@@ -34,7 +33,6 @@ UGLC-TDI (Client) wants to develope a web based application to migrate their bus
     </li>
 </ul>
 </p>
-![Rental Management System Demo](Animation.gif)
 
 
 This project uses ASP.NET Boilerplate [ASP.NET Boilerplate](https://aspnetboilerplate.com/Pages/Documents). 
@@ -44,4 +42,7 @@ and [PrimeNG](https://primefaces.org/primeng/showcase/#/)
  
 
 [MIT](LICENSE).
+
+<h1>Project Demo</h1>
+[Rental Management System Demo](Animation.gif)
 

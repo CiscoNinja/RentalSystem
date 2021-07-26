@@ -34,7 +34,7 @@ namespace RentalSystem.Bookings.Dtos
                     Price = x.Miscellaneous.Price,
                     Quantity = x.QuantityBooked
                 }).ToList()))
-                .ForMember(x => x.BookedDates, opt => opt.MapFrom(src => src.BookedDates.Split(new[] { ',' })));
+                .ForMember(x => x.BookedDates, opt => opt.MapFrom(src => src.BookedDates.Split(new[] { ',' }))).ReverseMap();
 
             //CreateMap<Booking, BookingListDto>()
             //    .ForMember(x => x.ClientName, opt => opt.MapFrom(src => src.Client.FullName))

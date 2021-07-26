@@ -56,6 +56,15 @@ namespace RentalSystem.Bookings
             _clientBookingRepository = clientBookingRepository;
         }
 
+        public override async Task<PagedResultDto<BookingDto>> GetAllAsync(PagedAndSortedResultRequestDto input)
+        {
+            var enrollments = await _bookingRepository.GetAllIncluding(x => x.FacilityBookings, x => x.MiscellaneousBookings, x => x.Client).ToListAsync();
+
+            var res = ObjectMapper.Map<List<BookingDto>>(enrollments);
+
+            return new PagedResultDto<BookingDto>(input.MaxResultCount, res);
+        }
+
         public async Task<ListResultDto<BookingListDto>> GetAllList()
         {
             var splitchar = new[] { ',' };
